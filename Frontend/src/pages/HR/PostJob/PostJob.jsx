@@ -84,15 +84,17 @@ const PostJob = () => {
                         <label htmlFor="experience">Experience</label><br />
                         <input type="text" name="experience" id="experience" className='border border-gray-300 w-full rounded px-2 py-1' value={experience} onChange={(e) => setExperience(e.target.value)} />
                     </div>
-                    
-                    <div>
-                        <label htmlFor="salary">Salary</label><br />
-                        <input type="text" name="salary" id="salary" className='border border-gray-300 w-full rounded px-2 py-1' value={salary} onChange={(e) => setSalary(e.target.value)} />
-                    </div>
 
-                    <div>
-                        <label htmlFor="deadline">Deadline</label><br />
-                        <input type="date" name="deadline" id="deadline" className='border border-gray-300 w-full rounded px-2 py-1' value={deadline} onChange={(e) => setDeadline(e.target.value)} />
+                    <div className='flex items-center justify-between gap-4'>                    
+                        <div className='w-full'>
+                            <label htmlFor="salary">Salary</label><br />
+                            <input type="text" name="salary" id="salary" className='border border-gray-300 w-full rounded px-2 py-1' value={salary} onChange={(e) => setSalary(e.target.value)} />
+                        </div>
+
+                        <div className='w-full'>
+                            <label htmlFor="deadline">Deadline</label><br />
+                            <input type="date" name="deadline" id="deadline" className='border border-gray-300 w-full rounded px-2 py-1' value={deadline} onChange={(e) => setDeadline(e.target.value)} />
+                        </div>
                     </div>
 
                     <div className='relative w-full'>
@@ -109,7 +111,7 @@ const PostJob = () => {
                     </div>
                 </form>
 
-                <div className='w-1/5 border border-amber-500 flex flex-col items-center justify-center gap-2'>
+                <div className='w-1/5 border border-amber-500 flex flex-col items-center pt-4 gap-2'>
                     <img src={JSON.parse(localStorage.getItem("user")).companyLogo} alt={JSON.parse(localStorage.getItem("user")).companyLogo} className='h-32 w-32 rounded-full border' />
                     <p className='text-2xl font-semibold'>{JSON.parse(localStorage.getItem("user")).companyName}</p>
                     <p>Total jobs posted: 0</p>
