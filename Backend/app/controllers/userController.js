@@ -2,11 +2,12 @@ const bcryptjs = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
 const User = require("../models/userModel");
+const Job = require("../models/jobModel");
 const { userRegisterValidationSchema,userLoginValidationSchema } = require("../validations/userValidation");
 
 const userController = {};
 
-userController.register = async(req, res) => {
+userController.register = async (req, res) => {
     const { error, value } = userRegisterValidationSchema.validate(req.body, { abortEarly: false });
     if(error) {
         return res.status(400).json({ error: error.details.map(err => err.message)});
@@ -68,7 +69,7 @@ userController.login = async (req, res) => {
 
         // Create token
         const tokenData = { userId: isUserExist._id, role: isUserExist.role };
-        const token = jwt.sign(tokenData, process.env.JWT_SECRET, { expiresIn: "1h" });
+        const token = jwt.sign(tokenData, process.env.JWT_SECRET, { expiresIn: "5h" });
 
         res.status(200).json({ success: true, message: "Login done successfully!", user: isUserExist, token });
     } catch (error) {
@@ -81,6 +82,20 @@ userController.list = async (req, res) => {
     try {
         const users = await User.find();
         res.status(200).json({ success: true, users });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ success: false, message: "Something went wrong." });
+    }
+};
+
+userController.allAppliedJobs = async (req, res) => {
+    try {
+        const user = await User.findById(req.userId).populate("appliedJobs");
+        if(!user) {
+            return res.status(404).json({ error: "User not found." });
+        }
+
+        res.status(200).json({ success: true, appliedJobs: user.appliedJobs });
     } catch (error) {
         console.log(error);
         res.status(500).json({ success: false, message: "Something went wrong." });

@@ -25,10 +25,15 @@ const upload = require("./app/middlewares/upload");
 app.post("/api/register", upload.single("companyLogo"), userController.register); // Registration ✅
 app.post("/api/login", userController.login);   // Login ✅
 app.get("/api/list", userController.list);   // List ✅
+app.get("/api/allAppliedJobs", authenticateUser, authorizeUser(["User"]), userController.allAppliedJobs);    // All applied jobs ✅
 
 // Job Route
 app.post("/api/job", authenticateUser, authorizeUser(["HR"]), jobController.create); // Create a job ✅
+app.post("/api/job/generateDescription", authenticateUser, authorizeUser(["HR"]), jobController.generateJobDescription);    // Generating job description externally ✅
 app.get("/api/job", authenticateUser, authorizeUser(["User"]), jobController.getAllJobs);   // List of all jobs ✅
+app.get("/api/job/allPostedJobsByHR", authenticateUser, authorizeUser(["HR"]), jobController.allPostedJobsByHR);    // All posted jobs by the specific user ✅
+app.get("/api/job/getSpecificJob/:id", authenticateUser, authorizeUser(["User", "HR"]), jobController.getSpecificJob);  // Get a specific job ✅
+app.post("/api/job/applyJob/:id", authenticateUser, authorizeUser(["User"]), jobController.apply);  // Apply for a job ✅
 
 const PORT = process.env.PORT || 3030;
 app.listen(PORT, () => {

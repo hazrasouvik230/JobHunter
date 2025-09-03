@@ -22,15 +22,43 @@ jobController.create = async(req, res) => {
             return res.status(404).json({ error: "User not found." });
         }
 
-        value.description = await generateJobDescription(value);
+        if(!value.description || value.description.trim() === "") {
+            value.description = await generateJobDescription(value);
+        }
 
-        const job = new Job({ ...value, postedBy: req.userId });
+        const job = new Job({ ...value, postedBy: req.userId, companyName: user.companyName, companyLogo: user.companyLogo });
         await job.save();
 
         res.status(201).json({ success: true, message: "Job created successfully!", job });
     } catch (error) {
         console.log(error);
         res.status(500).json({ success: false, message: "Something went wrong while creating the job." })
+    }
+};
+
+jobController.generateJobDescription = async(req, res) => {
+    try {
+        const description = await generateJobDescription(req.body);
+        res.status(200).json({ success: true, description });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ success: false, message: "AI description generation failed." });
+    }
+};
+
+jobController.allPostedJobsByHR = async(req, res) => {
+    try {
+        if(req.role !== "HR") {
+            return res.status(403).json({ error: "Forbidden: Only HRs can view their posted jobs." });
+        }
+
+        // const jobs = await Job.find({ postedBy: req.userId }).populate("User", ["name"]);
+        const jobs = await Job.find({ postedBy: req.userId }).populate("postedBy", "name email companyName companyLogo");
+
+        res.status(200).json({ success: true, jobs });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ success: false, message: "Something went wrong while fetching jobs which was posted by the this HR." });
     }
 };
 
@@ -45,11 +73,66 @@ jobController.getAllJobs = async(req, res) => {
             return res.status(404).json({ error: "User not found." });
         }
 
-        const jobs = await Job.find();
+        // const jobs = await Job.find();
+        const jobs = await Job.find().populate("postedBy", "name email companyName companyLogo");
         res.status(200).json({ success: true, jobs });
     } catch (error) {
         console.log(error);
         res.status(500).json({ success: false, message: "Something went wrong while fetching jobs." });
+    }
+};
+
+jobController.getSpecificJob = async(req, res) => {
+    const jobId = req.params.id;
+    try {
+        const job = await Job.findById(jobId);
+        res.status(200).json({ success: true, job });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ success: false, message: "Something went wrong while fetching specific job details." });
+    }
+};
+
+jobController.apply = async(req, res) => {
+    const jobId = req.params.id;
+    try {
+        if(req.role !== "User") {
+            return res.status(403).json({ error: "Forbidden: Only applicants can apply for the jobs." });
+        }
+
+        const job = await Job.findById(jobId);
+        if(!job) {
+            return res.status(404).json({ error: "Job not found!" });
+        }
+
+        if(job.applicants.includes(req.userId)) {
+            return res.status(400).json({ error: "You've already applied for this job." });
+        }
+
+        await Job.updateOne(
+            { _id: jobId },
+            { $addToSet: { applicants: req.userId }}
+        );
+
+        // job.applicants.push(req.userId);
+        // await job.save();
+
+        const applicant = await User.findById(req.userId);
+        if(!applicant) {
+            return res.status(404).json({ error: "User not found!" });
+        }
+
+        await User.updateOne(
+            { _id: req.userId },
+            { $addToSet: { appliedJobs: jobId } }
+        );
+        // applicant.appliedJobs.push(jobId);
+        // await applicant.save();
+
+        res.status(200).json({ success: true, message: "Successfully applied for the job." });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ success: false, message: "Something went wrong while applying for a job." });
     }
 };
 

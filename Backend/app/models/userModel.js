@@ -16,7 +16,11 @@ const userSchema = new mongoose.Schema({
         required: function() {
             return this.role === 'HR';
         }
-    }
+    },
+    appliedJobs: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Job"
+    }]
 }, { timestamps: true });
 
 const User = mongoose.model("User", userSchema);
