@@ -20,6 +20,10 @@ const userSchema = new mongoose.Schema({
     appliedJobs: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: "Job"
+    }],
+    savedJobs: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Job"
     }]
 }, { timestamps: true });
 

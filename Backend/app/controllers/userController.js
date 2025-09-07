@@ -102,4 +102,18 @@ userController.allAppliedJobs = async (req, res) => {
     }
 };
 
+userController.savedJobs = async (req, res) => {
+    try {
+        const user = await User.findById(req.userId).populate("savedJobs");
+        if(!user) {
+            return res.status(404).json({ error: "User not found." });
+        }
+
+        res.status(200).json({ success: true, savedJobs: user.savedJobs });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ success: false, message: "Something went wrong." });
+    }
+};
+
 module.exports = userController;

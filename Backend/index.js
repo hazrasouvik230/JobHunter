@@ -26,6 +26,7 @@ app.post("/api/register", upload.single("companyLogo"), userController.register)
 app.post("/api/login", userController.login);   // Login ✅
 app.get("/api/list", userController.list);   // List ✅
 app.get("/api/allAppliedJobs", authenticateUser, authorizeUser(["User"]), userController.allAppliedJobs);    // All applied jobs ✅
+app.get("/api/savedJobs", authenticateUser, authorizeUser(["User"]), userController.savedJobs);    // All saved jobs ✅
 
 // Job Route
 app.post("/api/job", authenticateUser, authorizeUser(["HR"]), jobController.create); // Create a job ✅
@@ -34,6 +35,8 @@ app.get("/api/job", authenticateUser, authorizeUser(["User"]), jobController.get
 app.get("/api/job/allPostedJobsByHR", authenticateUser, authorizeUser(["HR"]), jobController.allPostedJobsByHR);    // All posted jobs by the specific user ✅
 app.get("/api/job/getSpecificJob/:id", authenticateUser, authorizeUser(["User", "HR"]), jobController.getSpecificJob);  // Get a specific job ✅
 app.post("/api/job/applyJob/:id", authenticateUser, authorizeUser(["User"]), jobController.apply);  // Apply for a job ✅
+app.post("/api/job/saveJob/:id", authenticateUser, authorizeUser(["User"]), jobController.saveJob);  // Save a job ✅
+app.delete("/api/job/unsaveJob/:id", authenticateUser, authorizeUser(["User"]), jobController.unsaveJob);  // Unsave a job
 
 const PORT = process.env.PORT || 3030;
 app.listen(PORT, () => {

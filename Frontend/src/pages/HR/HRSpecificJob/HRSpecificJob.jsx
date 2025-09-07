@@ -19,19 +19,37 @@ const HRSpecificJob = () => {
             }  
         })();
     }, [id]);
+
+    const handleReject = (id) => {
+        
+    }
+
     return (
         <div className='px-32 py-16'>
             <p className='text-3xl font-medium text-shadow-md pb-8'>Specific Job Details</p>
 
-            <p>Job id: {job._id}</p>
-            <p>Title: {job.title}</p>
-            {/* <p>Job Description: {job.description}</p> */}
-            {/* <ReactMarkdown>
-                {job.description}
-            </ReactMarkdown> */}
-            {/* <p>Location: {job.location.map((loc) => <span>{loc} </span>)}</p> */}
-            {/* <p>Total applied students: {job.applicants}</p> */}
-            <p>Total applied students: {job.applicants?.length || 0}</p>
+            <div>
+                <p>Job id: {job._id}</p>
+                <p>Title: {job.title}</p>
+                <p>Total applied students: {job.applicants?.length || 0}</p>
+            </div>
+
+            <div className='border p-4'>
+                {
+                    job.applicants?.map((applicant) => {
+                        return <div key={applicant._id} className='border my-4 p-2 flex items-center justify-between rounded shadow-md'>
+                            <p>{applicant._id}</p>
+                            <p>{applicant.name}</p>
+                            <p>{applicant.email}</p>
+
+                            <div className='flex items-center justify-center gap-2'>
+                                <button className='px-4 py-1 bg-amber-200 rounded cursor-pointer'>Schedule Interview</button>
+                                <button className='px-4 py-1 bg-red-600/70 text-white rounded cursor-pointer' onClick={() => handleReject(applicant._id)}>Reject</button>
+                            </div>
+                        </div>
+                    })
+                }
+            </div>
         </div>
     )
 }

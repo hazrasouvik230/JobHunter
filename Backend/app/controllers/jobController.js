@@ -85,7 +85,7 @@ jobController.getAllJobs = async(req, res) => {
 jobController.getSpecificJob = async(req, res) => {
     const jobId = req.params.id;
     try {
-        const job = await Job.findById(jobId);
+        const job = await Job.findById(jobId).populate("applicants", ["name", "email"]);
         res.status(200).json({ success: true, job });
     } catch (error) {
         console.log(error);
@@ -121,18 +121,84 @@ jobController.apply = async(req, res) => {
         if(!applicant) {
             return res.status(404).json({ error: "User not found!" });
         }
-
+        
         await User.updateOne(
             { _id: req.userId },
             { $addToSet: { appliedJobs: jobId } }
         );
         // applicant.appliedJobs.push(jobId);
         // await applicant.save();
-
+        
         res.status(200).json({ success: true, message: "Successfully applied for the job." });
     } catch (error) {
         console.log(error);
         res.status(500).json({ success: false, message: "Something went wrong while applying for a job." });
+    }
+};
+
+jobController.saveJob = async (req, res) => {
+    const jobId = req.params.id;
+    try {
+        const job = await Job.findById(jobId);
+        if(!job) {
+            return res.status(404).json({ error: "Job not found!" });
+        }
+        
+        const user = await User.findById(req.userId);
+        if(!user) {
+            return res.status(404).json({ error: "User not found!" });
+        }
+
+        if(req.role !== "User") {
+            return res.status(403).json({ error: "Forbidden: Only applicants can apply for the jobs." });
+        }
+
+        if(user.savedJobs.includes(jobId)) {
+            return res.status(400).json({ error: "Job is already saved." });
+        }
+
+        await User.updateOne(
+            { _id: req.userId },
+            { $addToSet: { savedJobs: jobId } }
+        );
+
+        res.status(200).json({ success: true, message: "Job saved successfully." });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ success: false, message: "Something went wrong while saving the job." })
+    }
+};
+
+jobController.unsaveJob = async (req, res) => {
+    const jobId = req.params.id;
+    try {
+        const job = await Job.findById(jobId);
+        if(!job) {
+            return res.status(404).json({ error: "Job not found!" });
+        }
+        
+        const user = await User.findById(req.userId);
+        if(!user) {
+            return res.status(404).json({ error: "User not found!" });
+        }
+
+        if(req.role !== "User") {
+            return res.status(403).json({ error: "Forbidden: Only applicants can apply for the jobs." });
+        }
+
+        if(!user.savedJobs.includes(jobId)) {
+            return res.status(400).json({ error: "Job is not saved." });
+        }
+
+        await User.updateOne(
+            { _id: req.userId },
+            { $pull: { savedJobs: jobId } }
+        );
+
+        res.status(200).json({ success: true, message: "Job unsaved successfully." });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ success: false, message: "Something went wrong while unsaving the job." });
     }
 };
 

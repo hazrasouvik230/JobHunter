@@ -4,7 +4,7 @@ import Footer from './Footer'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 
 import Home from './pages/HomePage/Home';
-import Profile from "./Profile";
+import Profile from "./pages/Profile/Profile";
 
 import Dashboard from "./pages/Admin/AdminDashboard/AdminDashboard";
 import AllUsers from "./pages/Admin/AllUsers/AllUsers";
