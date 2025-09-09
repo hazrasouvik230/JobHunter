@@ -1,10 +1,5 @@
 // import React, { useState } from 'react'
 
-import { useState } from "react";
-import AddEducation from "./AddEducation";
-import AddExperience from "./AddExperience";
-import AddProject from "./AddPorject";
-
 // const Profile = () => {
 //     const [address, setAddress] = useState("");
 //     const [mobile, setMobile] = useState("+91 ");
@@ -86,12 +81,71 @@ import AddProject from "./AddPorject";
 
 
 
+
+
+
+
+
+
+
+import { useEffect, useState } from "react";
+import AddEducation from "./AddEducation";
+import AddExperience from "./AddExperience";
+import AddProject from "./AddPorject";
+import AddCertificate from "./AddCertificate";
+
+import { IoMdAdd } from "react-icons/io";
+import axios from "axios";
+
 const skills = ["HTML", "CSS", "JS", "React", "Mongoose"];
 
 export default function Profile() {
+    const [profile, setProfile] = useState(() => {
+        const user = JSON.parse(localStorage.getItem("user"));
+        return {
+            name: user?.name || "",
+            email: user?.email || "",
+            mobile: "",
+            address: "",
+            title: "",
+            description: "",
+            technicalSkills: [],
+            softSkills: [],
+            languages: [],
+            interests: [],
+            educations: [],
+            experiences: [],
+            projects: [],
+            certificates: []
+        };
+    });
+    // const [loading, setLoading] = useState(true);
+
     const [educationModal, setEducationModal] = useState(false);
     const [experienceModal, setExperienceModal] = useState(false);
     const [projectModal, setProjectModal] = useState(false);
+    const [certificateModal, setCertificateModal] = useState(false);
+    const [edit, setEdit] = useState(false);
+
+    useEffect(() => {
+        fetchProfile();
+    }, []);
+
+    const fetchProfile = async () => {
+        try {
+            // setLoading(true);
+            const token = localStorage.getItem("token");
+            const response = await axios.get("http://localhost:3000/api/myProfile", { headers: { Authorization: token } });
+            console.log(response.data.resume);
+            setProfile(response.data.resume);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const handleEdit = () => {
+        setEdit(!edit);
+    };
 
     const handleEducationModalOpen = () => {
         setEducationModal(!educationModal);
@@ -102,9 +156,64 @@ export default function Profile() {
     const handleProjectModalOpen = () => {
         setProjectModal(!projectModal);
     };
+    const handleCertificateModalOpen = () => {
+        setCertificateModal(!certificateModal);
+    };
+
+    const handleEducation = async (educationData) => {
+        try {
+            const token = localStorage.getItem("token");
+            const response = await axios.post("http://localhost:3000/api/resume/education", educationData, { headers: { Authorization: token } });
+            console.log(response.data);
+            await fetchProfile();
+            setEducationModal(!educationModal);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+    const handleExperience = async (experienceData) => {
+        try {
+            const token = localStorage.getItem("token");
+            const response = await axios.post("http://localhost:3000/api/resume/experience", experienceData, { headers: { Authorization: token } });
+            console.log(response.data);
+            await fetchProfile();
+            setExperienceModal(!experienceModal);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+    const handleProject = async (projectData) => {
+        try {
+            const token = localStorage.getItem("token");
+            const response = await axios.post("http://localhost:3000/api/resume/project", projectData, { headers: { Authorization: token } });
+            console.log(response.data);
+            await fetchProfile();
+            setProjectModal(!projectModal);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+    const handleCertificate = async (certificateData) => {
+        try {
+            const token = localStorage.getItem("token");
+            const response = await axios.post("http://localhost:3000/api/resume/certificate", certificateData, { headers: { Authorization: token } });
+            console.log(response.data);
+            await fetchProfile();
+            setCertificateModal(!certificateModal);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
     return (
         <div className='px-32 py-16'>
-            <p className='text-3xl font-semibold text-shadow-lg pb-8'>Profile</p>
+            <div className="flex justify-between">
+                <p className='text-3xl font-semibold text-shadow-lg pb-8'>Profile</p>
+                <div className="mt-1 space-x-4">
+                    <button className="bg-sky-400/50 px-6 py-2 rounded-md font-medium cursor-pointer hover:scale-105 hover:shadow-lg duration-200 ease-in-out">Download Resume</button>
+                    <button className="bg-sky-400/50 px-6 py-2 rounded-md font-medium cursor-pointer hover:scale-105 hover:shadow-lg duration-200 ease-in-out" onClick={handleEdit}>{ edit ? "Update Profile" : "Edit Profile"}</button>
+                </div>
+            </div>
 
             <div className="flex justify-between gap-4">
                 {/* Left Side */}
@@ -112,21 +221,60 @@ export default function Profile() {
                     <img src="/Illustration.png" alt="" className="w-32 h-32 border rounded-full" />
                     <p>Software developer</p>
                     <p className="text-center">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Neque quibusdam veritatis impedit repudiandae alias dicta cum iste dolor incidunt recusandae aliquid, in enim vel ipsa eligendi commodi mollitia animi? Veritatis.</p>
-                    <div className="flex flex-wrap gap-2">
-                        {
-                            skills.map(skill => {
-                                return <span className="bg-amber-200 px-6 py-2 rounded-2xl">{skill}</span>
-                            })
-                        }
+                    
+                    <div className="mb-4">
+                        {/* <p className="mb-1 flex items-center gap-4">Technical Skills <IoMdAdd className="cursor-pointer hover:bg-amber-300 " /></p> */}
+                        <p className="mb-1">Technical Skills</p>
+                        <div className="flex flex-wrap gap-2">
+                            {
+                                skills.map(skill => {
+                                    return <span className="bg-amber-200 px-6 py-1 rounded-2xl text-xs">{skill}</span>
+                                })
+                            }
+                        </div>
                     </div>
+
+                    <div className="mb-4">
+                        <p className="mb-1">Soft Skills</p>
+                        <div className="flex flex-wrap gap-2">
+                            {
+                                skills.map(skill => {
+                                    return <span className="bg-amber-200 px-6 py-1 rounded-2xl text-xs">{skill}</span>
+                                })
+                            }
+                        </div>
+                    </div>    
+
+                    <div className="mb-4">
+                        <p className="mb-1">Languages</p>
+                        <div className="flex flex-wrap gap-2">
+                            {
+                                skills.map(skill => {
+                                    return <span className="bg-amber-200 px-6 py-1 rounded-2xl text-xs">{skill}</span>
+                                })
+                            }
+                        </div>
+                    </div>    
+
+                    <div className="mb-4">
+                        <p className="mb-1">Interests</p>
+                        <div className="flex flex-wrap gap-2">
+                            {
+                                skills.map(skill => {
+                                    return <span className="bg-amber-200 px-6 py-1 rounded-2xl text-xs">{skill}</span>
+                                })
+                            }
+                        </div>
+                    </div>    
+
                 </div>
 
                 {/* Right Side */}
                 <div className="border w-2/3 p-4">
                     {/* Basic info */}
                     <div className="border mb-4 p-4 rounded-lg">
-                        <p>Name:</p>
-                        <p>Email:</p>
+                        <p>Name: {profile.name}</p>
+                        <p>Email: {profile.email}</p>
                         <p>Mobile no.:</p>
                         <p>Address:</p>
                         <p>Linkedin:</p>
@@ -135,30 +283,64 @@ export default function Profile() {
                     {/* Education */}
                     <div className="border mb-4 p-4 rounded-lg relative">
                         <p className="text-xl font-semibold">Educations</p>
-                        <button className="absolute top-3.5 right-4 px-6 py-1 cursor-pointer rounded-md bg-amber-200" onClick={handleEducationModalOpen}>Add</button>
-                        <p className="text-xs text-gray-500">No education details</p>
                         {
-                            educationModal && <AddEducation handleEducationModalOpen={handleEducationModalOpen} />
+                            edit && <button className="absolute top-3.5 right-4 px-6 py-1 cursor-pointer rounded-md bg-amber-200" onClick={handleEducationModalOpen}>Add</button>
+                        }
+
+                        {
+                            profile?.educations?.length > 0 ? (
+                                profile.educations.map((education, index) => {
+                                    return (
+                                        <div key={index} className="mb-2">
+                                            <p className="font-semibold">{education.boardName}</p>
+                                            <p>{education.instituteName} - {education.streamName}</p>
+                                            <p>Marks: {education.marks}%</p>
+                                            <p>Passout: {new Date(education.passout).getFullYear()}</p>
+                                        </div>
+                                    )
+                                })
+                            ) : <p className="text-xs text-gray-500">No education details</p>
+                        }
+
+                        {/* <p className="text-xs text-gray-500">No education details</p> */}
+                        {
+                            educationModal && <AddEducation handleEducationModalOpen={handleEducationModalOpen} onSubmit={handleEducation} />
                         }
                     </div>
 
                     {/* Experience */}
                     <div className="border mb-4 p-4 rounded-lg relative">
                         <p className="text-xl font-semibold">Experiences</p>
-                        <button className="absolute top-3.5 right-4 px-6 py-1 cursor-pointer rounded-md bg-amber-200" onClick={handleExperienceModalOpen}>Add</button>
+                        {
+                            edit && <button className="absolute top-3.5 right-4 px-6 py-1 cursor-pointer rounded-md bg-amber-200" onClick={handleExperienceModalOpen}>Add</button>
+                        }
                         <p className="text-xs text-gray-500">No experiences are there</p>
                         {
-                            experienceModal && <AddExperience handleExperienceModalOpen={handleExperienceModalOpen} />
+                            experienceModal && <AddExperience handleExperienceModalOpen={handleExperienceModalOpen} onSubmit={handleExperience} />
                         }
                     </div>
 
                     {/* Projects */}
                     <div className="border mb-4 p-4 rounded-lg relative">
                         <p className="text-xl font-semibold">Projects</p>
-                        <button className="absolute top-3.5 right-4 px-6 py-1 cursor-pointer rounded-md bg-amber-200" onClick={handleProjectModalOpen}>Add</button>
+                        {
+                            edit && <button className="absolute top-3.5 right-4 px-6 py-1 cursor-pointer rounded-md bg-amber-200" onClick={handleProjectModalOpen}>Add</button>
+                        }
                         <p className="text-xs text-gray-500">No projects are there</p>
                         {
-                            projectModal && <AddProject handleProjectModalOpen={handleProjectModalOpen} />
+                            projectModal && <AddProject handleProjectModalOpen={handleProjectModalOpen} onSubmit={handleProject} />
+                        }
+                    </div>
+
+                    {/* Certificate */}
+                    <div className="border mb-4 p-4 rounded-lg relative">
+                        <p className="text-xl font-semibold">Certificates</p>
+                        {
+                            edit && <button className="absolute top-3.5 right-4 px-6 py-1 cursor-pointer rounded-md bg-amber-200" onClick={handleCertificateModalOpen}>Add</button>
+                        }
+                        <p className="text-xs text-gray-500">No certificates are there</p>
+                        {
+                            certificateModal && <AddCertificate handleCertificateModalOpen={handleCertificateModalOpen} onSubmit={handleCertificate} />
                         }
                     </div>
                 </div>
@@ -166,3 +348,186 @@ export default function Profile() {
         </div>
     )
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// import { useState } from "react";
+// import AddEducation from "./AddEducation";
+// import AddExperience from "./AddExperience";
+// import AddProject from "./AddPorject";
+// import AddCertificate from "./AddCertificate";
+
+// import { IoMdAdd } from "react-icons/io";
+
+// const skills = ["HTML", "CSS", "JS", "React", "Mongoose"];
+
+// export default function Profile() {
+//     const [educationModal, setEducationModal] = useState(false);
+//     const [experienceModal, setExperienceModal] = useState(false);
+//     const [projectModal, setProjectModal] = useState(false);
+//     const [certificateModal, setCertificateModal] = useState(false);
+//     const [edit, setEdit] = useState(false);
+
+//     const handleEdit = () => {
+//         setEdit(!edit);
+//     };
+
+//     const handleEducationModalOpen = () => {
+//         setEducationModal(!educationModal);
+//     };
+//     const handleExperienceModalOpen = () => {
+//         setExperienceModal(!experienceModal);
+//     };
+//     const handleProjectModalOpen = () => {
+//         setProjectModal(!projectModal);
+//     };
+//     const handleCertificateModalOpen = () => {
+//         setCertificateModal(!certificateModal);
+//     };
+
+//     return (
+//         <div className='px-32 py-16'>
+//             <div className="flex justify-between">
+//                 <p className='text-3xl font-semibold text-shadow-lg pb-8'>Profile</p>
+//                 <div className="mt-1 space-x-4">
+//                     <button className="bg-sky-400/50 px-6 py-2 rounded-md font-medium cursor-pointer hover:scale-105 hover:shadow-lg duration-200 ease-in-out">Download Resume</button>
+//                     <button className="bg-sky-400/50 px-6 py-2 rounded-md font-medium cursor-pointer hover:scale-105 hover:shadow-lg duration-200 ease-in-out" onClick={handleEdit}>{ edit ? "Update Profile" : "Edit Profile"}</button>
+//                 </div>
+//             </div>
+
+//             <div className="flex justify-between gap-4">
+//                 {/* Left Side */}
+//                 <div className="border w-1/3 flex items-center flex-col px-4 py-8">
+//                     <img src="/Illustration.png" alt="" className="w-32 h-32 border rounded-full" />
+//                     <p>Software developer</p>
+//                     <p className="text-center">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Neque quibusdam veritatis impedit repudiandae alias dicta cum iste dolor incidunt recusandae aliquid, in enim vel ipsa eligendi commodi mollitia animi? Veritatis.</p>
+                    
+//                     <div className="mb-4">
+//                         {/* <p className="mb-1 flex items-center gap-4">Technical Skills <IoMdAdd className="cursor-pointer hover:bg-amber-300 " /></p> */}
+//                         <p className="mb-1">Technical Skills</p>
+//                         <div className="flex flex-wrap gap-2">
+//                             {
+//                                 skills.map(skill => {
+//                                     return <span className="bg-amber-200 px-6 py-1 rounded-2xl text-xs">{skill}</span>
+//                                 })
+//                             }
+//                         </div>
+//                     </div>
+
+//                     <div className="mb-4">
+//                         <p className="mb-1">Soft Skills</p>
+//                         <div className="flex flex-wrap gap-2">
+//                             {
+//                                 skills.map(skill => {
+//                                     return <span className="bg-amber-200 px-6 py-1 rounded-2xl text-xs">{skill}</span>
+//                                 })
+//                             }
+//                         </div>
+//                     </div>    
+
+//                     <div className="mb-4">
+//                         <p className="mb-1">Languages</p>
+//                         <div className="flex flex-wrap gap-2">
+//                             {
+//                                 skills.map(skill => {
+//                                     return <span className="bg-amber-200 px-6 py-1 rounded-2xl text-xs">{skill}</span>
+//                                 })
+//                             }
+//                         </div>
+//                     </div>    
+
+//                     <div className="mb-4">
+//                         <p className="mb-1">Interests</p>
+//                         <div className="flex flex-wrap gap-2">
+//                             {
+//                                 skills.map(skill => {
+//                                     return <span className="bg-amber-200 px-6 py-1 rounded-2xl text-xs">{skill}</span>
+//                                 })
+//                             }
+//                         </div>
+//                     </div>    
+
+//                 </div>
+
+//                 {/* Right Side */}
+//                 <div className="border w-2/3 p-4">
+//                     {/* Basic info */}
+//                     <div className="border mb-4 p-4 rounded-lg">
+//                         <p>Name: {JSON.parse(localStorage.getItem("user")).name}</p>
+//                         <p>Email: {JSON.parse(localStorage.getItem("user")).email}</p>
+//                         <p>Mobile no.:</p>
+//                         <p>Address:</p>
+//                         <p>Linkedin:</p>
+//                     </div>
+
+//                     {/* Education */}
+//                     <div className="border mb-4 p-4 rounded-lg relative">
+//                         <p className="text-xl font-semibold">Educations</p>
+//                         {
+//                             edit && <button className="absolute top-3.5 right-4 px-6 py-1 cursor-pointer rounded-md bg-amber-200" onClick={handleEducationModalOpen}>Add</button>
+//                         }
+//                         <p className="text-xs text-gray-500">No education details</p>
+//                         {
+//                             educationModal && <AddEducation handleEducationModalOpen={handleEducationModalOpen} />
+//                         }
+//                     </div>
+
+//                     {/* Experience */}
+//                     <div className="border mb-4 p-4 rounded-lg relative">
+//                         <p className="text-xl font-semibold">Experiences</p>
+//                         {
+//                             edit && <button className="absolute top-3.5 right-4 px-6 py-1 cursor-pointer rounded-md bg-amber-200" onClick={handleExperienceModalOpen}>Add</button>
+//                         }
+//                         <p className="text-xs text-gray-500">No experiences are there</p>
+//                         {
+//                             experienceModal && <AddExperience handleExperienceModalOpen={handleExperienceModalOpen} />
+//                         }
+//                     </div>
+
+//                     {/* Projects */}
+//                     <div className="border mb-4 p-4 rounded-lg relative">
+//                         <p className="text-xl font-semibold">Projects</p>
+//                         {
+//                             edit && <button className="absolute top-3.5 right-4 px-6 py-1 cursor-pointer rounded-md bg-amber-200" onClick={handleProjectModalOpen}>Add</button>
+//                         }
+//                         <p className="text-xs text-gray-500">No projects are there</p>
+//                         {
+//                             projectModal && <AddProject handleProjectModalOpen={handleProjectModalOpen} />
+//                         }
+//                     </div>
+
+//                     {/* Certificate */}
+//                     <div className="border mb-4 p-4 rounded-lg relative">
+//                         <p className="text-xl font-semibold">Certificates</p>
+//                         {
+//                             edit && <button className="absolute top-3.5 right-4 px-6 py-1 cursor-pointer rounded-md bg-amber-200" onClick={handleCertificateModalOpen}>Add</button>
+//                         }
+//                         <p className="text-xs text-gray-500">No certificates are there</p>
+//                         {
+//                             certificateModal && <AddCertificate handleCertificateModalOpen={handleCertificateModalOpen} />
+//                         }
+//                     </div>
+//                 </div>
+//             </div>
+//         </div>
+//     )
+// }

@@ -3,7 +3,8 @@ const jwt = require("jsonwebtoken");
 
 const User = require("../models/userModel");
 const Job = require("../models/jobModel");
-const { userRegisterValidationSchema,userLoginValidationSchema } = require("../validations/userValidation");
+const { userRegisterValidationSchema, userLoginValidationSchema } = require("../validations/userValidation");
+const Resume = require("../models/resumeModal");
 
 const userController = {};
 
@@ -40,6 +41,14 @@ userController.register = async (req, res) => {
 
         const user = new User(value);
         await user.save();
+
+        // Creating resume
+        const resume = new Resume({
+            userId: user._id,
+            name: user.name,
+            email: user.email
+        });
+        await resume.save();
 
         res.status(201).json({ success: true, message: "Registration done successfully!", user: user });
     } catch (error) {

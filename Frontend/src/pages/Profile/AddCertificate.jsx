@@ -1,12 +1,12 @@
-import { useState } from "react";
+import { useState } from "react"
 
-export default function AddProject({ handleProjectModalOpen , onSubmit }) {
+export default function AddCertificate({ handleCertificateModalOpen, onSubmit }) {
     const [formData, setFormData] = useState({
-        projectTitle: "",
+        certificateName: "",
+        refURL: "",
         remarks: "",
         startDate: "",
-        endDate: "",
-        currentlyWorking: false
+        endDate: ""
     });
 
     const handleChange = (e) => {
@@ -20,11 +20,11 @@ export default function AddProject({ handleProjectModalOpen , onSubmit }) {
         e.preventDefault();
 
         try {
-            const experienceData = {
-                ...formData, startDate: new Date(formData.startDate), endDate: new Date(formData.endDate)
+            const certificateData = {
+                ...formData, startDate: new Date(formData.passout), endDate: new Date(formData.passout)
             };
 
-            await onSubmit(experienceData);
+            await onSubmit(certificateData);
         } catch (error) {
             console.log(error);
         }
@@ -32,16 +32,22 @@ export default function AddProject({ handleProjectModalOpen , onSubmit }) {
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
             <form className="bg-white w-11/12 sm:w-2/3 md:w-2/3 lg:w-1/3 p-8 pt-12 pb-12 rounded-xl shadow-lg relative max-h-[90vh] overflow-y-auto" onSubmit={handleSubmit}>
-                <button type="button" className="absolute top-3 right-4 text-2xl font-bold text-gray-500 cursor-pointer hover:text-red-600 focus:outline-none" onClick={handleProjectModalOpen}>&times;</button>
-
-                {/* Project Title */}
+                <button type="button" className="absolute top-3 right-4 text-2xl font-bold text-gray-500 cursor-pointer hover:text-red-600 focus:outline-none" onClick={handleCertificateModalOpen}>&times;</button>
+                
+                {/* Certificate Name */}
                 <div className="mb-2">
-                    <label htmlFor="projectTitle">Project Title</label>
-                    <input type="text" name="projectTitle" id="projectTitle" value={formData.projectTitle} onChange={handleChange} className='border border-gray-300 w-full p-1.5 px-3 rounded' />
+                    <label htmlFor="certificateName">Certificate Name</label>
+                    <input type="text" name="certificateName" id="certificateName" value={formData.certificateName} onChange={handleChange} className='border border-gray-300 w-full p-1.5 px-3 rounded' />
+                </div>
+                
+                {/* Reference URL */}
+                <div className="mb-2">
+                    <label htmlFor="refURL">Reference URL</label>
+                    <input type="text" name="refURL" id="refURL" value={formData.refURL} onChange={handleChange} className='border border-gray-300 w-full p-1.5 px-3 rounded' />
                 </div>
 
                 {/* Passout */}
-                <div className="flex items-center justify-between gap-2">
+                <div className="flex items-center justify-between gap-2 mb-2">
                     <div className="w-full">
                         <label htmlFor="startDate">Start Date</label>
                         <input type="date" name="startDate" id="startDate" value={formData.startDate} onChange={handleChange} className='border border-gray-300 w-full p-1.5 px-3 rounded' />
@@ -51,10 +57,6 @@ export default function AddProject({ handleProjectModalOpen , onSubmit }) {
                         <input type="date" name="endDate" id="endDate" value={formData.endDate} onChange={handleChange} className='border border-gray-300 w-full p-1.5 px-3 rounded' />
                     </div>
                 </div>
-                <div className="space-x-2">
-                    <input type="checkbox" name="present" id="present" value={formData.currentlyWorking} onChange={handleChange} />
-                    <label htmlFor="present">Currently working</label>
-                </div>
 
                 {/* Remarks */}
                 <div className="mb-2">
@@ -62,8 +64,8 @@ export default function AddProject({ handleProjectModalOpen , onSubmit }) {
                     <textarea name="remarks" id="remarks" value={formData.remarks} onChange={handleChange} className='border border-gray-300 w-full p-1.5 px-3 rounded'></textarea>
                 </div>
 
-                <input type="submit" value="Update Project" className="bg-green-600 px-6 py-1 rounded-md cursor-pointer hover:scale-105 duration-150 hover:shadow-lg font-semibold text-white" />
+                <input type="submit" value="Update Certificate" className="bg-green-600 px-6 py-2 rounded-md cursor-pointer hover:scale-105 duration-150 hover:shadow-lg font-semibold text-white" />
             </form>
         </div>
-    );
+    )
 }

@@ -15,6 +15,7 @@ configureDB();
 
 const userController = require("./app/controllers/userController");
 const jobController = require("./app/controllers/jobController");
+const resumeController = require("./app/controllers/resumeController");
 
 const authenticateUser = require("./app/middlewares/authenticateUser");
 const authorizeUser = require("./app/middlewares/authorizeUser");
@@ -27,6 +28,15 @@ app.post("/api/login", userController.login);   // Login ✅
 app.get("/api/list", userController.list);   // List ✅
 app.get("/api/allAppliedJobs", authenticateUser, authorizeUser(["User"]), userController.allAppliedJobs);    // All applied jobs ✅
 app.get("/api/savedJobs", authenticateUser, authorizeUser(["User"]), userController.savedJobs);    // All saved jobs ✅
+
+// Resume
+app.get("/api/myProfile", authenticateUser, resumeController.getMyProfile);
+app.post("/api/createResume", authenticateUser, resumeController.createResume);
+
+app.post("/api/resume/education", authenticateUser, resumeController.addEducation);
+app.post("/api/resume/experience", authenticateUser, resumeController.addExperience);
+app.post("/api/resume/project", authenticateUser, resumeController.addProject);
+app.post("/api/resume/certificate", authenticateUser, resumeController.addCertificate);
 
 // Job Route
 app.post("/api/job", authenticateUser, authorizeUser(["HR"]), jobController.create); // Create a job ✅
