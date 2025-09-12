@@ -12,9 +12,9 @@ export default function AddExperience({ handleExperienceModalOpen, onSubmit }) {
     });
 
     const handleChange = (e) => {
-        const { name, value } = e.target;
+        const { name, value, type, checked } = e.target;
         setFormData(prev => ({
-            ...prev, [name]: value
+            ...prev, [name]: type === "checkbox" ? checked : value
         }));
     };
 
@@ -23,10 +23,20 @@ export default function AddExperience({ handleExperienceModalOpen, onSubmit }) {
 
         try {
             const experienceData = {
-                ...formData, startDate: new Date(formData.startDate), endDate: new Date(formData.endDate)
+                ...formData, startDate: new Date(formData.startDate), endDate: formData.currentlyWorking ? null : new Date(formData.endDate)
             };
 
             await onSubmit(experienceData);
+
+            setFormData({
+                companyName: "",
+                companyLogo: "",
+                designationName: "",
+                remarks: "",
+                startDate: "",
+                endDate: "",
+                currentlyWorking: false
+            });
         } catch (error) {
             console.log(error);
         }
@@ -60,7 +70,7 @@ export default function AddExperience({ handleExperienceModalOpen, onSubmit }) {
                     <textarea name="remarks" id="remarks" value={formData.remarks} onChange={handleChange} className='border border-gray-300 w-full p-1.5 px-3 rounded'></textarea>
                 </div>
 
-                {/* Passout */}
+                {/* Date */}
                 <div className="flex items-center justify-between gap-2">
                     <div className="w-full">
                         <label htmlFor="startDate">Start Date</label>
@@ -68,12 +78,12 @@ export default function AddExperience({ handleExperienceModalOpen, onSubmit }) {
                     </div>
                     <div className="w-full">
                         <label htmlFor="endDate">End Date</label>
-                        <input type="date" name="endDate" id="endDate" value={formData.endDate} onChange={handleChange} className='border border-gray-300 w-full p-1.5 px-3 rounded' />
+                        <input type="date" name="endDate" id="endDate" value={formData.endDate} onChange={handleChange} className='border border-gray-300 w-full p-1.5 px-3 rounded' disabled={formData.currentlyWorking} />
                     </div>
                 </div>
                 <div className="space-x-2">
-                    <input type="checkbox" name="present" id="present" value={formData.currentlyWorking} onChange={handleChange} />
-                    <label htmlFor="present">Currently working</label>
+                    <input type="checkbox" name="currentlyWorking" id="currentlyWorking" value={formData.currentlyWorking} onChange={handleChange} />
+                    <label htmlFor="currentlyWorking">Currently working</label>
                 </div>
 
                 <input type="submit" value="Update Experience" className="bg-green-600 mt-4 px-6 py-1 rounded-md cursor-pointer hover:scale-105 duration-150 hover:shadow-lg font-semibold text-white" />

@@ -153,9 +153,11 @@ import React, { useState } from 'react'
 import CreatableSelect from 'react-select/creatable';
 import { BsStars } from "react-icons/bs";
 import axios from 'axios';
+import Loader from '../../../Loading';
 
 const PostJob = () => {
     const [title, setTitle] = useState("");
+    const [loading, setLoading] = useState(false);
     
     const [jobType, setJobType] = useState([
         { value: 'Full-Time', label: 'Full-Time' },
@@ -212,6 +214,7 @@ const PostJob = () => {
 
     const handleGenerateDescription = async() => {
         try {
+            setLoading(true);
             const token = localStorage.getItem("token");
 
             const infoJobData = { title, companyName: JSON.parse(localStorage.getItem("user")).companyName, location: selectLocation.map(ele => ele.value), jobType: selectJobType.value, requirements: selectRequirement.map(ele => ele.value), experienceLevel: experience, salary };
@@ -220,6 +223,8 @@ const PostJob = () => {
             setDescription(response.data.description);
         } catch (error) {
             console.log(error.response?.data || error.message);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -283,10 +288,20 @@ const PostJob = () => {
                     <div className='relative w-full'>
                         <label htmlFor="description">Description</label><br />
                         <textarea type="text" name="description" id="description" className='border border-gray-300 w-full h-36 rounded px-2 py-1' value={description} onChange={(e) => setDescription(e.target.value)} />
-                        <button type="button" className='absolute px-6 py-3 rounded bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500 text-white bottom-4 right-3 flex items-center justify-center gap-2 font-medium text-md opacity-90 cursor-pointer hover:shadow-xl hover:scale-105 duration-200 ease-in-out' onClick={handleGenerateDescription}>
-                            <BsStars className="w-5 h-5" />
-                            Generate through AI
-                        </button>
+                        
+                        {
+                            loading ? (
+                                <div className="absolute inset-0 flex justify-center items-center bg-transparent bg-opacity-70">
+                                    <Loader />
+                                </div>
+                            ) : (
+                                <button type="button" className='absolute px-6 py-3 rounded bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500 text-white bottom-4 right-3 flex items-center justify-center gap-2 font-medium text-md opacity-90 cursor-pointer hover:shadow-xl hover:scale-105 duration-200 ease-in-out' onClick={handleGenerateDescription}>
+                                    <BsStars className="w-5 h-5" />
+                                    Generate through AI
+                                </button>
+                            )
+                        }
+                        
                     </div>
 
                     <div className='flex justify-center mt-4 mb-8'>

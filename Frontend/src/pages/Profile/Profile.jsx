@@ -94,7 +94,10 @@ import AddExperience from "./AddExperience";
 import AddProject from "./AddPorject";
 import AddCertificate from "./AddCertificate";
 
-import { IoMdAdd } from "react-icons/io";
+import { MdDelete } from "react-icons/md";
+import { FaExternalLinkAlt } from "react-icons/fa";
+import { FaPen } from "react-icons/fa";
+
 import axios from "axios";
 
 const skills = ["HTML", "CSS", "JS", "React", "Mongoose"];
@@ -227,8 +230,8 @@ export default function Profile() {
                         <p className="mb-1">Technical Skills</p>
                         <div className="flex flex-wrap gap-2">
                             {
-                                skills.map(skill => {
-                                    return <span className="bg-amber-200 px-6 py-1 rounded-2xl text-xs">{skill}</span>
+                                skills.map((skill, index) => {
+                                    return <span key={index} className="bg-amber-200 px-6 py-1 rounded-2xl text-xs">{skill}</span>
                                 })
                             }
                         </div>
@@ -238,8 +241,8 @@ export default function Profile() {
                         <p className="mb-1">Soft Skills</p>
                         <div className="flex flex-wrap gap-2">
                             {
-                                skills.map(skill => {
-                                    return <span className="bg-amber-200 px-6 py-1 rounded-2xl text-xs">{skill}</span>
+                                skills.map((skill, index) => {
+                                    return <span key={index} className="bg-amber-200 px-6 py-1 rounded-2xl text-xs">{skill}</span>
                                 })
                             }
                         </div>
@@ -249,8 +252,8 @@ export default function Profile() {
                         <p className="mb-1">Languages</p>
                         <div className="flex flex-wrap gap-2">
                             {
-                                skills.map(skill => {
-                                    return <span className="bg-amber-200 px-6 py-1 rounded-2xl text-xs">{skill}</span>
+                                skills.map((skill, index) => {
+                                    return <span key={index} className="bg-amber-200 px-6 py-1 rounded-2xl text-xs">{skill}</span>
                                 })
                             }
                         </div>
@@ -260,8 +263,8 @@ export default function Profile() {
                         <p className="mb-1">Interests</p>
                         <div className="flex flex-wrap gap-2">
                             {
-                                skills.map(skill => {
-                                    return <span className="bg-amber-200 px-6 py-1 rounded-2xl text-xs">{skill}</span>
+                                skills.map((skill, index) => {
+                                    return <span key={index} className="bg-amber-200 px-6 py-1 rounded-2xl text-xs">{skill}</span>
                                 })
                             }
                         </div>
@@ -282,7 +285,7 @@ export default function Profile() {
 
                     {/* Education */}
                     <div className="border mb-4 p-4 rounded-lg relative">
-                        <p className="text-xl font-semibold">Educations</p>
+                        <p className="text-xl font-semibold mb-2">Educations</p>
                         {
                             edit && <button className="absolute top-3.5 right-4 px-6 py-1 cursor-pointer rounded-md bg-amber-200" onClick={handleEducationModalOpen}>Add</button>
                         }
@@ -291,18 +294,24 @@ export default function Profile() {
                             profile?.educations?.length > 0 ? (
                                 profile.educations.map((education, index) => {
                                     return (
-                                        <div key={index} className="mb-2">
+                                        <div key={index} className="mb-2 border p-1 rounded-md relative">
                                             <p className="font-semibold">{education.boardName}</p>
                                             <p>{education.instituteName} - {education.streamName}</p>
                                             <p>Marks: {education.marks}%</p>
                                             <p>Passout: {new Date(education.passout).getFullYear()}</p>
+
+                                            {
+                                                edit && <div className="absolute right-1 top-1 flex gap-2 items-center">
+                                                    <FaPen className="text-sm cursor-pointer hover:text-yellow-400 hover:scale-110" />
+                                                    <MdDelete className="cursor-pointer hover:text-red-500 hover:scale-110" />
+                                                </div>
+                                            }
                                         </div>
                                     )
                                 })
                             ) : <p className="text-xs text-gray-500">No education details</p>
                         }
 
-                        {/* <p className="text-xs text-gray-500">No education details</p> */}
                         {
                             educationModal && <AddEducation handleEducationModalOpen={handleEducationModalOpen} onSubmit={handleEducation} />
                         }
@@ -314,7 +323,29 @@ export default function Profile() {
                         {
                             edit && <button className="absolute top-3.5 right-4 px-6 py-1 cursor-pointer rounded-md bg-amber-200" onClick={handleExperienceModalOpen}>Add</button>
                         }
-                        <p className="text-xs text-gray-500">No experiences are there</p>
+
+                        {
+                            profile?.experiences?.length > 0 ? (
+                                profile.experiences.map((experience, index) => {
+                                    return (
+                                        <div key={index} className="mb-2 border p-1 rounded-md relative">
+                                            <p className="font-semibold">{experience.companyName}</p>
+                                            <p>{experience.companyLogo}</p>
+                                            <p>{experience.designationName}</p>
+                                            <p>{new Date(experience.startDate).getMonth()}/{new Date(experience.startDate).getFullYear()} - {new Date(experience.endDate).getMonth()}/{new Date(experience.endDate).getFullYear()}</p>
+
+                                            {
+                                                edit && <div className="absolute right-1 top-1 flex gap-2 items-center">
+                                                    <FaPen className="text-sm cursor-pointer hover:text-yellow-400 hover:scale-110" />
+                                                    <MdDelete className="cursor-pointer hover:text-red-500 hover:scale-110" />
+                                                </div>
+                                            }
+                                        </div>
+                                    )
+                                })
+                            ) : <p className="text-xs text-gray-500">No experience details</p>
+                        }
+
                         {
                             experienceModal && <AddExperience handleExperienceModalOpen={handleExperienceModalOpen} onSubmit={handleExperience} />
                         }
@@ -326,7 +357,28 @@ export default function Profile() {
                         {
                             edit && <button className="absolute top-3.5 right-4 px-6 py-1 cursor-pointer rounded-md bg-amber-200" onClick={handleProjectModalOpen}>Add</button>
                         }
-                        <p className="text-xs text-gray-500">No projects are there</p>
+
+                        {
+                            profile?.projects?.length > 0 ? (
+                                profile.projects.map((project, index) => {
+                                    return (
+                                        <div key={index} className="mb-2 border p-1 rounded-md relative">
+                                            <p className="font-semibold">{project.projectTitle}</p>
+                                            <p>{project.remarks}</p>
+                                            <p>{new Date(project.startDate).getMonth()}/{new Date(project.startDate).getFullYear()} - {new Date(project.endDate).getMonth()}/{new Date(project.endDate).getFullYear()}</p>
+
+                                            {
+                                                edit && <div className="absolute right-1 top-1 flex gap-2 items-center">
+                                                    <FaPen className="text-sm cursor-pointer hover:text-yellow-400 hover:scale-110" />
+                                                    <MdDelete className="cursor-pointer hover:text-red-500 hover:scale-110" />
+                                                </div>
+                                            }
+                                        </div>
+                                    )
+                                })
+                            ) : <p className="text-xs text-gray-500">No education details</p>
+                        }
+
                         {
                             projectModal && <AddProject handleProjectModalOpen={handleProjectModalOpen} onSubmit={handleProject} />
                         }
@@ -338,7 +390,29 @@ export default function Profile() {
                         {
                             edit && <button className="absolute top-3.5 right-4 px-6 py-1 cursor-pointer rounded-md bg-amber-200" onClick={handleCertificateModalOpen}>Add</button>
                         }
-                        <p className="text-xs text-gray-500">No certificates are there</p>
+
+                        {
+                            profile?.certificates?.length > 0 ? (
+                                profile.certificates.map((certificate, index) => {
+                                    return (
+                                        <div key={index} className="mb-2 border p-1 rounded-md relative">
+                                            <p className="font-semibold">{certificate.certificateName}</p>
+                                            <p className="flex items-center gap-2 text-blue-600 hover:underline cursor-pointer">{certificate.refURL} <FaExternalLinkAlt className="text-xs" /></p>
+                                            <p>{certificate.remarks}</p>
+                                            <p>{new Date(certificate.startDate).getMonth()}/{new Date(certificate.startDate).getFullYear()} - {new Date(certificate.endDate).getMonth()}/{new Date(certificate.endDate).getFullYear()}</p>
+
+                                            {
+                                                edit && <div className="absolute right-1 top-1 flex gap-2 items-center">
+                                                    <FaPen className="text-sm cursor-pointer hover:text-yellow-400 hover:scale-110" />
+                                                    <MdDelete className="cursor-pointer hover:text-red-500 hover:scale-110" />
+                                                </div>
+                                            }
+                                        </div>
+                                    )
+                                })
+                            ) : <p className="text-xs text-gray-500">No education details</p>
+                        }
+
                         {
                             certificateModal && <AddCertificate handleCertificateModalOpen={handleCertificateModalOpen} onSubmit={handleCertificate} />
                         }

@@ -10,9 +10,9 @@ export default function AddProject({ handleProjectModalOpen , onSubmit }) {
     });
 
     const handleChange = (e) => {
-        const { name, value } = e.target;
+        const { name, value, type, checked } = e.target;
         setFormData(prev => ({
-            ...prev, [name]: value
+            ...prev, [name]: type === "checkbox" ? checked: value
         }));
     };
 
@@ -21,10 +21,18 @@ export default function AddProject({ handleProjectModalOpen , onSubmit }) {
 
         try {
             const experienceData = {
-                ...formData, startDate: new Date(formData.startDate), endDate: new Date(formData.endDate)
+                ...formData, startDate: new Date(formData.startDate), endDate: formData.currentlyWorking ? null : new Date(formData.endDate)
             };
 
             await onSubmit(experienceData);
+
+            setFormData({
+                projectTitle: "",
+                remarks: "",
+                startDate: "",
+                endDate: "",
+                currentlyWorking: false
+            });
         } catch (error) {
             console.log(error);
         }
@@ -40,7 +48,7 @@ export default function AddProject({ handleProjectModalOpen , onSubmit }) {
                     <input type="text" name="projectTitle" id="projectTitle" value={formData.projectTitle} onChange={handleChange} className='border border-gray-300 w-full p-1.5 px-3 rounded' />
                 </div>
 
-                {/* Passout */}
+                {/* Date */}
                 <div className="flex items-center justify-between gap-2">
                     <div className="w-full">
                         <label htmlFor="startDate">Start Date</label>
@@ -48,12 +56,12 @@ export default function AddProject({ handleProjectModalOpen , onSubmit }) {
                     </div>
                     <div className="w-full">
                         <label htmlFor="endDate">End Date</label>
-                        <input type="date" name="endDate" id="endDate" value={formData.endDate} onChange={handleChange} className='border border-gray-300 w-full p-1.5 px-3 rounded' />
+                        <input type="date" name="endDate" id="endDate" value={formData.endDate} onChange={handleChange} className='border border-gray-300 w-full p-1.5 px-3 rounded' disabled={formData.currentlyWorking} />
                     </div>
                 </div>
                 <div className="space-x-2">
-                    <input type="checkbox" name="present" id="present" value={formData.currentlyWorking} onChange={handleChange} />
-                    <label htmlFor="present">Currently working</label>
+                    <input type="checkbox" name="currentlyWorking" id="currentlyWorking" checked={formData.currentlyWorking} onChange={handleChange} />
+                    <label htmlFor="currentlyWorking">Currently working</label>
                 </div>
 
                 {/* Remarks */}

@@ -26,6 +26,14 @@ export default function AddEducation({ handleEducationModalOpen, onSubmit }) {
             };
 
             await onSubmit(educationData);
+
+            setFormData({
+                boardName: "",
+                instituteName: "",
+                streamName: "",
+                marks: "",
+                passout: "",
+            });
         } catch (error) {
             console.log(error);
         }

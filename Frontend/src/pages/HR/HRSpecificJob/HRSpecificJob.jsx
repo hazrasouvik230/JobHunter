@@ -21,7 +21,11 @@ const HRSpecificJob = () => {
     }, [id]);
 
     const handleReject = (id) => {
-        
+        const confirm = window.confirm("Are you sure?");
+        if(confirm) {
+            const filteredApplicants = job.applicants.filter(applicant => applicant._id !== id);
+            setJob({ ...job, applicants: filteredApplicants });
+        }
     }
 
     return (
@@ -41,6 +45,7 @@ const HRSpecificJob = () => {
                             <p>{applicant._id}</p>
                             <p>{applicant.name}</p>
                             <p>{applicant.email}</p>
+                            <p>50</p>
 
                             <div className='flex items-center justify-center gap-2'>
                                 <button className='px-4 py-1 bg-amber-200 rounded cursor-pointer'>Schedule Interview</button>

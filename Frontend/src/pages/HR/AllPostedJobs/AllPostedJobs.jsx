@@ -32,12 +32,14 @@ const AllPostedJobs = () => {
                 <div className='bg-white border border-red-400 w-4/5'>
                   {
                     allPostedJobs.map((allJobs) => {
-                      return <div key={allJobs._id} className='border my-4 px-8 py-4 rounded' onClick={() => navigate(`/hr/specific-job/${allJobs._id}`)}>
-                        <p>{allJobs._id}</p>
+                      return <div key={allJobs._id} className='border border-l-8 my-4 px-8 py-4 rounded hover:shadow-lg hover:scale-101' onClick={() => navigate(`/hr/specific-job/${allJobs._id}`)}>
+                        <p><b>JOB ID: </b>{allJobs._id}</p>
                         <h1>{allJobs.title}</h1>
-                        <p>{allJobs.companyName}</p>
-                        <p>Applicants: {allJobs.applicants?.length || 0}</p>
                         {/* <p>{allJobs.companyName}</p> */}
+                        <p>Applicants: {allJobs.applicants?.length || 0}</p>
+                        <p>Selected Candidate: 0</p>
+                        {/* <p>{allJobs.companyName}</p> */}
+                        {/* <button>Show details</button> */}
                       </div>
                     })
                   }

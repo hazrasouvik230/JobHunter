@@ -21,10 +21,18 @@ export default function AddCertificate({ handleCertificateModalOpen, onSubmit })
 
         try {
             const certificateData = {
-                ...formData, startDate: new Date(formData.passout), endDate: new Date(formData.passout)
+                ...formData, startDate: new Date(formData.startDate), endDate: new Date(formData.endDate)
             };
 
             await onSubmit(certificateData);
+
+            setFormData({
+                certificateName: "",
+                refURL: "",
+                remarks: "",
+                startDate: "",
+                endDate: ""
+            });
         } catch (error) {
             console.log(error);
         }
