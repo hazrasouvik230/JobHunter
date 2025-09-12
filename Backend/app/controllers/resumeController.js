@@ -276,6 +276,23 @@ resumeController.addEducation = async (req, res) => {
     }
 };
 
+resumeController.deleteEducation = async (req, res) => {
+    try {
+        const userId = req.userId;
+        const educationId = req.params.id;
+
+        const updateResume = await Resume.findOneAndUpdate({userId}, { $pull: { educations: { _id: educationId } } }, { new: true });
+        if(!updateResume) {
+            return res.status(404).json({ success: false, message: "Resume not found." });
+        }
+
+        res.status(200).json({ success: true, message: "Education deleted successfully.", resume: updateResume })
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ success: false, message: "Something went wrong." });
+    }
+};
+
 // Add experience
 resumeController.addExperience = async (req, res) => {
     try {
@@ -295,6 +312,23 @@ resumeController.addExperience = async (req, res) => {
             message: "Experience added successfully",
             resume
         });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ success: false, message: "Something went wrong." });
+    }
+};
+
+resumeController.deleteExperience = async (req, res) => {
+    try {
+        const userId = req.userId;
+        const experienceId = req.params.id; 
+
+        const updateResume = await Resume.findOneAndUpdate({ userId }, { $pull: { experiences: { _id: experienceId } } }, { new: true });
+        if(!updateResume) {
+            return res.status(404).json({ success: false, message: "Resume not found." });
+        }
+
+        res.status(200).json({ success: true, message: "Experience deleted successfully.", resume: updateResume })
     } catch (error) {
         console.log(error);
         res.status(500).json({ success: false, message: "Something went wrong." });
@@ -326,6 +360,23 @@ resumeController.addProject = async (req, res) => {
     }
 };
 
+resumeController.deleteProject = async (req, res) => {
+    try {
+        const userId = req.userId;
+        const projectId = req.params.id;
+
+        const updateResume = await Resume.findOneAndUpdate({ userId }, { $pull: { projects: { _id: projectId } } }, { new: true });
+        if(!updateResume) {
+            return res.status(404).json({ success: false, message: "Resume not found." });
+        }
+
+        res.status(200).json({ success: true, message: "Project deleted successfully.", resume: updateResume })
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ success: false, message: "Something went wrong." });
+    }
+};
+
 // Add certificate
 resumeController.addCertificate = async (req, res) => {
     try {
@@ -345,6 +396,23 @@ resumeController.addCertificate = async (req, res) => {
             message: "Certificate added successfully",
             resume
         });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ success: false, message: "Something went wrong." });
+    }
+};
+
+resumeController.deleteCertificate = async (req, res) => {
+    try {
+        const userId = req.userId;
+        const certificateId = req.params.id;
+
+        const updateResume = await Resume.findOneAndUpdate({ userId }, { $pull: { certificates: { _id: certificateId } } }, { new: true });
+        if(!updateResume) {
+            return res.status(404).json({ success: false, message: "Resume not found." });
+        }
+
+        res.status(200).json({ success: true, message: "Certificate deleted successfully.", resume: updateResume })
     } catch (error) {
         console.log(error);
         res.status(500).json({ success: false, message: "Something went wrong." });

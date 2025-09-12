@@ -34,9 +34,13 @@ app.get("/api/myProfile", authenticateUser, resumeController.getMyProfile);
 app.post("/api/createResume", authenticateUser, resumeController.createResume);
 
 app.post("/api/resume/education", authenticateUser, resumeController.addEducation);
+app.delete("/api/resume/education/:id", authenticateUser, resumeController.deleteEducation);
 app.post("/api/resume/experience", authenticateUser, resumeController.addExperience);
+app.delete("/api/resume/experience/:id", authenticateUser, resumeController.deleteExperience);
 app.post("/api/resume/project", authenticateUser, resumeController.addProject);
+app.delete("/api/resume/project/:id", authenticateUser, resumeController.deleteProject);
 app.post("/api/resume/certificate", authenticateUser, resumeController.addCertificate);
+app.delete("/api/resume/certificate/:id", authenticateUser, resumeController.deleteCertificate);
 
 // Job Route
 app.post("/api/job", authenticateUser, authorizeUser(["HR"]), jobController.create); // Create a job ✅

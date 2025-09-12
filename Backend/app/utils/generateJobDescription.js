@@ -6,7 +6,7 @@ async function generateJobDescription(jobDetails) {
     const response = await ai.models.generateContent({
         model: "gemini-2.5-flash",
         contents: `
-            Write a job description for the role of ${jobDetails.title}. 
+            Write a job description for the role of ${jobDetails.title} as short as possible (within 500 words). 
             
             Company: ${jobDetails.companyName}
             Location: ${jobDetails.location}
@@ -18,11 +18,10 @@ async function generateJobDescription(jobDetails) {
             The job description should include:  
             1. A compelling introduction about the company and why someone would want to work here.  
             2. A clear overview of the role and its importance.  
-            3. Key responsibilities (5–8 bullet points).  
+            3. Key responsibilities (3–5 bullet points).  
             4. Required qualifications and skills (technical + soft skills).  
             5. Preferred qualifications (if any).  
-            6. Benefits and perks offered.  
-            7. A call-to-action encouraging candidates to apply.  
+            6. Benefits and perks offered.
 
             Make the tone professional, inclusive, and engaging. Avoid bias. Optimize for readability and clarity.
         `
