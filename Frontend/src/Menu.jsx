@@ -20,7 +20,7 @@ const Menu = ({ setShowMenu }) => {
     };
 
     return (
-        <div className='absolute right-28 z-10'>
+        <div className='absolute top-14 right-28 z-30'>
             <div className="bg-amber-50 w-40 p-4 rounded-xl shadow-xl relative">
                 <p className='flex items-center gap-2 bg-amber-400/30 mb-2 px-4 py-2 rounded-lg cursor-pointer hover:scale-105 hover:shadow-md hover:bg-amber-200' onClick={handleProfileClick}><FaUserCog />Profile</p>
                 <p className='flex items-center gap-2 bg-amber-400/30 px-4 py-2 rounded-lg cursor-pointer hover:scale-105 hover:shadow-md hover:bg-amber-200' onClick={handleLogout}><TbLogout /> Logout</p>

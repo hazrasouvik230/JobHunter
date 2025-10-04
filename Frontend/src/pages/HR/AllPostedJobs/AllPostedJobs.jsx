@@ -1,9 +1,17 @@
 import axios from 'axios';
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
+import CompanyDetails from './CompanyDetails';
+import JobContext from '../../../context/JobsContext';
 
 const AllPostedJobs = () => {
     const [allPostedJobs, setAllPostedJobs] = useState([]);
+
+//     const { allPostedJobs, liveJobs } = useContext(JobContext);
+//     useEffect(() => {
+//   console.log("All Jobs in Context:", allPostedJobs);
+//   console.log("Live Jobs in Context:", liveJobs);
+// }, [allPostedJobs, liveJobs]);
 
     useEffect(() => {
       (async() => {
@@ -23,11 +31,11 @@ const AllPostedJobs = () => {
 
     return (
       <div className='px-32 py-16'>
-        <p className='text-3xl font-medium text-shadow-md pb-8'>All Posted Jobs</p>
+        <p className='text-3xl font-medium text-shadow-md pb-8 mt-24'>All Posted Jobs</p>
 
         <div>
           {
-            allPostedJobs.length > 0 ?
+            allPostedJobs?.length > 0 ?
               <div className='flex justify-between gap-2'>
                 <div className='bg-white border border-red-400 w-4/5'>
                   {
@@ -44,6 +52,8 @@ const AllPostedJobs = () => {
                     })
                   }
                 </div>
+
+                {/* <CompanyDetails allPostedJobs={allPostedJobs} liveJobs={liveJobs} /> */}
 
                 <div className='w-1/5 border border-amber-500 flex flex-col items-center pt-4 gap-2'>
                   <img src={`http://localhost:3000/uploads/company-logos/${JSON.parse(localStorage.getItem("user")).companyLogo}`} alt={JSON.parse(localStorage.getItem("user")).companyLogo} className='h-32 w-32 rounded-full border' />

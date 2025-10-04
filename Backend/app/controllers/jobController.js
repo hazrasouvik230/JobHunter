@@ -136,6 +136,30 @@ jobController.apply = async(req, res) => {
     }
 };
 
+jobController.revoke = async (req, res) => {
+    const jobId = req.params.id;
+    try {
+        if(req.role !== "User") {
+            return res.status(403).json({ error: "Forbidden: Only applicants can apply for the jobs." });
+        }
+
+        await Job.updateOne(
+            { _id: jobId },
+            { $pull: { applicants: req.userId }}
+        );
+
+        await User.updateOne(
+            { _id: req.userId },
+            { $pull: { appliedJobs: jobId }}
+        );
+
+        res.status(200).json({ succes: true, message: "Applicant revoke successfully." });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ success: false, message: "Something went wrong while revoking an application." });
+    }
+};
+
 jobController.saveJob = async (req, res) => {
     const jobId = req.params.id;
     try {

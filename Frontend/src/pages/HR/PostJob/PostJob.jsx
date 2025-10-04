@@ -149,13 +149,19 @@
 
 
 
-import React, { useState } from 'react'
+import React, { useContext, useState, useEffect } from 'react'
 import CreatableSelect from 'react-select/creatable';
 import { BsStars } from "react-icons/bs";
 import axios from 'axios';
 import Loader from '../../../Loading';
+import CompanyDetails from '../AllPostedJobs/CompanyDetails';
+import JobContext from '../../../context/JobsContext';
+import { Link, useNavigate } from 'react-router-dom';
 
 const PostJob = () => {
+    // const { allPostedJobs } = useContext(JobContext);
+    // console.log(allPostedJobs);
+
     const [title, setTitle] = useState("");
     const [loading, setLoading] = useState(false);
     
@@ -191,6 +197,26 @@ const PostJob = () => {
     const [deadline, setDeadline] = useState("");
     const [description, setDescription] = useState("");
 
+    
+    const [allPostedJobs, setAllPostedJobs] = useState([]);
+
+    const navigate = useNavigate();
+
+    useEffect(() => {
+      (async() => {
+        try {
+          const token = localStorage.getItem("token");
+          const response = await axios.get(`http://localhost:3000/api/job/allPostedJobsByHR`, { headers: { Authorization: token } });
+          console.log(response.data.jobs);
+          setAllPostedJobs(response.data.jobs);
+        } catch (error) {
+          console.log(error);
+        }
+      })();
+    }, []);
+
+    const liveJobs = allPostedJobs.filter((job) => new Date(job.deadline) > Date.now());
+    
     const handleSubmit = async(e) => {
         e.preventDefault();
 
@@ -207,6 +233,7 @@ const PostJob = () => {
 
             console.log(response.data);
             alert("Job posted successfully!");
+            navigate("/hr/all-posted-jobs");
         } catch (error) {
             console.log(error.response?.data || error.message);
         }
@@ -230,7 +257,7 @@ const PostJob = () => {
 
     return (
         <div className='px-32 py-16'>
-            <p className='text-3xl font-medium text-shadow-md pb-8'>Post a Job</p>
+            <p className='text-3xl font-medium text-shadow-md pb-8 mt-24'>Post a Job</p>
             <p className='mb-4'>Find the best talent for your company.</p>
             
             <div className='flex justify-between gap-2'>
@@ -243,7 +270,7 @@ const PostJob = () => {
                     <div>
                         <label htmlFor="location">Location</label>
                         <CreatableSelect isMulti options={location} value={selectLocation} onChange={(newValue) => setSelectLocation(newValue)} onCreateOption={(inputValue) => {
-                            const newOption = { value: inputValue.toLowerCase(), label: inputValue };
+                            const newOption = { value: (inputValue[0].toUpperCase()+inputValue.slice(1).toLowerCase()), label: inputValue };
                             setLocation((prev) => [...prev, newOption]);
                             setSelectLocation((prev) => [...prev, newOption]);
                         }} />
@@ -276,7 +303,7 @@ const PostJob = () => {
                     <div className='flex items-center justify-between gap-4'>                    
                         <div className='w-full'>
                             <label htmlFor="salary">Salary</label><br />
-                            <input type="text" name="salary" id="salary" className='border border-gray-300 w-full rounded px-2 py-1' value={salary} onChange={(e) => setSalary(e.target.value)} />
+                            <input type="number" name="salary" id="salary" className='border border-gray-300 w-full rounded px-2 py-1' value={salary} onChange={(e) => setSalary(e.target.value)} />
                         </div>
 
                         <div className='w-full'>
@@ -312,9 +339,16 @@ const PostJob = () => {
                 <div className='w-1/5 border border-amber-500 flex flex-col items-center pt-4 gap-2'>
                     <img src={`http://localhost:3000/uploads/company-logos/${JSON.parse(localStorage.getItem("user")).companyLogo}`} alt={JSON.parse(localStorage.getItem("user")).companyLogo} className='h-32 w-32 rounded-full border' />
                     <p className='text-2xl font-semibold'>{JSON.parse(localStorage.getItem("user")).companyName}</p>
-                    <p>Total jobs posted: 0</p>
-                    <p>Live posted jobs: 0</p>
+                    {/* <p>Total jobs posted: 0</p>
+                    <p>Live posted jobs: 0</p> */}
+
+                    <p>Total jobs posted: {allPostedJobs.length}</p>
+                    <p>Live posted jobs: {liveJobs.length}</p>
+                    
+                    <p>You can make job post: 3</p>
+                    <button className='bg-blue-300 px-4 py-2 rounded-3xl'><Link to="/hr/buy-subscription">Buy Subscription</Link></button>
                 </div>
+                {/* <CompanyDetails /> */}
             </div>
         </div>
     )

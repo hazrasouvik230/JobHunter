@@ -945,7 +945,14 @@ export default function Profile() {
             <div className="flex flex-col lg:flex-row justify-between gap-4">
                 {/* Left Side */}
                 <div className="border w-full lg:w-1/3 flex items-center flex-col px-4 py-8 rounded-lg">
-                    <img src="/Illustration.png" alt="" className="w-32 h-32 border rounded-full" />
+                    {
+                        JSON.parse(localStorage.getItem("user")).profileImage === "" ? <div className='border h-32 w-32 rounded-full cursor-pointer hover:scale-105' /> : (
+                        <>
+                            <img src={`http://localhost:3000/uploads/profile-images/${JSON.parse(localStorage.getItem("user")).profileImage}`} alt="" className='h-32 border w-32 rounded-full' />
+                        </>
+                        )
+                    }
+                    {/* <img src={`http://localhost:3000/uploads/profile-images/${JSON.parse(localStorage.getItem("user")).profileImage}`} alt="" className="w-32 h-32 border rounded-full" /> */}
                     
                     <div className="w-full mb-4 text-center">
                         {edit ? (

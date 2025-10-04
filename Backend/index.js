@@ -21,13 +21,16 @@ const authenticateUser = require("./app/middlewares/authenticateUser");
 const authorizeUser = require("./app/middlewares/authorizeUser");
 
 const upload = require("./app/middlewares/upload");
+const interviewController = require("./app/controllers/interviewController");
 
 // User Routes
 app.post("/api/register", upload.single("companyLogo"), userController.register); // Registration ✅
 app.post("/api/login", userController.login);   // Login ✅
 app.get("/api/list", userController.list);   // List ✅
+app.get("/api/specificUserDetails/:id", authenticateUser, authorizeUser(["Admin"]), userController.specificUserDetails);   // List ✅
 app.get("/api/allAppliedJobs", authenticateUser, authorizeUser(["User"]), userController.allAppliedJobs);    // All applied jobs ✅
 app.get("/api/savedJobs", authenticateUser, authorizeUser(["User"]), userController.savedJobs);    // All saved jobs ✅
+app.put("/api/updateProfileImage", authenticateUser, upload.single("profileImage"), userController.updateProfileImage);
 
 // Resume
 app.get("/api/myProfile", authenticateUser, resumeController.getMyProfile);
@@ -49,8 +52,13 @@ app.get("/api/job", authenticateUser, authorizeUser(["User"]), jobController.get
 app.get("/api/job/allPostedJobsByHR", authenticateUser, authorizeUser(["HR"]), jobController.allPostedJobsByHR);    // All posted jobs by the specific user ✅
 app.get("/api/job/getSpecificJob/:id", authenticateUser, authorizeUser(["User", "HR"]), jobController.getSpecificJob);  // Get a specific job ✅
 app.post("/api/job/applyJob/:id", authenticateUser, authorizeUser(["User"]), jobController.apply);  // Apply for a job ✅
+app.delete("/api/job/revokeApplication/:id", authenticateUser, authorizeUser(["User"]), jobController.revoke);
 app.post("/api/job/saveJob/:id", authenticateUser, authorizeUser(["User"]), jobController.saveJob);  // Save a job ✅
 app.delete("/api/job/unsaveJob/:id", authenticateUser, authorizeUser(["User"]), jobController.unsaveJob);  // Unsave a job
+
+
+app.post("/api/interview/scheduleInterview", authenticateUser, authorizeUser(["HR"]), interviewController.scheduleInterview);
+app.get("/api/interview/getInterviews", authenticateUser, authorizeUser(["User"]), interviewController.getInterviewByApplicant);
 
 const PORT = process.env.PORT || 3030;
 app.listen(PORT, () => {

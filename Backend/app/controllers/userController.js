@@ -97,6 +97,28 @@ userController.list = async (req, res) => {
     }
 };
 
+userController.specificUserDetails = async (req, res) => {
+    const id = req.params.id;
+    try {
+        const user = await User.findById(id).populate("appliedJobs");
+        if(!user) {
+            res.status(404).json({ success: false, message: "User not found." });
+        }
+
+        const responseUser = { user };
+        if(user.role === "HR") {
+            const jobs = await Job.find({ postedBy: user._id });
+            responseUser.jobs = jobs;
+        }
+        
+        // res.status(200).json({ success: true, message: "User fetched successfully.", user });
+        res.status(200).json({ success: true, message: "User fetched successfully.", responseUser });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ success: false, message: "Something went wrong while fetching a specific user details." });
+    }
+};
+
 userController.allAppliedJobs = async (req, res) => {
     try {
         const user = await User.findById(req.userId).populate("appliedJobs");
@@ -122,6 +144,41 @@ userController.savedJobs = async (req, res) => {
     } catch (error) {
         console.log(error);
         res.status(500).json({ success: false, message: "Something went wrong." });
+    }
+};
+
+userController.updateProfileImage = async (req, res) => {
+    try {
+        // Check if file was uploaded
+        if(!req.file) {
+            return res.status(400).json({ success: false, message: "No image file provided!" });
+        }
+
+        const user = await User.findById(req.userId);
+        if(!user) {
+            return res.status(404).json({ success: false, message: "User not found." });
+        }
+
+        // Deletes the old file if that exists
+        if(user.profileImage) {
+            const fs = require("fs");
+            const path = require("path");
+
+            const oldImagePath = path.join(__dirname, "../../uploads", user.profileImage);
+
+            fs.unlink(oldImagePath, (err) => {
+                if(err) {
+                    console.log("Error for deleting the old profile image", err);
+                }
+            })
+        }
+
+        const updatedUser = await User.findByIdAndUpdate(req.userId, { profileImage: req.file.filename }, { new: true });
+
+        res.status(200).json({ success: true, message: "Profile image updated successfully!", user: updatedUser, imageUrl: `/uploads/${req.file.filename}` });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ success: false, message: "Something went wrong while updating the profile image." });
     }
 };
 

@@ -13,7 +13,7 @@ const Interview = () => {
 
   return (
     <div className='px-32 py-16'>
-      <p className='text-3xl font-medium text-shadow-md pb-8'>Scheduled Interviews</p>
+      <p className='text-3xl font-medium text-shadow-md pb-8 mt-24'>Scheduled Interviews</p>
 
       {
         HRInterviews.length == 0 ?

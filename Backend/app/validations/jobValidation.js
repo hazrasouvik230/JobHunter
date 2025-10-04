@@ -6,7 +6,7 @@ const jobValidationSchema = Joi.object({
     jobType: Joi.string().valid("Full-Time", "Part-Time", "Internship", "Contract", "Remote").required(),
     requirements: Joi.array().items(Joi.string()).default([]),
     experienceLevel: Joi.string().required(),
-    salary: Joi.string().required(),
+    salary: Joi.number().required(),
     deadline: Joi.date().greater("now").required(),
     description: Joi.string().allow("")
 });

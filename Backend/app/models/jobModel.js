@@ -6,7 +6,7 @@ const jobSchema = new mongoose.Schema({
     jobType: String,
     requirements: [String],
     experienceLevel: String,
-    salary: String,
+    salary: Number,
     deadline: Date,
     description: String,
     interviewQuestions: String,

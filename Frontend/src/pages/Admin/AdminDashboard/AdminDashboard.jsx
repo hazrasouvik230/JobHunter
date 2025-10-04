@@ -12,7 +12,7 @@ const AdminDashboard = () => {
 
     return (
         <div className='px-32 py-16'>
-            <p className='text-3xl font-medium text-shadow-md pb-8'>Admin Dashboard</p>
+            <p className='text-3xl font-medium text-shadow-md pb-8 mt-24'>Admin Dashboard</p>
 
             <div className='flex items-center justify-between my-8'>
                 {

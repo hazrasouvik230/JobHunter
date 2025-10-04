@@ -308,11 +308,13 @@ import { FaSackDollar } from "react-icons/fa6";
 import { PiBuildingsFill } from "react-icons/pi";
 import { MdSpaceDashboard } from "react-icons/md";
 import { AuthContext } from './context/AuthContext';
+import Notifications from './Notifications';
 
 const Navbar = () => {
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const { isLoggedIn, role } = useContext(AuthContext);
   const [showMenu, setShowMenu] = useState(false);
+  const [notification, setNotification] = useState(false);
   
   const navigate = useNavigate();
   const location = useLocation();
@@ -323,6 +325,11 @@ const Navbar = () => {
 
   const handleMenu = () => {
     setShowMenu(prev => !prev);
+  };
+
+  const handleNotificationModal = () => {
+    console.log("clicked")
+    setNotification(!notification);
   };
 
   // const [isNotifications, setIsNotifications] = useState(false);
@@ -368,10 +375,18 @@ const Navbar = () => {
     }
   }, []);
 
+
+  const notifications = [
+      { id: 1, title: "Interview scheduled", status: "unread" },
+      { id: 2, title: "Rejected", status: "unread" },
+      { id: 3, title: "New post", status: "unread" },
+  ];
+
   return (
     <>
-      <div className='flex items-center justify-between px-32 py-4 shadow-xl'>
-        <img src='/Logo.jpg' alt='JobHunterLogo' className='cursor-pointer h-8 hover:scale-110' onClick={() => navigate("/")} />
+      <div className='fixed w-full z-20 bg-white flex items-center justify-between px-32 py-4 shadow-xl'>
+        {/* <img src='/Logo.jpg' alt='JobHunterLogo' className='cursor-pointer h-8 hover:scale-110' onClick={() => navigate("/")} /> */}
+        <img src='/Logo(C)-1.png' alt='JobHunterLogo' className='cursor-pointer h-8 hover:scale-110' onClick={() => navigate("/")} />
 
         {/* Navitems */}
         {
@@ -387,8 +402,16 @@ const Navbar = () => {
 
         {
           isLoggedIn ? <div className='flex gap-4'>
-            <IoNotifications className='text-3xl' />
-            <FaUser className='border text-3xl rounded-full cursor-pointer hover:scale-105' onClick={handleMenu} />
+            <IoNotifications className='relative text-3xl cursor-pointer' onClick={handleNotificationModal} />
+            <span className='absolute right-43 text-center bg-red-400 text-xs font-semibold text-white h-4 w-4 rounded-full'>{notifications.length}</span>
+            {
+              JSON.parse(localStorage.getItem("user")).profileImage === "" ? <FaUser className='border text-3xl rounded-full cursor-pointer hover:scale-105' onClick={handleMenu} /> : (
+                <>
+                  <img src={`http://localhost:3000/uploads/profile-images/${JSON.parse(localStorage.getItem("user")).profileImage}`} alt="" className='h-7.5 border w-7.5 rounded-full' onClick={handleMenu} />
+                </>
+              )
+            }
+            
           </div> : <div>
             <button className=' bg-sky-400/85 text-white font-semibold hover:scale-[1.20] px-6 py-1 rounded transition duration-500 ease-in-out sm:flex cursor-pointer' onClick={() => setIsLoginOpen(true)}>Login</button>
           </div>
@@ -401,6 +424,10 @@ const Navbar = () => {
 
       {
         showMenu && <Menu setShowMenu={setShowMenu} />
+      }
+
+      {
+        notification && <Notifications notifications={notifications} />
       }
     </>
   )
