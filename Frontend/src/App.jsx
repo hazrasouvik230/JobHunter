@@ -22,6 +22,7 @@ import AppliedJobs from './pages/User/AppliedJobs/AppliedJobs';
 import SavedJobs from "./pages/User/SavedJobs/SavedJobs";
 import UserInterview from "./pages/User/Interview/UserInterview";
 import ApplyJob from './pages/User/ApplyJob/ApplyJob';
+import HRProfilePage from './pages/HR/ProfilePage/HRProfile';
 
 const App = () => {
   return (
@@ -31,6 +32,7 @@ const App = () => {
       <Routes>
         <Route path='/' element={<Home />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/hr_profile" element={<HRProfilePage />} />
 
         {/* Admin pages */}
         <Route path='/admin/dashboard' element={<Dashboard />} />

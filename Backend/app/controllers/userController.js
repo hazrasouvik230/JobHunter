@@ -164,7 +164,7 @@ userController.updateProfileImage = async (req, res) => {
             const fs = require("fs");
             const path = require("path");
 
-            const oldImagePath = path.join(__dirname, "../../uploads", user.profileImage);
+            const oldImagePath = path.join(__dirname, "../../uploads/profile-images", user.profileImage);
 
             fs.unlink(oldImagePath, (err) => {
                 if(err) {
@@ -175,7 +175,42 @@ userController.updateProfileImage = async (req, res) => {
 
         const updatedUser = await User.findByIdAndUpdate(req.userId, { profileImage: req.file.filename }, { new: true });
 
-        res.status(200).json({ success: true, message: "Profile image updated successfully!", user: updatedUser, imageUrl: `/uploads/${req.file.filename}` });
+        res.status(200).json({ success: true, message: "Profile image updated successfully!", user: updatedUser, imageUrl: `/uploads/profile-images/${req.file.filename}` });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ success: false, message: "Something went wrong while updating the profile image." });
+    }
+};
+
+userController.updateCompanyLogo = async (req, res) => {
+    try {
+        // Check if file was uploaded
+        if(!req.file) {
+            return res.status(400).json({ success: false, message: "No image file provided!" });
+        }
+
+        const user = await User.findById(req.userId);
+        if(!user) {
+            return res.status(404).json({ success: false, message: "User not found." });
+        }
+
+        // Deletes the old file if that exists
+        if(user.companyLogo) {
+            const fs = require("fs");
+            const path = require("path");
+
+            const oldImagePath = path.join(__dirname, "../../uploads/company-logos", user.companyLogo);
+
+            fs.unlink(oldImagePath, (err) => {
+                if(err) {
+                    console.log("Error for deleting the old profile image", err);
+                }
+            })
+        }
+
+        const updatedUser = await User.findByIdAndUpdate(req.userId, { companyLogo: req.file.filename }, { new: true });
+
+        res.status(200).json({ success: true, message: "Company logo updated successfully!", user: updatedUser, imageUrl: `/uploads/company-logos/${req.file.filename}` });
     } catch (error) {
         console.log(error);
         res.status(500).json({ success: false, message: "Something went wrong while updating the profile image." });

@@ -5,12 +5,16 @@ import { useNavigate } from 'react-router-dom';
 import { AuthContext } from './context/AuthContext';
 
 const Menu = ({ setShowMenu }) => {
-    const { logout } = useContext(AuthContext);
+    const { role, logout } = useContext(AuthContext);
     const navigate = useNavigate();
 
     const handleProfileClick = () => {
         setShowMenu(prev => !prev);
-        navigate("/profile");
+        if(role === "HR") {
+            navigate("/hr_profile");
+        } else {
+            navigate("/profile");
+        }
     };
 
     const handleLogout = () => {

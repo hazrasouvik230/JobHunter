@@ -31,6 +31,7 @@ app.get("/api/specificUserDetails/:id", authenticateUser, authorizeUser(["Admin"
 app.get("/api/allAppliedJobs", authenticateUser, authorizeUser(["User"]), userController.allAppliedJobs);    // All applied jobs ✅
 app.get("/api/savedJobs", authenticateUser, authorizeUser(["User"]), userController.savedJobs);    // All saved jobs ✅
 app.put("/api/updateProfileImage", authenticateUser, upload.single("profileImage"), userController.updateProfileImage);
+app.put("/api/updateCompanyLogo", authenticateUser, upload.single("companyLogo"), userController.updateCompanyLogo);
 
 // Resume
 app.get("/api/myProfile", authenticateUser, resumeController.getMyProfile);

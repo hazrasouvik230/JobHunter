@@ -311,8 +311,9 @@ import { AuthContext } from './context/AuthContext';
 import Notifications from './Notifications';
 
 const Navbar = () => {
-  const [isLoginOpen, setIsLoginOpen] = useState(false);
   const { isLoggedIn, role } = useContext(AuthContext);
+  
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [notification, setNotification] = useState(false);
   
@@ -385,7 +386,6 @@ const Navbar = () => {
   return (
     <>
       <div className='fixed w-full z-20 bg-white flex items-center justify-between px-32 py-4 shadow-xl'>
-        {/* <img src='/Logo.jpg' alt='JobHunterLogo' className='cursor-pointer h-8 hover:scale-110' onClick={() => navigate("/")} /> */}
         <img src='/Logo(C)-1.png' alt='JobHunterLogo' className='cursor-pointer h-8 hover:scale-110' onClick={() => navigate("/")} />
 
         {/* Navitems */}
