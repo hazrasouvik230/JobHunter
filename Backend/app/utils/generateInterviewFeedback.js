@@ -1,7 +1,6 @@
 const { GoogleGenAI } = require("@google/genai");
 
-// const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-const ai = new GoogleGenAI({ apiKey: "AIzaSyDgkjKt4hlBB1KREihoBTcgwTPtvswdI7s" });
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
 async function generateInterviewFeedback(voices) {
     const response = await ai.models.generateContent({
