@@ -29,6 +29,12 @@ jobController.create = async(req, res) => {
         const job = new Job({ ...value, postedBy: req.userId, companyName: user.companyName, companyLogo: user.companyLogo });
         await job.save();
 
+        // Increment job post count in subscription
+        if(req.subscription) {
+            req.subscription.jobPostsUsed += 1;
+            await req.subscription.save();
+        }
+
         res.status(201).json({ success: true, message: "Job created successfully!", job });
     } catch (error) {
         console.log(error);

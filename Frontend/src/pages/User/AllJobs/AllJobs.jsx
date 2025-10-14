@@ -452,8 +452,8 @@ const AllJobs = () => {
       const token = localStorage.getItem("token");
       const response = await axios.get(`http://localhost:3000/api/job`, { headers: { Authorization: token }});
       console.log("All jobs:", response.data.jobs);
-      const checking = response.data.jobs[11].salary;  // Last jobs: 400000 number
-      console.log("Last jobs:", checking, typeof checking);
+      // const checking = response.data.jobs[11].salary;  // Last jobs: 400000 number
+      // console.log("Last jobs:", checking, typeof checking);
       setAllJobs(response.data.jobs);
     } catch (error) {
       console.log(error);
@@ -614,7 +614,7 @@ const AllJobs = () => {
                     <div className='bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-800 rounded-2xl px-6 py-1 flex items-center justify-center gap-2'><FaBriefcase /> {job.jobType}</div>
                     <div className='bg-gradient-to-r from-green-100 to-emerald-100 text-green-800 rounded-2xl px-6 py-1 flex items-center justify-center gap-2'><FaLocationDot /> {job.location.join(", ")}</div>
                     <div className='bg-gradient-to-r from-purple-100 to-violet-100 text-purple-800 rounded-2xl px-6 py-1 flex items-center justify-center gap-2'><GiGraduateCap />{job.experienceLevel}</div>
-                    <div className='bg-gradient-to-r from-amber-100 to-yellow-100 text-amber-800 rounded-2xl px-6 py-1 flex items-center justify-center gap-2'><CurrencyFormatter amount={Number(job.salary)} currencyCode="INR" /></div>
+                    {/* <div className='bg-gradient-to-r from-amber-100 to-yellow-100 text-amber-800 rounded-2xl px-6 py-1 flex items-center justify-center gap-2'><CurrencyFormatter amount={Number(job.salary)} currencyCode="INR" /></div> */}
 
                     {/* <div className='bg-amber-200 rounded-2xl px-6 py-1 flex items-center justify-center gap-2'>
                       <FaRupeeSign />

@@ -23,6 +23,7 @@ import SavedJobs from "./pages/User/SavedJobs/SavedJobs";
 import UserInterview from "./pages/User/Interview/UserInterview";
 import ApplyJob from './pages/User/ApplyJob/ApplyJob';
 import HRProfilePage from './pages/HR/ProfilePage/HRProfile';
+import Interview from './Interview';
 
 const App = () => {
   return (
@@ -54,6 +55,8 @@ const App = () => {
         <Route path='/user/applied-jobs' element={<AppliedJobs />} />
         <Route path='/user/saved-jobs' element={<SavedJobs />} />
         <Route path='/user/interview' element={<UserInterview />} />
+
+        <Route path='/interview/:id' element={<Interview />} />
       </Routes>
       
       <Footer />

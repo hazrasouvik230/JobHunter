@@ -80,7 +80,7 @@
 
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import ReactMarkdown from "react-markdown";
 import ScheduleInterview from './ScheduleInterview';
 
@@ -118,8 +118,13 @@ const HRSpecificJob = () => {
     }
 
     return (
-        <div className='px-32 py-16'>
-            <p className='text-3xl font-medium text-shadow-md pb-8 mt-24'>Specific Job Details</p>
+        <div className='px-6 md:px-32 py-12 bg-gray-50 min-h-screen'>
+            <div className='text-center mb-8 mt-16'>
+                <div className="absolute"><span className="text-start hover:text-blue-800 cursor-pointer ease-in-out text-gray-600 hover:font-semibold"><Link to="/hr/all-posted-jobs">Back</Link></span></div>
+
+                <p className='text-4xl font-bold text-gray-900 mb-4'>Specific job details</p>
+                <p className='text-xl text-gray-600 max-w-2xl mx-auto'>Hire smarter. Grow faster.</p>
+            </div>
 
             <div>
                 <p>Job id: {job._id}</p>

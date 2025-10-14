@@ -22,6 +22,7 @@ const authorizeUser = require("./app/middlewares/authorizeUser");
 
 const upload = require("./app/middlewares/upload");
 const interviewController = require("./app/controllers/interviewController");
+const checkSubscription = require("./app/middlewares/checkSubscription");
 
 // User Routes
 app.post("/api/register", upload.single("companyLogo"), userController.register); // Registration ✅
@@ -47,7 +48,8 @@ app.post("/api/resume/certificate", authenticateUser, resumeController.addCertif
 app.delete("/api/resume/certificate/:id", authenticateUser, resumeController.deleteCertificate);
 
 // Job Route
-app.post("/api/job", authenticateUser, authorizeUser(["HR"]), jobController.create); // Create a job ✅
+// app.post("/api/job", authenticateUser, authorizeUser(["HR"]), jobController.create); // Create a job ✅
+app.post("/api/job", authenticateUser, authorizeUser(["HR"]), checkSubscription, jobController.create); // Create a job ✅
 app.post("/api/job/generateDescription", authenticateUser, authorizeUser(["HR"]), jobController.generateJobDescription);    // Generating job description externally ✅
 app.get("/api/job", authenticateUser, authorizeUser(["User"]), jobController.getAllJobs);   // List of all jobs ✅
 app.get("/api/job/allPostedJobsByHR", authenticateUser, authorizeUser(["HR"]), jobController.allPostedJobsByHR);    // All posted jobs by the specific user ✅
@@ -57,9 +59,18 @@ app.delete("/api/job/revokeApplication/:id", authenticateUser, authorizeUser(["U
 app.post("/api/job/saveJob/:id", authenticateUser, authorizeUser(["User"]), jobController.saveJob);  // Save a job ✅
 app.delete("/api/job/unsaveJob/:id", authenticateUser, authorizeUser(["User"]), jobController.unsaveJob);  // Unsave a job
 
+const subscriptionController = require("./app/controllers/subscriptionController");
+
+// Subscription Routes
+app.get("/api/subscription/current", authenticateUser, authorizeUser(["HR"]), subscriptionController.getCurrentSubscription);
+app.post("/api/subscription/purchase", authenticateUser, authorizeUser(["HR"]), subscriptionController.purchaseSubscription);
+app.post("/api/subscription/cancel", authenticateUser, authorizeUser(["HR"]), subscriptionController.cancelSubscription);
+
 
 app.post("/api/interview/scheduleInterview", authenticateUser, authorizeUser(["HR"]), interviewController.scheduleInterview);
 app.get("/api/interview/getInterviews", authenticateUser, authorizeUser(["User"]), interviewController.getInterviewByApplicant);
+app.get("/api/interview/getInterviewByHR", authenticateUser, authorizeUser(["HR"]), interviewController.getInterviewByHR);
+app.get("/api/interview/specificInterview/:meetingLink", authenticateUser, authorizeUser(["User", "HR"]), interviewController.specificInterview);
 
 const PORT = process.env.PORT || 3030;
 app.listen(PORT, () => {

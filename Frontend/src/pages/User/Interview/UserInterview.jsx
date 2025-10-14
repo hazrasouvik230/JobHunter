@@ -85,6 +85,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import { IoVideocam } from "react-icons/io5";
 import { AuthContext } from '../../../context/AuthContext';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const Interview = () => {
   const [interviews, setInterviews] = useState([]);
@@ -105,19 +106,7 @@ const Interview = () => {
     })();
   }, []);
 
-  const handleInterview = (link) => {
-    if(link) {
-      window.open(link, "_blank");
-      // window.location.href = link;
-    } else {
-      alert("meeting link not available yet.");
-    }
-  };
-
-  // const canJoin = (startTime, endTime) => {
-  //   const now = new Date();
-  //   return new Date()
-  // }
+  const navigate = useNavigate();
 
   return (
     <div className='px-32 py-16'>
@@ -146,7 +135,7 @@ const Interview = () => {
                     </div>
                   </div>
 
-                  <button className='absolute flex items-center justify-center px-8 py-1 gap-2 bg-amber-200 rounded-md text-xl font-semibold duration-300 hover:scale-105 cursor-not-allowed top-4 right-8' onClick={() => handleInterview(interview.meetingLink)}><IoVideocam className='text-2xl' /> Join</button>
+                  <button className='absolute flex items-center justify-center px-8 py-1 gap-2 bg-amber-200 rounded-md text-xl font-semibold duration-300 hover:scale-105 cursor-not-allowed top-4 right-8' onClick={() => navigate(`/interview/${interview.meetingLink}`)}><IoVideocam className='text-2xl' /> Join</button>
                 </div>
               })
             }

@@ -1,7 +1,7 @@
-import { useContext, useRef, useState } from "react"
+import { useContext, useRef, useState, useEffect } from "react"
 import { AuthContext } from "../../../context/AuthContext"
 import { Link } from "react-router-dom";
-import axios from "axios";
+import axios, { all } from "axios";
 import { motion } from "framer-motion";
 
 export default function HRProfilePage() {
@@ -18,6 +18,28 @@ export default function HRProfilePage() {
     const [profileImagePreview, setProfileImagePreview] = useState(storedUser?.profileImage ? `http://localhost:3000/uploads/profile-images/${storedUser.profileImage}` : "");
     
     const [companyLogoPreview, setCompanyLogoPreview] = useState(storedUser?.companyLogo ? `http://localhost:3000/uploads/company-logos/${storedUser.companyLogo}` : "");
+
+    const [allPostedJobs, setAllPostedJobs] = useState(0);
+    const [totalApplicants, setTotalApplicants] = useState(0);
+
+    useEffect(() => {
+        (async() => {
+        try {
+            const token = localStorage.getItem("token");
+            const response = await axios.get(`http://localhost:3000/api/job/allPostedJobsByHR`, { headers: { Authorization: token } });
+            console.log(response.data.jobs);
+            setAllPostedJobs(response.data.jobs);
+
+            const applicantCount = response.data.jobs.reduce((total, job) => {
+                return total + (job.applicants?.length || 0);
+            }, 0);
+
+            setTotalApplicants(applicantCount);
+        } catch (error) {
+            console.log(error);
+        }
+        })();
+    }, []);
 
     const handleFileChange = async (e, type) => {
         const file = e.target.files?.[0];
@@ -155,7 +177,8 @@ export default function HRProfilePage() {
                 {/* Hiring Funnel Overview */}
                 <motion.div className="bg-gray-50 border-2 border-blue-200 rounded-lg p-8 hover:scale-101 hover:shadow-lg hover:shadow-blue-200 duration-150 ease-in-out" initial={{ y: -30, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.7, delay: 0.2 }}>
                     <p className="font-semibold mb-3">Hiring funnel overview</p>
-                    <p className="text-gray-700">Total posted jobs: 0</p>
+                    <p className="text-gray-700">Total posted jobs: {allPostedJobs.length || 0}</p>
+                    <p className="text-gray-700">Total applied applicant: {totalApplicants}</p>
                     <p className="text-gray-700">Hired applicant: 0</p>
                     <p className="text-gray-700">Hired applicant per job post: 0%</p>
                 </motion.div>

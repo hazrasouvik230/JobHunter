@@ -1,5 +1,7 @@
-import React from 'react'
-import { IoVideocam } from "react-icons/io5";
+import axios from 'axios';
+import React, { useEffect, useState } from 'react'
+import { SiGooglemeet } from "react-icons/si";
+import { Link, useNavigate } from 'react-router-dom';
 
 const Interview = () => {
   const HRInterviews = [
@@ -11,31 +13,73 @@ const Interview = () => {
     { userName: "Sanjay", role: "Service", date: "Aug 31, 2025", time: "14:00:00" },
   ];
 
+  const [interviews, setInterviews] = useState([]);
+
+  useEffect(() => {
+    (async() => {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await axios.get("http://localhost:3000/api/interview/getInterviewByHR", { headers: { Authorization: token } });
+        console.log(response.data.interviews);
+        setInterviews(response.data.interviews);
+      } catch (error) {
+        console.log(error);
+        alert("something went wrong");
+      }
+    })();
+  }, []);
+
+  const navigate = useNavigate();
+
   return (
-    <div className='px-32 py-16'>
-      <p className='text-3xl font-medium text-shadow-md pb-8 mt-24'>Scheduled Interviews</p>
+    <div className='px-6 md:px-32 py-12 bg-gray-50 min-h-screen'>
+      <div className='text-center mb-8 mt-16'>
+          <div className="absolute"><span className="text-start hover:text-blue-800 cursor-pointer ease-in-out text-gray-600 hover:font-semibold"><Link to="/">Back</Link></span></div>
+
+          <p className='text-4xl font-bold text-gray-900 mb-4'>Scheduled Interviews</p>
+          <p className='text-xl text-gray-600 max-w-2xl mx-auto'>Hire smarter. Grow faster.</p>
+      </div>
 
       {
-        HRInterviews.length == 0 ?
+        interviews.length == 0 ? (
+          <p>No interviews.</p>
+        ) : (
           <div>
-            <p>Interview not scheduled yet.</p>
-            <div className='flex items-center justify-center'>
-              <img src="/Sad.png" alt="" className='w-1/3' />
-            </div>
-          </div> :
-          <div className='border'>
             {
-              HRInterviews.map((interview) => {
-                return <div className='bg-amber-400/20 px-8 py-4 my-4 rounded flex items-center justify-between hover:shadow-lg'>
-                  <p>{interview.userName}</p>
-                  <p>{interview.role}</p>
-                  <p>{interview.date}</p>
-                  <p>{interview.time}</p>
-                  <button className='flex items-center justify-center px-8 py-1 gap-2 bg-amber-200 rounded-md text-xl font-semibold duration-300 hover:scale-105 cursor-not-allowed'><IoVideocam className='text-2xl' /> Join</button>
+              interviews.map(interview => {
+                return <div key={interview._id} className='border p-6'>
+                  <p className='text-2xl font-semibold'>{interview.jobId.title}</p>
+                  <div className='flex items-center justify-between mt-8'>
+                    <div className='border flex relative p-4 px-10 bg-blue-50 border-gray-200 rounded-lg'>
+                      <p className='bg-white px-2 absolute -top-4 left-2 border-2 border-blue-200 rounded-md'>Candidate details:</p>
+                      <p>{interview.applicantId.name}</p>
+                      ~
+                      <p>{interview.applicantId.email}</p>
+                    </div>
+                    <div className='border flex relative p-4 px-10 bg-blue-50 border-gray-200 rounded-lg'>
+                      <p className='bg-white px-2 absolute -top-4 left-2 border-2 border-blue-200 rounded-md'>Interview details:</p>
+                      <p>{interview.date}</p>
+                      ~
+                      <p>{interview.startTime} - {interview.endTime}</p>
+                    </div>
+
+                    <div className='border flex relative p-4 px-10 bg-blue-50 border-gray-200 rounded-lg'>
+                      <p className='bg-white px-2 absolute -top-4 left-2 border-2 border-blue-200 rounded-md'>Status</p>
+                      <p>{interview.status}</p>
+                    </div>
+
+                    <div className='border flex relative p-4 px-14 bg-blue-50 border-gray-200 rounded-lg'>
+                      <p className='bg-white px-2 absolute -top-4 left-2 border-2 border-blue-200 rounded-md'>Rating</p>
+                      <p>{interview.rating}</p>
+                    </div>
+
+                    <button className='flex gap-2 items-center bg-sky-500 px-8 py-2 rounded-md cursor-pointer text-white' onClick={() => navigate(`/interview/${interview.meetingLink}`)}><SiGooglemeet />Join Meeting</button>
+                  </div>
                 </div>
               })
             }
           </div>
+        )
       }
     </div>
   )
