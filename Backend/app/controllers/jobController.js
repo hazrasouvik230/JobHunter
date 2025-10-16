@@ -24,7 +24,6 @@ jobController.create = async(req, res) => {
 
         if(!value.description || value.description.trim() === "") {
             value.description = await generateJobDescription(value);
-            value.shortDesc = await generateShortDesc(value);
         }
 
         const job = new Job({ ...value, postedBy: req.userId, companyName: user.companyName, companyLogo: user.companyLogo });
@@ -138,13 +137,56 @@ jobController.getAllJobs = async(req, res) => {
 jobController.getSpecificJob = async(req, res) => {
     const jobId = req.params.id;
     try {
-        const job = await Job.findById(jobId).populate("applicants", ["name", "email"]);
+        const job = await Job.findById(jobId).populate("applicants.applicantId", ["name", "email"]);
         res.status(200).json({ success: true, job });
     } catch (error) {
         console.log(error);
         res.status(500).json({ success: false, message: "Something went wrong while fetching specific job details." });
     }
 };
+
+// jobController.apply = async(req, res) => {
+//     const jobId = req.params.id;
+//     try {
+//         if(req.role !== "User") {
+//             return res.status(403).json({ error: "Forbidden: Only applicants can apply for the jobs." });
+//         }
+
+//         const job = await Job.findById(jobId);
+//         if(!job) {
+//             return res.status(404).json({ error: "Job not found!" });
+//         }
+
+//         if(job.applicants.includes(req.userId)) {
+//             return res.status(400).json({ error: "You've already applied for this job." });
+//         }
+
+//         await Job.updateOne(
+//             { _id: jobId },
+//             { $addToSet: { applicants: req.userId }}
+//         );
+
+//         // job.applicants.push(req.userId);
+//         // await job.save();
+
+//         const applicant = await User.findById(req.userId);
+//         if(!applicant) {
+//             return res.status(404).json({ error: "User not found!" });
+//         }
+        
+//         await User.updateOne(
+//             { _id: req.userId },
+//             { $addToSet: { appliedJobs: jobId } }
+//         );
+//         // applicant.appliedJobs.push(jobId);
+//         // await applicant.save();
+        
+//         res.status(200).json({ success: true, message: "Successfully applied for the job." });
+//     } catch (error) {
+//         console.log(error);
+//         res.status(500).json({ success: false, message: "Something went wrong while applying for a job." });
+//     }
+// };
 
 jobController.apply = async(req, res) => {
     const jobId = req.params.id;
@@ -158,29 +200,35 @@ jobController.apply = async(req, res) => {
             return res.status(404).json({ error: "Job not found!" });
         }
 
-        if(job.applicants.includes(req.userId)) {
+        // Check if user already applied (using the new schema structure)
+        const alreadyApplied = job.applicants.some(
+            applicant => applicant.applicantId.toString() === req.userId
+        );
+
+        if(alreadyApplied) {
             return res.status(400).json({ error: "You've already applied for this job." });
         }
 
-        await Job.updateOne(
-            { _id: jobId },
-            { $addToSet: { applicants: req.userId }}
-        );
+        // Add applicant with the new structure
+        job.applicants.push({
+            applicantId: req.userId,
+            status: "applied"
+            // appliedAt will be automatically set by default
+        });
 
-        // job.applicants.push(req.userId);
-        // await job.save();
+        await job.save();
 
+        // Update user's applied jobs
         const applicant = await User.findById(req.userId);
         if(!applicant) {
             return res.status(404).json({ error: "User not found!" });
         }
         
-        await User.updateOne(
-            { _id: req.userId },
-            { $addToSet: { appliedJobs: jobId } }
-        );
-        // applicant.appliedJobs.push(jobId);
-        // await applicant.save();
+        // If User model also has appliedJobs array
+        if (!applicant.appliedJobs.includes(jobId)) {
+            applicant.appliedJobs.push(jobId);
+            await applicant.save();
+        }
         
         res.status(200).json({ success: true, message: "Successfully applied for the job." });
     } catch (error) {

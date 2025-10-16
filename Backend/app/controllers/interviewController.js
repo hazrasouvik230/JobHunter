@@ -57,6 +57,17 @@ interviewController.specificInterview = async (req, res) => {
         console.log(error);
         res.status(500).json({ message: "Something went wrong." });
     }
+};
+
+interviewController.getSpecificJobInterviews = async (req, res) => {
+    const jobId = req.params.id;
+    
+    try {
+        
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: "Something went wrong." });
+    }
 }
 
 module.exports = interviewController;

@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useEffect } from "react"
 import { Link } from "react-router-dom";
 
-export default function CompanyDetails() {
+export default function UserDetails() {
     const [allJobs, setAllJobs] = useState([]);
     const [subscriptionInfo, setSubscriptionInfo] = useState(null);
 
@@ -33,9 +33,12 @@ export default function CompanyDetails() {
             <img src={`http://localhost:3000/uploads/company-logos/${JSON.parse(localStorage.getItem("user")).companyLogo}`} alt={JSON.parse(localStorage.getItem("user")).companyLogo} className='h-32 w-32 rounded-full border-4 border-gray-400' />
             <p className='text-2xl text-center font-semibold'>{JSON.parse(localStorage.getItem("user")).companyName}</p>
             
-            <div className="text-center mt-4">
-                <p className="font-semibold text-lg">{subscriptionInfo?.planName || 'Free'} Plan</p>
-                <p>Total jobs posted: {allJobs.length}</p>
+            <div className="text-center my-6 w-5/6 py-6 rounded-xl bg-blue-50 relative">
+                <div className="absolute flex items-center justify-center -top-4.5 w-full">
+                    <span className="font-semibold text-lg bg-gradient-to-tr from-cyan-600 to-purple-700 text-white px-8 py-1 rounded-4xl">{subscriptionInfo?.planName || 'Free'} Plan</span>
+                </div>
+                
+                <p className="pt-2">Total jobs posted: {allJobs.length}</p>
                 <p>Live posted jobs: {liveJobs.length}</p>
                 <p className={`font-medium ${subscriptionInfo?.remainingPosts <= 0 ? 'text-red-600' : 'text-green-600'}`}>Remaining posts: {subscriptionInfo?.remainingPosts || 0}/{subscriptionInfo?.jobPostsLimit || 3}</p>
                 {
@@ -45,7 +48,7 @@ export default function CompanyDetails() {
                 }
             </div>
             
-            <button className='bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg mt-4 transition-colors'><Link to="/hr/buy-subscription">{subscriptionInfo?.planName === 'Free' ? 'Upgrade Plan' : 'Manage Subscription'}</Link></button>
+            <button className='bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg transition-colors'><Link to="/hr/buy-subscription">{subscriptionInfo?.planName === 'Free' ? 'Upgrade Plan' : 'Manage Subscription'}</Link></button>
         </div>
     )
 }

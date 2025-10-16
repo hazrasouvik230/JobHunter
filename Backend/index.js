@@ -72,6 +72,7 @@ app.post("/api/subscription/cancel", authenticateUser, authorizeUser(["HR"]), su
 app.post("/api/interview/scheduleInterview", authenticateUser, authorizeUser(["HR"]), interviewController.scheduleInterview);
 app.get("/api/interview/getInterviews", authenticateUser, authorizeUser(["User"]), interviewController.getInterviewByApplicant);
 app.get("/api/interview/getInterviewByHR", authenticateUser, authorizeUser(["HR"]), interviewController.getInterviewByHR);
+app.get("/api/interview/getInterviewByHR/:id", authenticateUser, authorizeUser(["HR"]), interviewController.getSpecificJobInterviews);
 app.get("/api/interview/specificInterview/:meetingLink", authenticateUser, authorizeUser(["User", "HR"]), interviewController.specificInterview);
 
 const PORT = process.env.PORT || 3000;

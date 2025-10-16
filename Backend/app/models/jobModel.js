@@ -9,16 +9,31 @@ const jobSchema = new mongoose.Schema({
     salary: Number,
     deadline: Date,
     description: String,
-    shortDesc: String,
     postedBy: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User"
     },
     companyName: String,
     companyLogo: String,
+    // applicants: [{
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: "User"
+    // }]
     applicants: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User"
+        applicantId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+            required: true
+        },
+        status: {
+            type: String,
+            enum: ["applied", "rejected", "selected_for_interview", "hired"],
+            default: "applied"
+        },
+        appliedAt: {
+            type: Date,
+            default: Date.now
+        }
     }]
 }, { timestamps: true });
 

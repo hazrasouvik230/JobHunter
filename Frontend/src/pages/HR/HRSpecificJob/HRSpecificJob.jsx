@@ -83,6 +83,10 @@ import React, { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import ReactMarkdown from "react-markdown";
 import ScheduleInterview from './ScheduleInterview';
+import UserDetails from '../UserDetails';
+
+import { MdOutlineAccessTimeFilled } from "react-icons/md";
+import { FaTrash } from "react-icons/fa6";
 
 const HRSpecificJob = () => {
     const { id }= useParams();
@@ -126,31 +130,78 @@ const HRSpecificJob = () => {
                 <p className='text-xl text-gray-600 max-w-2xl mx-auto'>Hire smarter. Grow faster.</p>
             </div>
 
-            <div>
-                <p>Job id: {job._id}</p>
-                <p>Title: {job.title}</p>
-                <p>Total applied students: {job.applicants?.length || 0}</p>
+            <div className='flex justify-between gap-2'>
+                <div className='bg-white border-2 border-gray-400 rounded-xl shadow-xl w-2/3 px-6 py-3'>
+                    <div>
+                        <p>Job id: {job._id}</p>
+                        <p>Title: {job.title}</p>
+                        <p>Total applied students: {job.applicants?.length || 0}</p>
+                    </div>
+
+                    {/* <div className='border p-4'>
+                        {
+                            job.applicants?.map((applicant) => {
+                                return <div key={applicant._id} className='border my-4 p-2 flex items-center justify-between rounded shadow-md'>
+                                    <p>{applicant.name}</p>
+                                    <p>{applicant.email}</p>
+                                    <p>50</p>
+
+                                    <div className='flex items-center justify-center gap-2'>
+                                        <button className='px-4 py-1 bg-amber-200 rounded cursor-pointer' onClick={() => handleScheduleInterview(applicant)}>Schedule Interview</button>
+                                        <button className='px-4 py-1 bg-red-600/70 text-white rounded cursor-pointer' onClick={() => handleReject(applicant._id)}>Reject</button>
+                                    </div>
+                                </div>
+                            })
+                        }
+                    </div> */}
+                    <div className='mt-4'>
+                        <table className='w-full border-collapse'>
+                            <thead>
+                                <tr className='bg-gray-300 text-center'>
+                                    <th className='border p-2 w-[30%]'>Name</th>
+                                    <th className='border p-2 w-[30%]'>Email</th>
+                                    <th className='border p-2 w-[20%]'>Score</th>
+                                    <th className='border p-2 w-[20%]'>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {
+                                    job.applicants?.map((applicant) => {
+                                        return (
+                                            <tr key={applicant._id} className='border-b hover:bg-gray-50 text-center'>
+                                                <td className='border p-2'>{applicant.applicantId.name}</td>
+                                                <td className='border border-black p-2 cursor-pointer text-blue-500'>{applicant.applicantId.email}</td>
+                                                <td className='p-2 flex items-center justify-center'><p className='px-4 py-1 bg-amber-400 font-semibold text-white rounded'>Resume</p></td>
+                                                <td className='border p-2'>
+                                                    <div className='flex items-center justify-center gap-2'>
+                                                        {
+                                                            applicant.status === "applied" ? (
+                                                                <>
+                                                                    <button className='px-4 py-1 bg-amber-200 rounded cursor-pointer hover:bg-amber-300 transition-colors' onClick={() => handleScheduleInterview(applicant)}><MdOutlineAccessTimeFilled /></button>
+                                                                    <button className='px-4 py-1 bg-red-600/70 text-white rounded cursor-pointer hover:bg-red-700/70 transition-colors' onClick={() => handleReject(applicant._id)}><FaTrash /></button>
+                                                                </>
+                                                            ) : (
+                                                                <>
+                                                                    <p className='px-4 py-1 bg-amber-400 font-semibold text-white rounded'>Interview</p>
+                                                                </>
+                                                            )
+                                                        }
+                                                        {/* <p className='px-4 py-1 bg-red-600 font-semibold text-white rounded'>Rejected</p> */}
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        )
+                                    })
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+                    {scheduleInterviewModal && <ScheduleInterview selectedApplicant={selectedApplicant} setScheduleInetrviewModal={setScheduleInetrviewModal} scheduleInterviewModal={scheduleInterviewModal} job={job} />}
+                </div>
+
+                <div className="w-1/3"><UserDetails /></div>
             </div>
-
-            <div className='border p-4'>
-                {
-                    job.applicants?.map((applicant) => {
-                        return <div key={applicant._id} className='border my-4 p-2 flex items-center justify-between rounded shadow-md'>
-                            <p>{applicant._id}</p>
-                            <p>{applicant.name}</p>
-                            <p>{applicant.email}</p>
-                            <p>50</p>
-
-                            <div className='flex items-center justify-center gap-2'>
-                                <button className='px-4 py-1 bg-amber-200 rounded cursor-pointer' onClick={() => handleScheduleInterview(applicant)}>Schedule Interview</button>
-                                <button className='px-4 py-1 bg-red-600/70 text-white rounded cursor-pointer' onClick={() => handleReject(applicant._id)}>Reject</button>
-                            </div>
-                        </div>
-                    })
-                }
-            </div>
-
-            {scheduleInterviewModal && <ScheduleInterview selectedApplicant={selectedApplicant} setScheduleInetrviewModal={setScheduleInetrviewModal} scheduleInterviewModal={scheduleInterviewModal} job={job} />}
         </div>
     )
 }
