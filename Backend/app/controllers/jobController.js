@@ -79,9 +79,16 @@ jobController.getAllJobs = async(req, res) => {
             return res.status(404).json({ error: "User not found." });
         }
 
-        // const jobs = await Job.find();
-        const jobs = await Job.find().populate("postedBy", "name email companyName companyLogo");
-        res.status(200).json({ success: true, jobs });
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 3;
+        const skip = (page - 1) * limit;
+
+        const jobs = await Job.find().skip(skip).limit(limit).populate("postedBy", "name email companyName companyLogo");
+
+        const totalJobs = await Job.countDocuments();
+        const totalPages = Math.ceil(totalJobs / limit);
+
+        res.status(200).json({ success: true, jobs, pagination: { currentPage: page, totalPages, totalJobs, limit } });
     } catch (error) {
         console.log(error);
         res.status(500).json({ success: false, message: "Something went wrong while fetching jobs." });

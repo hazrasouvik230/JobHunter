@@ -19,8 +19,8 @@ module.exports = generateInterviewFeedback;
 
 async function getFeedback() {
     const feedback = await generateInterviewFeedback({
-        interviewer: "hi candidate good afternoon please interview ok tell me something about you state hook ok nice to meet you yeah you can leave now",
-        candidate: "hello sir good afternoon sir yeah my name is I am from India I completed my graduations from IIT KGP now I am applying for this job rule s in B.Ed new state hope is used for state management purpose thank you sir thank you"
+        interviewer: "so hello candidate good afternoon what is your name okay nice to meet you so tell me about you state hook okay thank you you can continue to leave",
+        candidate: "good afternoon sir myself ABC I am from India I completed my graduation from Bangalore right now I am working at ABC company as a software developer yeah in Riyadh for state where using you straight hook in the centralised way okay thank you sir"
     });
     console.log(feedback);
 }
