@@ -51,11 +51,13 @@ app.delete("/api/resume/certificate/:id", authenticateUser, resumeController.del
 // app.post("/api/job", authenticateUser, authorizeUser(["HR"]), jobController.create); // Create a job ✅
 app.post("/api/job", authenticateUser, authorizeUser(["HR"]), checkSubscription, jobController.create); // Create a job ✅
 app.post("/api/job/generateDescription", authenticateUser, authorizeUser(["HR"]), jobController.generateJobDescription);    // Generating job description externally ✅
+app.post("/api/job/generateShortDesc", authenticateUser, authorizeUser(["HR"]), jobController.generateShortDesc);    // Generating short description externally ✅
 app.get("/api/job", authenticateUser, authorizeUser(["User"]), jobController.getAllJobs);   // List of all jobs ✅
 app.get("/api/job/allPostedJobsByHR", authenticateUser, authorizeUser(["HR"]), jobController.allPostedJobsByHR);    // All posted jobs by the specific user ✅
 app.get("/api/job/getSpecificJob/:id", authenticateUser, authorizeUser(["User", "HR"]), jobController.getSpecificJob);  // Get a specific job ✅
 app.post("/api/job/applyJob/:id", authenticateUser, authorizeUser(["User"]), jobController.apply);  // Apply for a job ✅
 app.delete("/api/job/revokeApplication/:id", authenticateUser, authorizeUser(["User"]), jobController.revoke);
+app.get("/api/job/savedJobs", authenticateUser, authorizeUser(["User"]), jobController.getSavedJobs);  // Get saved jobs with pagination ✅
 app.post("/api/job/saveJob/:id", authenticateUser, authorizeUser(["User"]), jobController.saveJob);  // Save a job ✅
 app.delete("/api/job/unsaveJob/:id", authenticateUser, authorizeUser(["User"]), jobController.unsaveJob);  // Unsave a job
 

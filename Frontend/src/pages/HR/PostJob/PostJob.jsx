@@ -3,9 +3,8 @@ import CreatableSelect from 'react-select/creatable';
 import { BsStars } from "react-icons/bs";
 import axios from 'axios';
 import Loader from '../../../Loading';
-import CompanyDetails from '../AllPostedJobs/CompanyDetails';
-import JobContext from '../../../context/JobsContext';
 import { Link, useNavigate } from 'react-router-dom';
+import UserDetails from "../UserDetails";
 
 const PostJob = () => {
     // const { allPostedJobs } = useContext(JobContext);
@@ -204,17 +203,7 @@ const PostJob = () => {
                     </div>
                 </form>
 
-                {/* <div className='w-1/5 border border-amber-500 flex flex-col items-center pt-4 gap-2'>
-                    <img src={`http://localhost:3000/uploads/company-logos/${JSON.parse(localStorage.getItem("user")).companyLogo}`} alt={JSON.parse(localStorage.getItem("user")).companyLogo} className='h-32 w-32 rounded-full border' />
-                    <p className='text-2xl font-semibold'>{JSON.parse(localStorage.getItem("user")).companyName}</p>
-
-                    <p>Total jobs posted: {allPostedJobs.length}</p>
-                    <p>Live posted jobs: {liveJobs.length}</p>
-                    
-                    <p>You can make job post: 3</p>
-                    <button className='bg-blue-300 px-4 py-2 rounded-3xl'><Link to="/hr/buy-subscription">Buy Subscription</Link></button>
-                </div> */}
-                <div className='w-1/3 border border-amber-500 flex flex-col items-center pt-4 gap-2'>
+                {/* <div className='w-1/3 border border-amber-500 flex flex-col items-center pt-4 gap-2'>
                     <img src={`http://localhost:3000/uploads/company-logos/${JSON.parse(localStorage.getItem("user")).companyLogo}`} alt={JSON.parse(localStorage.getItem("user")).companyLogo} className='h-32 w-32 rounded-full border' />
                     <p className='text-2xl text-center font-semibold'>{JSON.parse(localStorage.getItem("user")).companyName}</p>
                     
@@ -231,9 +220,14 @@ const PostJob = () => {
                     </div>
                     
                     <button className='bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg mt-4 transition-colors'><Link to="/hr/buy-subscription">{subscriptionInfo?.planName === 'Free' ? 'Upgrade Plan' : 'Manage Subscription'}</Link></button>
+                </div> */}
+
+                <div className="w-1/3">
+                    <UserDetails />
                 </div>
                 {/* <CompanyDetails /> */}
             </div>
+
         </div>
     )
 }

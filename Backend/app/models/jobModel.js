@@ -9,7 +9,7 @@ const jobSchema = new mongoose.Schema({
     salary: Number,
     deadline: Date,
     description: String,
-    interviewQuestions: String,
+    shortDesc: String,
     postedBy: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User"

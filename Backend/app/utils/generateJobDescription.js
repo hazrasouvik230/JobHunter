@@ -28,4 +28,12 @@ async function generateJobDescription(jobDetails) {
     });
     return response.text;
 }
-module.exports = generateJobDescription;
+
+async function generateShortDesc(jobDetails) {
+    const response = await ai.models.generateContent({
+        model: "gemini-2.5-flash",
+        contents: `Write a concise job description summary within 200 characters for a ${jobDetails.title} position at ${jobDetails.companyName}. Include key highlights about the role and company.`
+    });
+    return response.text;
+}
+module.exports = { generateJobDescription, generateShortDesc };

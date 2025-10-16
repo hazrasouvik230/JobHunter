@@ -1,8 +1,6 @@
 import axios from 'axios';
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom';
-import CompanyDetails from './CompanyDetails';
-import JobContext from '../../../context/JobsContext';
 import { BsBriefcaseFill } from "react-icons/bs";
 import { FaLocationDot } from "react-icons/fa6";
 import { FaRupeeSign } from "react-icons/fa";
@@ -13,31 +11,70 @@ import { MdEdit } from "react-icons/md";
 import { FaChevronRight } from "react-icons/fa";
 import { formatDistanceToNow  } from "date-fns";
 
+import UserDetails from "../UserDetails";
+
 const AllPostedJobs = () => {
     const [allPostedJobs, setAllPostedJobs] = useState([]);
-    const [subscriptionInfo, setSubscriptionInfo] = useState(null);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [totalJobs, setTotalJobs] = useState(0);
+
+    const fetchPostedJobs = async (page = 1) => {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await axios.get(`http://localhost:3000/api/job/allPostedJobsByHR?page=${page}&limit=2`, { headers: { Authorization: token } });
+        console.log(response.data.jobs);
+        setAllPostedJobs(response.data.jobs);
+        setCurrentPage(response.data.pagination.currentPage);
+        setTotalPages(response.data.pagination.totalPages);
+        setTotalJobs(response.data.pagination.totalJobs);
+      } catch (error) {
+        console.log(error);
+      }
+    }
 
     useEffect(() => {
-      (async() => {
-        try {
-          const token = localStorage.getItem("token");
-          const response = await axios.get(`http://localhost:3000/api/job/allPostedJobsByHR`, { headers: { Authorization: token } });
-          console.log(response.data.jobs);
-          setAllPostedJobs(response.data.jobs);
-
-          // Fetch subscription info
-          const subResponse = await axios.get(`http://localhost:3000/api/subscription/current`, {
-              headers: { Authorization: token }
-          });
-          setSubscriptionInfo(subResponse.data.subscription);
-        } catch (error) {
-          console.log(error);
-        }
-      })();
+      fetchPostedJobs(1);
     }, []);
 
-    const liveJobs = allPostedJobs.filter((job) => new Date(job.deadline) > Date.now());
     const navigate = useNavigate();
+
+    // Pagination handlers
+    const handleNextPage = () => {
+        if (currentPage < totalPages) {
+            fetchPostedJobs(currentPage + 1);
+        }
+    };
+
+    const handlePrevPage = () => {
+        if (currentPage > 1) {
+            fetchPostedJobs(currentPage - 1);
+        }
+    };
+
+    const handlePageClick = (page) => {
+        fetchPostedJobs(page);
+    };
+
+    // Generate page numbers for pagination
+    const getPageNumbers = () => {
+        const pages = [];
+        const maxVisiblePages = 5;
+        
+        let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+        let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+        
+        // Adjust start page if we're near the end
+        if (endPage - startPage + 1 < maxVisiblePages) {
+            startPage = Math.max(1, endPage - maxVisiblePages + 1);
+        }
+        
+        for (let i = startPage; i <= endPage; i++) {
+            pages.push(i);
+        }
+        
+        return pages;
+    };
 
     return (
       <div className='px-6 md:px-32 py-12 bg-gray-50 min-h-screen'>
@@ -102,28 +139,29 @@ const AllPostedJobs = () => {
                       </div>
                     })
                   }
-                </div>
 
-                {/* <CompanyDetails allPostedJobs={allPostedJobs} liveJobs={liveJobs} /> */}
+                  {/* Pagination Controls */}
+                  {totalPages > 1 && (
+                    <div className="flex flex-col sm:flex-row items-center justify-center mt-8 pt-6 border-t border-gray-200">
+                        <div className="flex items-center space-x-2">
+                            {/* Previous Button */}
+                            <button onClick={handlePrevPage} disabled={currentPage === 1} className={`px-6 py-2 rounded-lg text-sm font-medium ${ currentPage === 1 ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-indigo-500 text-white hover:bg-indigo-600 cursor-pointer' }`} >Previous</button>
 
-                <div className='w-1/3 border border-amber-500 flex flex-col items-center pt-4 gap-2'>
-                    <img src={`http://localhost:3000/uploads/company-logos/${JSON.parse(localStorage.getItem("user")).companyLogo}`} alt={JSON.parse(localStorage.getItem("user")).companyLogo} className='h-32 w-32 rounded-full border' />
-                    <p className='text-2xl text-center font-semibold'>{JSON.parse(localStorage.getItem("user")).companyName}</p>
-                    
-                    <div className="text-center mt-4">
-                        <p className="font-semibold text-lg">{subscriptionInfo?.planName || 'Free'} Plan</p>
-                        <p>Total jobs posted: {allPostedJobs.length}</p>
-                        <p>Live posted jobs: {liveJobs.length}</p>
-                        <p className={`font-medium ${subscriptionInfo?.remainingPosts <= 0 ? 'text-red-600' : 'text-green-600'}`}>Remaining posts: {subscriptionInfo?.remainingPosts || 0}/{subscriptionInfo?.jobPostsLimit || 3}</p>
-                        {
-                            subscriptionInfo?.isExpired && (
-                                <p className="text-red-600 text-sm mt-2">Subscription Expired!</p>
-                            )
-                        }
+                            {/* Page Numbers */}
+                            {
+                              getPageNumbers().map(page => (
+                                <button key={page} onClick={() => handlePageClick(page)} className={`px-6 py-2 rounded-lg text-sm font-medium ${ currentPage === page ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300 cursor-pointer' }`} >{page}</button>
+                              ))
+                            }
+
+                            {/* Next Button */}
+                            <button onClick={handleNextPage} disabled={currentPage === totalPages} className={`px-3 py-2 rounded-lg text-sm font-medium ${ currentPage === totalPages ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-indigo-500 text-white hover:bg-indigo-600 cursor-pointer' }`} >Next</button>
+                        </div>
                     </div>
-                    
-                    <button className='bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg mt-4 transition-colors'><Link to="/hr/buy-subscription">{subscriptionInfo?.planName === 'Free' ? 'Upgrade Plan' : 'Manage Subscription'}</Link></button>
+                  )}
                 </div>
+
+                <div className="w-1/3"><UserDetails /></div>
               </div> :
               <p>You've not post any job yet.</p>
           }

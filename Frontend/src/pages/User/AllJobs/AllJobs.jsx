@@ -9,11 +9,9 @@ import { FaBookmark } from "react-icons/fa6";
 import { FaRegBookmark  } from "react-icons/fa6";
 import { FaSearch } from 'react-icons/fa';
 import { GiGraduateCap } from "react-icons/gi";
-import { FaRupeeSign } from "react-icons/fa";
 import { AuthContext } from '../../../context/AuthContext';
 import ReactMarkdown from "react-markdown";
 import CurrencyFormatter from '../../../CurrencyFormatter';
-import { RiArrowDropRightLine } from "react-icons/ri";
 import { formatDistanceToNow  } from "date-fns";
 
 
@@ -94,11 +92,6 @@ const AllJobs = () => {
       console.log(error);
     }
   }
-
-  // useEffect(() => {
-  //   setPage(1);
-  //   fetchAllJobs();
-  // }, [filters]);
 
   useEffect(() => {
     fetchAllJobs();
@@ -226,15 +219,13 @@ const AllJobs = () => {
                 const isSaved = savedJobs.includes(job._id);
                 return (
                   <div key={job._id} className='border border-gray-300 p-4 rounded-xl relative w-[32.6%] mb-4 hover:scale-102 hover:shadow-lg hover:border-gray-600/50 duration-300 ease-in-out'>
-                    {/* <div className='absolute h-[20%] bg-gradient-to-r from-red-500 to-purple-500 opacity-50 top-0 left-0 w-full rounded-t-xl -z-5'></div> */}
-                    {/* <div className='absolute h-[20%] bg-gradient-to-r from-teal-400 to-indigo-500 opacity-35 top-0 left-0 w-full rounded-t-xl -z-5'></div> */}
                     <div className='absolute h-20 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 opacity-35 top-0 left-0 w-full rounded-t-xl -z-5'></div>
                     <div className='flex gap-4'>
                       <img src={`http://localhost:3000/uploads/company-logos/${job.companyLogo}`} alt={job.companyLogo} className='h-20 w-20 rounded-lg shadow-lg' />
                       <div>
                         {/* <p className='font-extralight text-xs'>JOB ID: {job._id}</p> */}
-                        <p className='font-bold text-xl mt-2'>{job.title}</p>
-                        <p className='font-semibold text-lg'>{job.companyName}</p>
+                        <p className='font-bold text-xl mt-5'>{job.title}</p>
+                        {/* <p className='font-semibold text-lg'>{job.companyName}</p> */}
                       </div>
                     </div>
 
@@ -256,9 +247,7 @@ const AllJobs = () => {
                       </div> */}
 
                     </div>
-                    {/* <ReactMarkdown>{job.description.slice(0, 200)}...</ReactMarkdown> */}
 
-                    {/* <div className='mb-10'> */}
                     <div className='mb-16'>
                       <ReactMarkdown>{job.description ? job.description.slice(0, 200) : "No description available."}</ReactMarkdown>
                     </div>
@@ -278,34 +267,30 @@ const AllJobs = () => {
                       )
                     }
 
-                    <button className={`absolute right-4 bottom-4 py-2 px-8 font-semibold rounded cursor-pointer ${user.appliedJobs.includes(job._id) ? "bg-green-200 text-green-800" : " bg-orange-300/50 text-orange-800 hover:scale-110"}`} onClick={() => navigate(`/user/apply-job/${job._id}`)}>
-                      {user.appliedJobs.includes(job._id) ? "Applied" : "Apply"}
-                    </button>
+                    <button className={`absolute right-4 bottom-4 py-2 px-8 font-semibold rounded cursor-pointer ${user.appliedJobs.includes(job._id) ? "bg-green-200 text-green-800" : " bg-orange-300/50 text-orange-800 hover:scale-110"}`} onClick={() => navigate(`/user/apply-job/${job._id}`)}>{user.appliedJobs.includes(job._id) ? "Applied" : "Apply"}</button>
                   </div>
                 );
               })}
             </div>
 
-            <div className="flex justify-center mt-8">
-              <button
-                className="py-2 px-4 bg-gray-300 rounded-lg mr-2"
-                onClick={() => setPage(page > 1 ? page - 1 : 1)}
-                disabled={page === 1}
-              >
-                Previous
-              </button>
-              
-              <span className="py-2 px-4">{`Page ${page} of ${totalPages}`}</span>
-              
-              <button
-                className="py-2 px-4 bg-gray-300 rounded-lg ml-2"
-                onClick={() => setPage(page < totalPages ? page + 1 : totalPages)}
-                disabled={page === totalPages}
-              >
-                Next
-              </button>
-            </div>
-
+            {/* Pagination Controls */}
+            {
+              totalPages > 1 && (
+                <div className="flex justify-center items-center gap-4 mt-8">
+                  <button className={`py-2 px-6 rounded-lg font-semibold transition-all ${page === 1 ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-indigo-500 text-white hover:bg-indigo-600 cursor-pointer' }`} onClick={() => setPage(page - 1)} disabled={page === 1}>Previous</button>
+                  
+                  <div className="flex gap-2">
+                    {
+                      [...Array(totalPages)].map((_, index) => (
+                        <button key={index + 1} className={`w-10 h-10 rounded-lg font-semibold transition-all ${page === index + 1 ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300 cursor-pointer' }`} onClick={() => setPage(index + 1)}>{index + 1}</button>
+                      ))
+                    }
+                  </div>
+                  
+                  <button className={`py-2 px-6 rounded-lg font-semibold transition-all ${page === totalPages ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-indigo-500 text-white hover:bg-indigo-600 cursor-pointer' }`} onClick={() => setPage(page + 1)} disabled={page === totalPages}>Next</button>
+                </div>
+              )
+            }
           </>
         )}
       </div>
