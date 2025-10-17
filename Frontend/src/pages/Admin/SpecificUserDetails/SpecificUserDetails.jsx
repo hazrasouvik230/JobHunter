@@ -8,6 +8,11 @@ export default function SpecificUserDetails() {
     const { id } = useParams();
     const [fetchedUser, setFetchedUser] = useState(null);
 
+    const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [loading, setLoading] = useState(false);
+    const [limit] = useState(2);
+
     useEffect(() => {
         (async () => {
             const token = localStorage.getItem("token");
@@ -33,6 +38,67 @@ export default function SpecificUserDetails() {
             // navigate("/admin/all-users");
         }
     }
+
+    const handlePageChange = (newPage) => {
+        setPage(newPage);
+    };
+
+    const paginationInfo = data => {
+        if(!data) return [];
+
+        const startIndex = (page - 1) * limit;
+        const endIndex = startIndex + limit;
+        return data.slice(startIndex, endIndex);
+    };
+
+    const applicationStatus = (job) => {
+        if (!job?.applicants || !fetchedUser?.user?._id) return "Not Applied";
+        
+        const userApplication = job.applicants.find(
+            applicant => applicant.applicantId === fetchedUser.user._id
+        );
+        
+        return userApplication ? userApplication.status : "Not Applied";
+    };
+
+    const statusInfo = (status) => {
+        const statusConfig = {
+            'selected_for_interview': {
+                text: 'Interview Scheduled',
+                className: 'bg-yellow-100/50 text-yellow-800 px-4 py-2 rounded-md'
+            },
+            'rejected': {
+                text: 'Rejected',
+                className: 'bg-red-100/50 text-red-800 px-4 py-2 rounded-md'
+            },
+            'under_review': {
+                text: 'Hired',
+                className: 'bg-green-100/50 text-green-800 px-4 py-2 rounded-md'
+            },
+            'applied': {
+                text: 'Applied',
+                className: 'bg-blue-100/50 text-gray-800 px-4 py-2 rounded-md'
+            }
+        };
+        
+        return statusConfig[status] || statusConfig.applied;
+    };
+
+    useEffect(() => {
+        if (fetchedUser) {
+            let dataLength = 0;
+            if(fetchedUser.user?.role === "User") {
+                dataLength = fetchedUser.user?.appliedJobs?.length || 0;
+            } else if (fetchedUser.user?.role === "HR") {
+                dataLength = fetchedUser.jobs?.length || 0;
+            }
+            setTotalPages(Math.ceil(dataLength / limit));
+        }
+    }, [fetchedUser, limit]);
+
+    useEffect(() => {
+        setPage(1);
+    }, [id]);
 
     return (
         <div className='px-6 md:px-32 py-12 pb-20 bg-gray-50'>
@@ -106,10 +172,13 @@ export default function SpecificUserDetails() {
                     fetchedUser?.user?.role === "User" && (
                         <>
                             <div className="p-8">
-                                <p className="text-2xl font-bold">Posted Jobs:</p>
+                                <p className="text-2xl font-bold">Applied Jobs:</p>
                                 <div className="flex flex-col">
                                     {
-                                        fetchedUser?.user?.appliedJobs?.map(job => {
+                                        paginationInfo(fetchedUser?.user?.appliedJobs)?.map(job => {
+                                            const status = applicationStatus(job);
+                                            const statusDisplay = statusInfo(status);
+
                                             return <div key={job._id} className="border mx-2 p-4 py-6 rounded-md shadow-lg my-2.5 max-w-5xl relative">
                                                 <div className="absolute h-12 bg-amber-200 w-full -z-10 left-0 top-0 rounded-t-md"></div>
                                                     <p className="absolute top-4 right-4 px-4 py-1 bg-gradient-to-l from-blue-400 to-purple-500 text-white font-semibold rounded-2xl">{job?.jobType}</p>
@@ -126,7 +195,7 @@ export default function SpecificUserDetails() {
                                                     <div className="flex items-center my-3 gap-30">
                                                     <div className="pl-2 pr-6">
                                                         <p>STATUS</p>
-                                                        <p>Pending</p>
+                                                        <p className={statusDisplay.className}>{statusDisplay.text}</p>
                                                     </div>
                                                     <div className="pl-2 pr-6">
                                                         <p>POSTED ON</p>
@@ -149,15 +218,50 @@ export default function SpecificUserDetails() {
                                         })
                                     }
                                 </div>
-                                <div className="flex items-center justify-center gap-2 mt-4">
-                                    <button className="border px-5 py-2 rounded-md cursor-pointer hover:bg-cyan-100 ease-in-out duration-200 hover:font-bold"><FaAngleLeft /></button>
-                                    <button className="border px-5 py-2 rounded-md cursor-pointer hover:bg-cyan-100 ease-in-out duration-200 hover:font-bold">1</button>
-                                    <button className="border px-5 py-2 rounded-md cursor-pointer hover:bg-cyan-100 ease-in-out duration-200 hover:font-bold">2</button>
-                                    <button className="border px-5 py-2 rounded-md cursor-pointer hover:bg-cyan-100 ease-in-out duration-200 hover:font-bold">3</button>
-                                    ...
-                                    <button className="border px-5 py-2 rounded-md cursor-pointer hover:bg-cyan-100 ease-in-out duration-200 hover:font-bold">n</button>
-                                    <button className="border px-5 py-2 rounded-md cursor-pointer hover:bg-cyan-100 ease-in-out duration-200 hover:font-bold"><FaAngleRight /></button>
-                                </div>
+                                {/* Pagination Controls */}
+                                {totalPages > 1 && (
+                                    <div className="flex justify-center items-center gap-4 mt-8">
+                                        <button 
+                                            className={`py-2 px-6 rounded-lg font-semibold transition-all ${
+                                                page === 1 
+                                                    ? 'bg-gray-200 text-gray-400 cursor-not-allowed' 
+                                                    : 'bg-indigo-500 text-white hover:bg-indigo-600 cursor-pointer'
+                                            }`}
+                                            onClick={() => handlePageChange(page - 1)}
+                                            disabled={page === 1}
+                                        >
+                                            Previous
+                                        </button>
+                                        
+                                        <div className="flex gap-2">
+                                            {[...Array(totalPages)].map((_, index) => (
+                                                <button 
+                                                    key={index + 1}
+                                                    className={`w-10 h-10 rounded-lg font-semibold transition-all ${
+                                                        page === index + 1 
+                                                            ? 'bg-indigo-600 text-white' 
+                                                            : 'bg-gray-200 text-gray-700 hover:bg-gray-300 cursor-pointer'
+                                                    }`}
+                                                    onClick={() => handlePageChange(index + 1)}
+                                                >
+                                                    {index + 1}
+                                                </button>
+                                            ))}
+                                        </div>
+                                        
+                                        <button 
+                                            className={`py-2 px-6 rounded-lg font-semibold transition-all ${
+                                                page === totalPages 
+                                                    ? 'bg-gray-200 text-gray-400 cursor-not-allowed' 
+                                                    : 'bg-indigo-500 text-white hover:bg-indigo-600 cursor-pointer'
+                                            }`}
+                                            onClick={() => handlePageChange(page + 1)}
+                                            disabled={page === totalPages}
+                                        >
+                                            Next
+                                        </button>
+                                    </div>
+                                )}
                             </div>
                         </>
                     )
@@ -171,8 +275,8 @@ export default function SpecificUserDetails() {
                                 <p className="text-2xl font-bold">Posted Jobs:</p>
                                 <div className="flex flex-col">
                                     {
-                                        fetchedUser?.jobs?.map(job => {
-                                            return <div key={job._id} className="border mx-2 p-4 py-6 rounded-md shadow-lg my-2.5 max-w-5xl relative">
+                                        paginationInfo(fetchedUser?.jobs)?.map(job => {
+                                            return <div key={job._id} className="border-2 border-gray-200 mx-2 p-4 py-6 rounded-xl shadow-lg my-2.5 max-w-5xl relative">
                                                 <p className="absolute top-4 right-4 px-4 py-1 bg-gradient-to-l from-blue-400 to-purple-500 text-white font-semibold rounded-2xl">{job?.jobType}</p>
                                                 <div className="flex gap-4">
                                                     <img src={`http://localhost:3000/uploads/company-logos/${fetchedUser?.user?.companyLogo}`} alt={fetchedUser?.user?.companyName} className='h-12 w-12 rounded-md shadow-md' />
@@ -208,15 +312,49 @@ export default function SpecificUserDetails() {
                                         })
                                     }
                                 </div>
-                                <div className="flex items-center justify-center gap-2 mt-4">
-                                    <button className="border px-5 py-2 rounded-md cursor-pointer hover:bg-cyan-100 ease-in-out duration-200 hover:font-bold"><FaAngleLeft /></button>
-                                    <button className="border px-5 py-2 rounded-md cursor-pointer hover:bg-cyan-100 ease-in-out duration-200 hover:font-bold">1</button>
-                                    <button className="border px-5 py-2 rounded-md cursor-pointer hover:bg-cyan-100 ease-in-out duration-200 hover:font-bold">2</button>
-                                    <button className="border px-5 py-2 rounded-md cursor-pointer hover:bg-cyan-100 ease-in-out duration-200 hover:font-bold">3</button>
-                                    ...
-                                    <button className="border px-5 py-2 rounded-md cursor-pointer hover:bg-cyan-100 ease-in-out duration-200 hover:font-bold">n</button>
-                                    <button className="border px-5 py-2 rounded-md cursor-pointer hover:bg-cyan-100 ease-in-out duration-200 hover:font-bold"><FaAngleRight /></button>
-                                </div>
+                                {totalPages > 1 && (
+                                    <div className="flex justify-center items-center gap-4 mt-8">
+                                        <button 
+                                            className={`py-2 px-6 rounded-lg font-semibold transition-all ${
+                                                page === 1 
+                                                    ? 'bg-gray-200 text-gray-400 cursor-not-allowed' 
+                                                    : 'bg-indigo-500 text-white hover:bg-indigo-600 cursor-pointer'
+                                            }`}
+                                            onClick={() => handlePageChange(page - 1)}
+                                            disabled={page === 1}
+                                        >
+                                            Previous
+                                        </button>
+                                        
+                                        <div className="flex gap-2">
+                                            {[...Array(totalPages)].map((_, index) => (
+                                                <button 
+                                                    key={index + 1}
+                                                    className={`w-10 h-10 rounded-lg font-semibold transition-all ${
+                                                        page === index + 1 
+                                                            ? 'bg-indigo-600 text-white' 
+                                                            : 'bg-gray-200 text-gray-700 hover:bg-gray-300 cursor-pointer'
+                                                    }`}
+                                                    onClick={() => handlePageChange(index + 1)}
+                                                >
+                                                    {index + 1}
+                                                </button>
+                                            ))}
+                                        </div>
+                                        
+                                        <button 
+                                            className={`py-2 px-6 rounded-lg font-semibold transition-all ${
+                                                page === totalPages 
+                                                    ? 'bg-gray-200 text-gray-400 cursor-not-allowed' 
+                                                    : 'bg-indigo-500 text-white hover:bg-indigo-600 cursor-pointer'
+                                            }`}
+                                            onClick={() => handlePageChange(page + 1)}
+                                            disabled={page === totalPages}
+                                        >
+                                            Next
+                                        </button>
+                                    </div>
+                                )}
                             </div>
                         </>
                     )

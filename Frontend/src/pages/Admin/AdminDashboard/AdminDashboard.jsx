@@ -2,6 +2,7 @@ import React from 'react'
 import { FaUsers } from "react-icons/fa";
 import { PiBuildingsFill } from "react-icons/pi";
 import { FaSackDollar } from "react-icons/fa6";
+import { Link } from 'react-router-dom';
 
 const AdminDashboard = () => {
     const info = [
@@ -11,8 +12,15 @@ const AdminDashboard = () => {
     ];
 
     return (
-        <div className='px-32 py-16'>
-            <p className='text-3xl font-medium text-shadow-md pb-8 mt-24'>Admin Dashboard</p>
+        <div className='px-6 md:px-32 py-12 pb-20 bg-gray-50'>
+            <div className='text-center mb-8 mt-16'>
+                <div className="absolute">
+                    <Link to="/user/all-jobs" className="text-start hover:text-blue-800 cursor-pointer ease-in-out text-gray-600 hover:font-semibold">Back</Link>
+                </div>
+
+                <p className='text-4xl font-bold text-gray-900 text-shadow-lg mb-4'>Admin Dashboard</p>
+                <p className='text-xl text-gray-600 max-w-2xl mx-auto'>Track your job applications</p>
+                </div>
 
             <div className='flex items-center justify-between my-8'>
                 {

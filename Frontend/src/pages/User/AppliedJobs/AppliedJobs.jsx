@@ -30,23 +30,19 @@ const AppliedJobs = () => {
         const statusConfig = {
             'selected_for_interview': {
                 text: 'Interview Scheduled',
-                className: 'bg-green-100/50 text-green-800'
+                className: 'bg-yellow-100/50 text-yellow-800 px-4 py-2 rounded-md'
             },
             'rejected': {
                 text: 'Rejected',
-                className: 'bg-red-100/50 text-red-800'
-            },
-            'shortlisted': {
-                text: 'Shortlisted',
-                className: 'bg-blue-100/50 text-blue-800'
+                className: 'bg-red-100/50 text-red-800 px-4 py-2 rounded-md'
             },
             'under_review': {
-                text: 'Under Review',
-                className: 'bg-yellow-100/50 text-yellow-800'
+                text: 'Hired',
+                className: 'bg-green-100/50 text-green-800 px-4 py-2 rounded-md'
             },
             'applied': {
                 text: 'Applied',
-                className: 'bg-gray-100/50 text-gray-800'
+                className: 'bg-blue-100/50 text-gray-800 px-4 py-2 rounded-md'
             }
         };
         
