@@ -44,10 +44,10 @@ const Interview = () => {
         interviews.length == 0 ? (
           <p>No interviews.</p>
         ) : (
-          <div>
+          <div className='bg-white border-2 border-gray-400 rounded-xl shadow-xl p-6 flex flex-col gap-4'>
             {
               interviews.map(interview => {
-                return <div key={interview._id} className='border p-6'>
+                return <div key={interview._id} className='border-2 p-6 rounded-lg border-blue-100 shadow-lg'>
                   <p className='text-2xl font-semibold'>{interview.jobId.title}</p>
                   <div className='flex items-center justify-between mt-8'>
                     <div className='border flex relative p-4 px-10 bg-blue-50 border-gray-200 rounded-lg'>

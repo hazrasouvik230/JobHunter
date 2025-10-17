@@ -107,16 +107,68 @@ const HRSpecificJob = () => {
         })();
     }, [id]);
 
-    const handleReject = (id) => {
-        const confirm = window.confirm("Are you sure?");
-        if(confirm) {
-            const filteredApplicants = job.applicants.filter(applicant => applicant._id !== id);
-            setJob({ ...job, applicants: filteredApplicants });
+    const statusCount = job?.applicants?.reduce((acc, applicant) => {
+        const status = applicant.status;
+        acc[status] = (acc[status] || 0) + 1;
+        return acc;
+    }, {});
+    console.log(statusCount);
+
+    // const handleReject = async (id) => {
+    //     const confirm = window.confirm("Are you sure?");
+    //     if(confirm) {
+    //         // const filteredApplicants = job.applicants.filter(applicant => applicant._id !== id);
+    //         // setJob({ ...job, applicants: filteredApplicants });
+    //         const formdata = { jobId: job._id, applicantId: id };
+    //         console.log(formdata);
+    //         try {
+    //             const token = localStorage.getItem("token");
+    //             const response = await axios.put(`http://localhost:3000/api/interview/specificJobRejection`, formdata, { headers: { Authorization: token }});
+    //             console.log(response.data);
+    //         } catch (error) {
+    //             console.log(error);
+    //         }
+    //     }
+    // }
+    const handleReject = async (applicantId) => {
+    const confirm = window.confirm("Are you sure?");
+    if(confirm) {
+        const formdata = { 
+            jobId: job._id, 
+            applicantId: applicantId 
+        };
+        
+        console.log("Rejecting with data:", formdata);
+        
+        try {
+            const token = localStorage.getItem("token");
+            const response = await axios.put(
+                `http://localhost:3000/api/interview/specificJobRejection`, 
+                formdata, 
+                { headers: { Authorization: token }}
+            );
+            
+            console.log("Response:", response.data);
+            
+            if (response.data.success) {
+                // Update local state to reflect the change immediately
+                const updatedApplicants = job.applicants.map(applicant => 
+                    applicant._id === applicantId 
+                        ? { ...applicant, status: "rejected" } 
+                        : applicant
+                );
+                setJob({ ...job, applicants: updatedApplicants });
+                
+                alert("Candidate rejected successfully");
+            }
+        } catch (error) {
+            console.log("Error:", error.response?.data || error.message);
+            alert("Failed to reject candidate");
         }
     }
+}
 
     const handleScheduleInterview = (selectedApplicant) => {
-        // alert(JSON.stringify(applicant)); //[object Object]
         setScheduleInetrviewModal(!scheduleInterviewModal);
         setSelectedApplicant(selectedApplicant);
     }
@@ -133,35 +185,21 @@ const HRSpecificJob = () => {
             <div className='flex justify-between gap-2'>
                 <div className='bg-white border-2 border-gray-400 rounded-xl shadow-xl w-2/3 px-6 py-3'>
                     <div>
-                        <p>Job id: {job._id}</p>
-                        <p>Title: {job.title}</p>
+                        <p className='text-xs font-extralight text-gray-500'>Job id: {job._id}</p>
+                        <p className='text-2xl font-bold'>{job.title}</p>
                         <p>Total applied students: {job.applicants?.length || 0}</p>
+                        <p>Interview Scheduled students: {statusCount?.selected_for_interview || 0}</p>
+                        <p>Hired students: {statusCount?.hired || 0}</p>
                     </div>
-
-                    {/* <div className='border p-4'>
-                        {
-                            job.applicants?.map((applicant) => {
-                                return <div key={applicant._id} className='border my-4 p-2 flex items-center justify-between rounded shadow-md'>
-                                    <p>{applicant.name}</p>
-                                    <p>{applicant.email}</p>
-                                    <p>50</p>
-
-                                    <div className='flex items-center justify-center gap-2'>
-                                        <button className='px-4 py-1 bg-amber-200 rounded cursor-pointer' onClick={() => handleScheduleInterview(applicant)}>Schedule Interview</button>
-                                        <button className='px-4 py-1 bg-red-600/70 text-white rounded cursor-pointer' onClick={() => handleReject(applicant._id)}>Reject</button>
-                                    </div>
-                                </div>
-                            })
-                        }
-                    </div> */}
                     <div className='mt-4'>
                         <table className='w-full border-collapse'>
                             <thead>
                                 <tr className='bg-gray-300 text-center'>
-                                    <th className='border p-2 w-[30%]'>Name</th>
-                                    <th className='border p-2 w-[30%]'>Email</th>
-                                    <th className='border p-2 w-[20%]'>Score</th>
-                                    <th className='border p-2 w-[20%]'>Actions</th>
+                                    <th className='border p-2 w-[25%]'>Name</th>
+                                    <th className='border p-2 w-[35%]'>Email</th>
+                                    <th className='border p-2 w-[15%]'>Resume</th>
+                                    <th className='border p-2 w-[15%]'>Actions</th>
+                                    <th className='border p-2 w-[10%]'>Score</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -175,20 +213,22 @@ const HRSpecificJob = () => {
                                                 <td className='border p-2'>
                                                     <div className='flex items-center justify-center gap-2'>
                                                         {
-                                                            applicant.status === "applied" ? (
+                                                            applicant.status === "applied" && (
                                                                 <>
                                                                     <button className='px-4 py-1 bg-amber-200 rounded cursor-pointer hover:bg-amber-300 transition-colors' onClick={() => handleScheduleInterview(applicant)}><MdOutlineAccessTimeFilled /></button>
                                                                     <button className='px-4 py-1 bg-red-600/70 text-white rounded cursor-pointer hover:bg-red-700/70 transition-colors' onClick={() => handleReject(applicant._id)}><FaTrash /></button>
                                                                 </>
-                                                            ) : (
-                                                                <>
-                                                                    <p className='px-4 py-1 bg-amber-400 font-semibold text-white rounded'>Interview</p>
-                                                                </>
                                                             )
                                                         }
-                                                        {/* <p className='px-4 py-1 bg-red-600 font-semibold text-white rounded'>Rejected</p> */}
+                                                        {
+                                                            applicant.status === "rejected" && <p className='px-4 py-1 bg-red-600 font-semibold text-white rounded'>Rejected</p>
+                                                        }
+                                                        {
+                                                            applicant.status === "selected_for_interview" && <p className='px-4 py-1 bg-amber-400 font-semibold text-white rounded'>Interview</p>
+                                                        }
                                                     </div>
                                                 </td>
+                                                <td className='border p-2'>0</td>
                                             </tr>
                                         )
                                     })

@@ -1,6 +1,9 @@
 const crypto = require("crypto");
 
 const Interview = require("../models/interviewModel");
+const User = require("../models/userModel");
+const Job = require("../models/jobModel");
+const mongoose = require("mongoose");
 
 const interviewController = {};
 
@@ -17,6 +20,11 @@ interviewController.scheduleInterview = async (req, res) => {
 
         const interview = new Interview({ jobId, applicantId, hrId, date, startTime, endTime, status, meetingLink, rating });
         await interview.save();
+
+        await Job.updateOne(
+            { _id: jobId, "applicants.applicantId": applicantId },
+            { $set: { "applicants.$.status": "selected_for_interview" } }
+        );
 
         res.status(201).json({ success: true, message: "Interview scheduled successfully.", interview });
     } catch (error) {
@@ -69,5 +77,23 @@ interviewController.getSpecificJobInterviews = async (req, res) => {
         res.status(500).json({ message: "Something went wrong." });
     }
 }
+
+interviewController.specificJobRejection = async (req, res) => {
+    try {
+        const { jobId, applicantId } = req.body;
+
+        console.log(jobId, "&", typeof jobId, "&", applicantId, "&", typeof applicantId);   // 68f120f5806bb84f12de61ed & string & 68f1400544ca968d5928e40d & string
+
+        await Job.updateOne(
+            { _id: new mongoose.Types.ObjectId(jobId), "applicants.applicantId": new mongoose.Types.ObjectId(applicantId) },
+            { $set: { "applicants.$.status": "rejected" } }
+        );
+
+        res.status(201).json({ success: true, message: "Candidate response is rejected." });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: "Something went wrong." });
+    }
+};
 
 module.exports = interviewController;

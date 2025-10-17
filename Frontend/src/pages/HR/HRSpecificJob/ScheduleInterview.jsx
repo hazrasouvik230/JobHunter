@@ -81,14 +81,14 @@ export default function ScheduleInterview({ selectedApplicant, scheduleInterview
     const user = JSON.parse(localStorage.getItem("user"));
     console.log("User:", user);
 
-    useEffect(() => {
-        handleSubmit();
-    }, []);
+    // useEffect(() => {
+    //     handleSubmit();
+    // }, []);
 
     const handleSubmit = async(e) => {
         e.preventDefault();
 
-        const formdata = { jobId: job._id, applicantId: selectedApplicant._id, hrId: user._id, date, startTime: startingTime, endTime: endingTime };
+        const formdata = { jobId: job._id, applicantId: selectedApplicant.applicantId._id, hrId: user._id, date, startTime: startingTime, endTime: endingTime };
         console.log(formdata);
         setScheduleInetrviewModal(!scheduleInterviewModal);
 
@@ -96,6 +96,11 @@ export default function ScheduleInterview({ selectedApplicant, scheduleInterview
             const token = localStorage.getItem("token");
             const response = await axios.post("http://localhost:3000/api/interview/scheduleInterview", formdata, { headers: { Authorization: token }});
             console.log(response.data);
+
+            if (response.data.success) {
+                setScheduleInetrviewModal(false);
+                window.location.reload();
+            }
         } catch (error) {
             console.log(error);
         }
@@ -108,7 +113,7 @@ export default function ScheduleInterview({ selectedApplicant, scheduleInterview
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
             <form className="bg-white w-11/12 sm:w-2/3 md:w-2/3 lg:w-1/3 p-8 rounded-xl shadow-lg relative max-h-[90vh] overflow-y-auto" onSubmit={handleSubmit}>
-                <p>Applicant Name: {selectedApplicant.name}</p>
+                <p>Applicant Name: {selectedApplicant.applicantId.name}</p>
 
                 <div>
                     <label htmlFor="date">Date</label>

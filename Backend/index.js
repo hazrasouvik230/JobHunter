@@ -70,6 +70,7 @@ app.post("/api/subscription/cancel", authenticateUser, authorizeUser(["HR"]), su
 
 
 app.post("/api/interview/scheduleInterview", authenticateUser, authorizeUser(["HR"]), interviewController.scheduleInterview);
+app.put("/api/interview/specificJobRejection", authenticateUser, authorizeUser(["HR"]), interviewController.specificJobRejection);
 app.get("/api/interview/getInterviews", authenticateUser, authorizeUser(["User"]), interviewController.getInterviewByApplicant);
 app.get("/api/interview/getInterviewByHR", authenticateUser, authorizeUser(["HR"]), interviewController.getInterviewByHR);
 app.get("/api/interview/getInterviewByHR/:id", authenticateUser, authorizeUser(["HR"]), interviewController.getSpecificJobInterviews);
