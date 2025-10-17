@@ -121,12 +121,26 @@ userController.specificUserDetails = async (req, res) => {
 
 userController.allAppliedJobs = async (req, res) => {
     try {
-        const user = await User.findById(req.userId).populate("appliedJobs");
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const skip = (page - 1) * limit;
+
+        const user = await User.findById(req.userId).select("appliedJobs").populate({ path: "appliedJobs", options: { skip: skip, limit: limit, sort: { createdAt: 1 } } });
         if(!user) {
             return res.status(404).json({ error: "User not found." });
         }
 
-        res.status(200).json({ success: true, appliedJobs: user.appliedJobs });
+        const userWithCount = await User.findById(req.userId).select("appliedJobs");
+        const totalAppliedJobs = userWithCount.appliedJobs.length;
+        const totalPages = Math.ceil(totalAppliedJobs / limit);
+
+        res.status(200).json({ success: true, appliedJobs: user.appliedJobs, pagination: {
+            currentPage: page,
+            totalPages: totalPages,
+            totalJobs: totalAppliedJobs,
+            hasNext: page < totalPages,
+            hasPrev: page > 1
+        } });
     } catch (error) {
         console.log(error);
         res.status(500).json({ success: false, message: "Something went wrong." });

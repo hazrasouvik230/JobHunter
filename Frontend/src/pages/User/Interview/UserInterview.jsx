@@ -85,7 +85,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import { IoVideocam } from "react-icons/io5";
 import { AuthContext } from '../../../context/AuthContext';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Interview = () => {
   const [interviews, setInterviews] = useState([]);
@@ -109,8 +109,15 @@ const Interview = () => {
   const navigate = useNavigate();
 
   return (
-    <div className='px-32 py-16'>
-      <p className='text-3xl font-semibold text-shadow-lg pb-8 mt-24'>Interview Slots</p>
+    <div className='px-6 md:px-32 py-12 pb-20 bg-gray-50'>
+      <div className='text-center mb-8 mt-16'>
+          <div className="absolute">
+              <Link to="/user/all-jobs" className="text-start hover:text-blue-800 cursor-pointer ease-in-out text-gray-600 hover:font-semibold">Back</Link>
+          </div>
+
+          <p className='text-4xl font-bold text-gray-900 text-shadow-lg mb-4'>Interview Slots</p>
+          <p className='text-xl text-gray-600 max-w-2xl mx-auto'>Track your job applications</p>
+      </div>
 
       {
         interviews.length == 0 ?

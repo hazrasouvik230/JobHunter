@@ -22,6 +22,8 @@ export default function HRProfilePage() {
     const [allPostedJobs, setAllPostedJobs] = useState(0);
     const [totalApplicants, setTotalApplicants] = useState(0);
 
+    const [interviewDetails, setInterviewDetails] = useState([]);
+
     useEffect(() => {
         (async() => {
         try {
@@ -29,6 +31,10 @@ export default function HRProfilePage() {
             const response = await axios.get(`http://localhost:3000/api/job/allPostedJobsByHR`, { headers: { Authorization: token } });
             console.log(response.data.jobs);
             setAllPostedJobs(response.data.jobs);
+
+            const interviewResponse = await axios.get(`http://localhost:3000/api/interview/getInterviewByHR`, { headers: { Authorization: token } });
+            console.log(interviewResponse.data.interviews);
+            setInterviewDetails(interviewResponse.data.interviews);
 
             const applicantCount = response.data.jobs.reduce((total, job) => {
                 return total + (job.applicants?.length || 0);
@@ -185,7 +191,10 @@ export default function HRProfilePage() {
                 
                 {/* Interviews */}
                 <motion.div className="bg-gray-50 border-2 border-blue-200 rounded-lg p-8 hover:scale-101 hover:shadow-lg hover:shadow-blue-200 duration-150 ease-in-out" initial={{ y: -30, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.8, delay: 0.3 }}>
-                    <p className="font-semibold">Interviews</p>
+                    <p className="font-semibold mb-3">Interviews</p>
+                    <p className="text-gray-700">Total interviews: {interviewDetails.length || 0}</p>
+                    <p className="text-gray-700">Interviews completed: {interviewDetails.length || 0}</p>
+                    <p className="text-gray-700">Interviews remaining: {interviewDetails.length || 0}</p>
                 </motion.div>
             </div>
         </motion.div>

@@ -1,10 +1,9 @@
-
 //! main
 import axios from 'axios';
 import React, { useContext, useEffect, useState } from 'react'
 import { FaBriefcase } from "react-icons/fa";
 import { FaLocationDot } from "react-icons/fa6";
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { FaBookmark } from "react-icons/fa6";
 import { FaRegBookmark  } from "react-icons/fa6";
 import { FaSearch } from 'react-icons/fa';
@@ -24,7 +23,7 @@ const AllJobs = () => {
 
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [limit, setLimit] = useState(3);
+  const [limit] = useState(9);
 
 
   const [filters, setFilters] = useState({
@@ -131,8 +130,13 @@ const AllJobs = () => {
   const navigate = useNavigate();
 
   return (
-    <div className='px-32 py-16'>
-      <p className='text-3xl font-semibold text-shadow-lg pb-8 mt-12'>All Jobs</p>
+    <div className='px-6 md:px-32 py-12 pb-20 bg-gray-50'>
+      <div className='text-center mb-8 mt-16'>
+          <div className="absolute"><span className="text-start hover:text-blue-800 cursor-pointer ease-in-out text-gray-600 hover:font-semibold"><Link to="/">Back</Link></span></div>
+
+          <p className='text-4xl font-bold text-shadow-lg text-gray-900 mb-4'>All Jobs</p>
+          <p className='text-xl text-gray-600 max-w-2xl mx-auto'>Hire smarter. Grow faster.</p>
+      </div>
 
       {/* Filtering */}
       <div className="pt-4 px-4 pb-2 border border-gray-200 rounded-md shadow-md mb-4">
@@ -219,13 +223,11 @@ const AllJobs = () => {
                 const isSaved = savedJobs.includes(job._id);
                 return (
                   <div key={job._id} className='border border-gray-300 p-4 rounded-xl relative w-[32.6%] mb-4 hover:scale-102 hover:shadow-lg hover:border-gray-600/50 duration-300 ease-in-out'>
-                    <div className='absolute h-20 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 opacity-35 top-0 left-0 w-full rounded-t-xl -z-5'></div>
+                    <div className='absolute h-20 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 opacity-50 top-0 left-0 w-full rounded-t-xl z-5'></div>
                     <div className='flex gap-4'>
-                      <img src={`http://localhost:3000/uploads/company-logos/${job.companyLogo}`} alt={job.companyLogo} className='h-20 w-20 rounded-lg shadow-lg' />
-                      <div>
-                        {/* <p className='font-extralight text-xs'>JOB ID: {job._id}</p> */}
-                        <p className='font-bold text-xl mt-5'>{job.title}</p>
-                        {/* <p className='font-semibold text-lg'>{job.companyName}</p> */}
+                      <img src={`http://localhost:3000/uploads/company-logos/${job.companyLogo}`} alt={job.companyLogo} className='h-20 w-20 rounded-lg shadow-lg z-5' />
+                      <div className='z-10'>
+                        <p className='font-bold text-xl mt-5 text-black'>{job.title}</p>
                       </div>
                     </div>
 
@@ -233,19 +235,6 @@ const AllJobs = () => {
                       <div className='bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-800 rounded-2xl px-6 py-1 flex items-center justify-center gap-2'><FaBriefcase /> {job.jobType}</div>
                       <div className='bg-gradient-to-r from-green-100 to-emerald-100 text-green-800 rounded-2xl px-6 py-1 flex items-center justify-center gap-2'><FaLocationDot /> {job.location.join(", ")}</div>
                       <div className='bg-gradient-to-r from-purple-100 to-violet-100 text-purple-800 rounded-2xl px-6 py-1 flex items-center justify-center gap-2'><GiGraduateCap />{job.experienceLevel}</div>
-                      {/* <div className='bg-gradient-to-r from-amber-100 to-yellow-100 text-amber-800 rounded-2xl px-6 py-1 flex items-center justify-center gap-2'><CurrencyFormatter amount={Number(job.salary)} currencyCode="INR" /></div> */}
-
-                      {/* <div className='bg-amber-200 rounded-2xl px-6 py-1 flex items-center justify-center gap-2'>
-                        <FaRupeeSign />
-                        {job.salary ? 
-                          (typeof job.salary === 'number' ? 
-                            `${(job.salary / 100000).toFixed(2)} LPA` : 
-                            job.salary
-                          ) : 
-                          'Not specified'
-                        }
-                      </div> */}
-
                     </div>
 
                     <div className='mb-16'>
@@ -256,14 +245,11 @@ const AllJobs = () => {
                       <p>Posted on: {formatDistanceToNow(new Date(job.createdAt))} ago</p>
                       <p>{new Date(job.deadline) > Date.now() ? `Deadline in ${formatDistanceToNow(new Date(job.deadline))}` : `Deadline was ${formatDistanceToNow(new Date(job.deadline))} ago`}</p>
                     </div>
-
-                    {/* <p className='flex gap-2 items-center'><FaBriefcase /> {job.experienceLevel}</p>
-                    <p className='flex gap-2 items-center'><FaLocationDot /> {job.location.join(", ")}</p> */}
                     {
                       isSaved ? (
-                        <FaBookmark className='absolute right-4 top-4 text-gray-800 cursor-pointer hover:scale-110' onClick={() => handleSave(job._id)} />
+                        <FaBookmark className='absolute right-4 top-4 text-gray-800 cursor-pointer z-10 hover:scale-110' onClick={() => handleSave(job._id)} />
                       ) : (
-                        <FaRegBookmark className='absolute right-4 top-4 text-gray-800 cursor-pointer hover:scale-110' onClick={() => handleSave(job._id)} />
+                        <FaRegBookmark className='absolute right-4 top-4 text-gray-800 cursor-pointer z-10 hover:scale-110' onClick={() => handleSave(job._id)} />
                       )
                     }
 
