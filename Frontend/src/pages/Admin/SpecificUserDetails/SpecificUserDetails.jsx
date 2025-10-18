@@ -10,8 +10,8 @@ export default function SpecificUserDetails() {
 
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
-    const [loading, setLoading] = useState(false);
     const [limit] = useState(2);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         (async () => {
