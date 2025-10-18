@@ -11,9 +11,13 @@ const subscriptionSchema = new mongoose.Schema({
     startDate: Date,
     endDate: Date,
     isActive: Boolean,
-    // price: Number,
-    // paymentStatus: String
-    paymentId: String
+    paymentId: String,
+    razorpayOrderId: String,
+    amountPaid: Number,
+    currency: {
+        type: String,
+        default: "INR"
+    }
 }, { timestamps: true });
 
 const Subscription = mongoose.model("Subscription", subscriptionSchema);

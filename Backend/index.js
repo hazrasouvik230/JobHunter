@@ -6,6 +6,7 @@ const cors = require("cors");
 const path = require("path");
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
@@ -65,8 +66,11 @@ const subscriptionController = require("./app/controllers/subscriptionController
 
 // Subscription Routes
 app.get("/api/subscription/current", authenticateUser, authorizeUser(["HR"]), subscriptionController.getCurrentSubscription);
-app.post("/api/subscription/purchase", authenticateUser, authorizeUser(["HR"]), subscriptionController.purchaseSubscription);
+app.get("/api/subscription/plans", authenticateUser, authorizeUser(["HR"]), subscriptionController.getSubscriptionPlans);
+app.post("/api/subscription/create-order", authenticateUser, authorizeUser(["HR"]), subscriptionController.createSubscriptionOrder);
+app.post("/api/subscription/verify-payment", authenticateUser, authorizeUser(["HR"]), subscriptionController.verification);
 app.post("/api/subscription/cancel", authenticateUser, authorizeUser(["HR"]), subscriptionController.cancelSubscription);
+app.get("/api/subscription/get-key", authenticateUser, subscriptionController.getRazorpayKey);
 
 
 app.post("/api/interview/scheduleInterview", authenticateUser, authorizeUser(["HR"]), interviewController.scheduleInterview);
