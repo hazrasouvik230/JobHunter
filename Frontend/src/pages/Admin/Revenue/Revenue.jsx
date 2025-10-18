@@ -107,7 +107,7 @@ const Revenue = () => {
   }
 
   return (
-    <div className='px-6 md:px-32 py-12 bg-gray-50 min-h-screen'>
+    <div className='px-6 md:px-32 py-12 pb-20 bg-gray-50 min-h-screen'>
       <div className='text-center mb-8 mt-16 relative'>
         <div className="absolute left-0 top-0"><Link to="/" className="text-gray-600 hover:text-blue-800 hover:font-semibold transition-all">Back</Link></div>
 
@@ -118,19 +118,19 @@ const Revenue = () => {
       {/* Summary Cards */}
       {data && (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-          <div className="bg-white p-6 rounded-lg shadow-lg border-l-4 border-blue-500">
+          <div className="bg-white p-6 rounded-lg shadow-lg border-l-8 border-blue-500">
             <p className="text-lg text-gray-600 font-medium">Total Revenue</p>
             <p className="text-2xl font-bold text-gray-800">
               {currencyFormatter({ amount: data.summary.totalRevenue })}/-
             </p>
           </div>
           
-          <div className="bg-white p-6 rounded-lg shadow-lg border-l-4 border-purple-500">
+          <div className="bg-white p-6 rounded-lg shadow-lg border-l-8 border-purple-500">
             <p className="text-lg text-gray-600 font-medium">Active Subscriptions</p>
             <p className="text-2xl font-bold text-gray-800">{data.summary.activeSubscriptions}</p>
           </div>
           
-          <div className="bg-white p-6 rounded-lg shadow-lg border-l-4 border-amber-500">
+          <div className="bg-white p-6 rounded-lg shadow-lg border-l-8 border-amber-500">
             <p className="text-lg text-gray-600 font-medium">Expired Subscriptions</p>
             <p className="text-2xl font-bold text-gray-800">{data.summary.expiredSubscriptions}</p>
           </div>
@@ -237,7 +237,7 @@ const Revenue = () => {
 
       {/* Recent Transactions */}
       {data && data.transactions && (
-        <div className="bg-white p-6 rounded-lg shadow-lg">
+        <div className="bg-white border-2 border-gray-300 p-6 rounded-lg shadow-lg">
           <h2 className="text-xl font-semibold mb-4 text-gray-800">Recent Transactions</h2>
           <div className="space-y-4">
             {data.transactions.map((transaction, index) => (
