@@ -262,13 +262,118 @@ subscriptionController.getSubscriptionPlans = async (req, res) => {
     }
 };
 
-subscriptionController.listOfSubscriptions = async (req, res) => {
+// subscriptionController.listOfSubscriptions = async (req, res) => {
+//     try {
+//         const subscriptions = await Subscription.find()
+//             .populate('userId', 'companyName name email') // Assuming these fields in User model
+//             .select('planName jobPostsLimit jobPostsUsed isActive endDate paymentId razorpayOrderId createdAt')
+//             .sort({ createdAt: -1 });
+
+//         const formattedSubscriptions = subscriptions.map(sub => ({
+//             paymentId: sub.paymentId,
+//             companyName: sub.userId?.companyName || 'N/A',
+//             hrName: sub.userId?.name || 'N/A',
+//             planName: sub.planName,
+//             amount: subscriptionController.getPlanPrice(sub.planName), // You'll need to implement this
+//             time: sub.createdAt,
+//             status: sub.isActive ? 'Active' : 'Inactive'
+//         }));
+
+//         res.status(200).json({
+//             success: true,
+//             subscriptions: formattedSubscriptions,
+//             total: formattedSubscriptions.length
+//         });
+//     } catch (error) {
+//         console.error("List subscriptions error:", error);
+//         res.status(500).json({ 
+//             success: false, 
+//             message: "Error fetching subscription details." 
+//         });
+//     }
+// };
+
+// // Helper method to get plan price
+// subscriptionController.getPlanPrice = (planName) => {
+//     const planPrices = {
+//         "Free": 0,
+//         "Basic": 2999,
+//         "Professional": 7999,
+//         "Enterprise": 14999
+//     };
+//     return planPrices[planName] || 0;
+// };
+
+subscriptionController.transactions = async (req, res) => {
     try {
-        
+        const planPrices = {
+            "Free": 0,
+            "Basic": 2999,
+            "Professional": 7999,
+            "Enterprise": 14999
+        };
+
+        // Fetch all subscriptions with user details, excluding free plan entries without payment
+        const subscriptions = await Subscription.find({
+            $or: [
+                { paymentId: { $exists: true, $ne: null } }, // Has payment ID
+                { planName: { $ne: "Free" } } // Or not a free plan
+            ]
+        })
+            .populate('userId', 'companyName name email')
+            .select('planName jobPostsLimit jobPostsUsed isActive endDate startDate paymentId razorpayOrderId amountPaid currency createdAt updatedAt')
+            .sort({ createdAt: -1 });
+
+        const transactions = subscriptions.map(sub => {
+            const amount = sub.amountPaid || planPrices[sub.planName] || 0;
+            
+            return {
+                transactionId: sub.paymentId || sub._id.toString(),
+                orderId: sub.razorpayOrderId || 'N/A',
+                companyName: sub.userId?.companyName || 'N/A',
+                hrName: sub.userId?.name || 'N/A',
+                email: sub.userId?.email || 'N/A',
+                planName: sub.planName,
+                amount: amount,
+                currency: sub.currency || 'INR',
+                jobPostsLimit: sub.jobPostsLimit,
+                jobPostsUsed: sub.jobPostsUsed,
+                status: sub.isActive ? 'Active' : 'Inactive',
+                purchaseDate: sub.createdAt,
+                startDate: sub.startDate || sub.createdAt,
+                endDate: sub.endDate,
+                isExpired: sub.endDate ? new Date() > sub.endDate : false,
+                lastUpdated: sub.updatedAt
+            };
+        });
+
+        // Calculate summary statistics
+        const summary = {
+            totalTransactions: transactions.length,
+            totalRevenue: transactions.reduce((sum, t) => sum + t.amount, 0),
+            activeSubscriptions: transactions.filter(t => t.status === 'Active').length,
+            expiredSubscriptions: transactions.filter(t => t.isExpired).length,
+            planBreakdown: {
+                Free: transactions.filter(t => t.planName === 'Free').length,
+                Basic: transactions.filter(t => t.planName === 'Basic').length,
+                Professional: transactions.filter(t => t.planName === 'Professional').length,
+                Enterprise: transactions.filter(t => t.planName === 'Enterprise').length
+            }
+        };
+
+        res.status(200).json({
+            success: true,
+            transactions,
+            summary,
+            total: transactions.length
+        });
     } catch (error) {
-        console.log(error);
-        res.status(500).json({ success: false, message: "Something went wrong while fetching all payment details." });
+        console.error("Transactions error:", error);
+        res.status(500).json({ 
+            success: false, 
+            message: "Error fetching transaction details." 
+        });
     }
-}
+};
 
 module.exports = subscriptionController;

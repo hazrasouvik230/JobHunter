@@ -231,4 +231,18 @@ userController.updateCompanyLogo = async (req, res) => {
     }
 };
 
+userController.companies = async (req, res) => {
+    try {
+        const companies = await User.find({ 
+            role: 'HR',
+            companyName: { $exists: true, $ne: "" } 
+        }).select('name email companyName companyLogo profileImage createdAt');
+        
+        res.status(200).json({ success: true, companies });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ success: false, message: "Something went worng while fetching all companies" });
+    }
+};
+
 module.exports = userController;

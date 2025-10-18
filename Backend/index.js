@@ -34,6 +34,7 @@ app.get("/api/allAppliedJobs", authenticateUser, authorizeUser(["User"]), userCo
 app.get("/api/savedJobs", authenticateUser, authorizeUser(["User"]), userController.savedJobs);    // All saved jobs ✅
 app.put("/api/updateProfileImage", authenticateUser, upload.single("profileImage"), userController.updateProfileImage);
 app.put("/api/updateCompanyLogo", authenticateUser, upload.single("companyLogo"), userController.updateCompanyLogo);
+app.get("/api/admin/companies", authenticateUser, authorizeUser(["Admin"]), userController.companies);
 
 // Resume
 app.get("/api/myProfile", authenticateUser, resumeController.getMyProfile);
@@ -71,6 +72,7 @@ app.post("/api/subscription/create-order", authenticateUser, authorizeUser(["HR"
 app.post("/api/subscription/verify-payment", authenticateUser, authorizeUser(["HR"]), subscriptionController.verification);
 app.post("/api/subscription/cancel", authenticateUser, authorizeUser(["HR"]), subscriptionController.cancelSubscription);
 app.get("/api/subscription/get-key", authenticateUser, subscriptionController.getRazorpayKey);
+app.get('/api/admin/transactions', authenticateUser, authorizeUser(['Admin']), subscriptionController.transactions);
 
 
 app.post("/api/interview/scheduleInterview", authenticateUser, authorizeUser(["HR"]), interviewController.scheduleInterview);
