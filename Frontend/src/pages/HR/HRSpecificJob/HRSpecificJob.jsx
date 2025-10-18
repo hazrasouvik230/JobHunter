@@ -110,8 +110,8 @@ const HRSpecificJob = () => {
                                     job.applicants?.map((applicant) => {
                                         return (
                                             <tr key={applicant._id} className='border-b hover:bg-gray-50 text-center'>
-                                                <td className='border p-2'>{applicant.applicantId.name}</td>
-                                                <td className='border border-black p-2 cursor-pointer text-blue-500'>{applicant.applicantId.email}</td>
+                                                <td className='border p-2'>{applicant?.applicantId?.name}</td>
+                                                <td className='border border-black p-2 cursor-pointer text-blue-500'>{applicant?.applicantId?.email}</td>
                                                 <td className='p-2 flex items-center justify-center'><p className='px-4 py-1 bg-amber-400 font-semibold text-white rounded'>Resume</p></td>
                                                 <td className='border p-2'>
                                                     <div className='flex items-center justify-center gap-2'>

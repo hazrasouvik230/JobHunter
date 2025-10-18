@@ -35,6 +35,7 @@ app.get("/api/savedJobs", authenticateUser, authorizeUser(["User"]), userControl
 app.put("/api/updateProfileImage", authenticateUser, upload.single("profileImage"), userController.updateProfileImage);
 app.put("/api/updateCompanyLogo", authenticateUser, upload.single("companyLogo"), userController.updateCompanyLogo);
 app.get("/api/admin/companies", authenticateUser, authorizeUser(["Admin"]), userController.companies);
+app.delete(`/api/admin/removeUser/:id`, authenticateUser, authorizeUser(["Admin"]), userController.removeUser);
 
 // Resume
 app.get("/api/myProfile", authenticateUser, resumeController.getMyProfile);

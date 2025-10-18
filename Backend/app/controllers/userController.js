@@ -5,6 +5,7 @@ const User = require("../models/userModel");
 const Job = require("../models/jobModel");
 const { userRegisterValidationSchema, userLoginValidationSchema } = require("../validations/userValidation");
 const Resume = require("../models/resumeModal");
+const Interview = require("../models/interviewModel");
 
 const userController = {};
 
@@ -242,6 +243,49 @@ userController.companies = async (req, res) => {
     } catch (error) {
         console.log(error);
         res.status(500).json({ success: false, message: "Something went worng while fetching all companies" });
+    }
+};
+
+userController.removeUser = async (req, res) => {
+    const id = req.params.id;
+    try {
+        const jobsToDelete = await Job.find({ postedBy: id });
+
+        for(const job of jobsToDelete) {
+            await User.updateMany(
+                { appliedJobs: job._id },
+                { $pull: { appliedJobs: job._id } }
+            );
+
+            await User.updateMany(
+                { savedJobs: job._id },
+                { $pull: { savedJobs: job._id } }
+            );
+        }
+
+        await Job.deleteMany({ postedBy: id });
+
+        await Job.updateMany(
+            { "applicants.applicantId": id },
+            { $pull: { applicants: { applicantId: id } } },
+        );
+
+        await Interview.deleteMany({
+            $or: [
+                { applicantId: id },
+                { hrId: id }
+            ]
+        });
+
+        const user = await User.findByIdAndDelete(id);
+        if(!user) {
+            return res.status(404).json({ success: false, message: "User not found." });
+        }
+
+        res.status(200).json({ success: true, message: "User data deleted successfully" });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ success: false, message: "Something went wrong while deleting the user."})
     }
 };
 

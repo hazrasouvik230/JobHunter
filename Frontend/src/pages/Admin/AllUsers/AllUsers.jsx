@@ -8,35 +8,50 @@ const AllUsers = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [limit] = useState(5);
 
+  
   useEffect(() => {
     const fetchUsers = async() => {
       try {
         const response = await axios.get("http://localhost:3000/api/list");
         console.log(response.data.users);
         setUsers(response.data.users);
-
+  
         setTotalPages(Math.ceil(response.data.users.length / limit));
       } catch (error) {
         console.log(error);
       }
     };
-
     fetchUsers();
-  }, []);
+  }, [limit]);
 
-  const handleRemove = (id) => {
+  const handleRemove = async (id) => {
     const confirmation = window.confirm("Are you sure to remove this user?");
     if(confirmation) {
-      const newArr = users.filter(user => user._id !== id);
-      setUsers(newArr);
+      try {
+        const token = localStorage.getItem("token");
+        const response = await axios.delete(`http://localhost:3000/api/admin/removeUser/${id}`, { headers: { Authorization: token }});
+        console.log(response.data);
 
-      setTotalPages(Math.ceil(newArr.length / limit));
+        if(response.data.success) {
+          const newArr = users.filter(user => user._id !== id);
+          setUsers(newArr);
+          const newTotalPages = Math.ceil(newArr.length / limit);
+          setTotalPages(newTotalPages);
+          
+          // If current page is now empty, go to previous page
+          if (page > newTotalPages && newTotalPages > 0) {
+            setPage(newTotalPages);
+          }
+        }
+      } catch (error) {
+        console.log(error);
+      }
     }
   };
 
   const navigate = useNavigate();
+
   const handleUser = (id) => {
-    alert(`Switching to ${id}`);
     navigate(`/admin/specific-users/${id}`);
   };
 
@@ -62,8 +77,8 @@ const AllUsers = () => {
       <div className='text-center mb-8 mt-16 relative'>
           <div className="absolute left-0 top-0"><Link to="/" className="text-gray-600 hover:text-blue-800 hover:font-semibold transition-all">Back</Link></div>
 
-          <p className='text-4xl font-bold text-gray-900 mb-4'>All Users List</p>
-          <p className='text-xl text-gray-600 max-w-2xl mx-auto'>Find the best talent for your company.</p>
+          <p className='text-4xl font-bold text-shadow-lg text-gray-900 mb-4'>All Users List</p>
+          <p className='text-xl text-gray-600 max-w-2xl mx-auto'>Track your users</p>
       </div>
 
       <div className='flex flex-col lg:flex-row gap-6'>

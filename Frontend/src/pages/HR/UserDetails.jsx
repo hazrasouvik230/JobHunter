@@ -12,13 +12,14 @@ export default function UserDetails() {
             try {
                 const token = localStorage.getItem("token");
                 const response = await axios.get(`http://localhost:3000/api/job/allPostedJobsByHR`, { headers: { Authorization: token } });
-                console.log(response.data.jobs);
+                // console.log(response.data.jobs);
                 setAllJobs(response.data.jobs);
 
                 // Fetch subscription info
                 const subResponse = await axios.get(`http://localhost:3000/api/subscription/current`, {
                     headers: { Authorization: token }
                 });
+                // console.log(subResponse.data.subscription);
                 setSubscriptionInfo(subResponse.data.subscription);
             } catch (error) {
                 console.log(error);
@@ -40,7 +41,7 @@ export default function UserDetails() {
                 
                 <p className="pt-2">Total jobs posted: {allJobs.length}</p>
                 <p>Live posted jobs: {liveJobs.length}</p>
-                <p className={`font-medium ${subscriptionInfo?.remainingPosts <= 0 ? 'text-red-600' : 'text-green-600'}`}>Remaining posts: {subscriptionInfo?.remainingPosts || 0}/{subscriptionInfo?.jobPostsLimit || 3}</p>
+                <p className={`font-medium ${subscriptionInfo?.remainingPosts <= 0 ? 'text-red-600' : 'text-green-600'}`}>Remaining posts: {subscriptionInfo?.jobPostsLimit === 999999 ? "Unlimited" : `${subscriptionInfo?.remainingPosts || 0}/${subscriptionInfo?.jobPostsLimit || 3}`}</p>
                 {
                     subscriptionInfo?.isExpired && (
                         <p className="text-red-600 text-sm mt-2">Subscription Expired!</p>

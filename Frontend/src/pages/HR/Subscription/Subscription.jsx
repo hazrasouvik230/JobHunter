@@ -580,28 +580,9 @@ export default function Subscription() {
   return (
     <div className='px-6 md:px-32 py-12 bg-gray-50 min-h-screen'>
       <div className='text-center mb-16 mt-16 relative'>
-        <div className="absolute left-0 top-0">
-          <Link to="/hr/post-job" className="text-blue-600 hover:text-blue-800 font-medium">
-            ← Back to Post Job
-          </Link>
-        </div>
+        <div className="absolute left-0 top-0"><Link to="/hr/post-job" className="text-gray-400 hover:text-blue-800 hover:font-semibold">Back</Link></div>
 
-        {currentSubscription && (
-          <div className="mb-8 p-4 bg-blue-50 border border-blue-200 rounded-lg inline-block">
-            <p className="text-sm text-gray-600">Current Plan</p>
-            <p className="text-xl font-bold text-blue-600">{currentSubscription.planName}</p>
-            <p className="text-sm text-gray-600">
-              {currentSubscription.jobPostsUsed}/{currentSubscription.jobPostsLimit === 999999 ? 'Unlimited' : currentSubscription.jobPostsLimit} posts used
-            </p>
-            {currentSubscription.endDate && (
-              <p className="text-sm text-gray-600">
-                Valid until: {new Date(currentSubscription.endDate).toLocaleDateString()}
-              </p>
-            )}
-          </div>
-        )}
-
-        <h1 className='text-4xl font-bold text-gray-900 mb-4'>Choose Your Hiring Plan</h1>
+        <h1 className='text-4xl text-shadow-lg font-bold text-gray-900 mb-4'>Choose Your Hiring Plan</h1>
         <p className='text-xl text-gray-600 max-w-2xl mx-auto'>
           Scale your recruitment efforts with our flexible subscription plans designed for HR professionals
         </p>
@@ -690,6 +671,21 @@ export default function Subscription() {
           );
         })}
       </div>
+
+      {/* {currentSubscription && (
+          <div className="mb-8 p-4 bg-blue-50 border border-blue-200 rounded-lg inline-block">
+            <p className="text-sm text-gray-600">Current Plan</p>
+            <p className="text-xl font-bold text-blue-600">{currentSubscription.planName}</p>
+            <p className="text-sm text-gray-600">
+              {currentSubscription.jobPostsUsed}/{currentSubscription.jobPostsLimit === 999999 ? 'Unlimited' : currentSubscription.jobPostsLimit} posts used
+            </p>
+            {currentSubscription.endDate && (
+              <p className="text-sm text-gray-600">
+                Valid until: {new Date(currentSubscription.endDate).toLocaleDateString()}
+              </p>
+            )}
+          </div>
+        )} */}
 
       {/* Loading Overlay */}
       {loading && (
