@@ -1,576 +1,3 @@
-// import axios from "./config/axios";
-// import { useCallback, useContext, useEffect, useRef, useState } from "react"
-// import { useParams } from "react-router-dom";
-// import { AuthContext } from "./context/AuthContext";
-// import peer from "./services/peer";
-
-// export default function Interview() {
-//     const { user } = useContext(AuthContext)
-//     const { id } = useParams();
-//     console.log(user);
-
-//     const [userStream, setUserStream] = useState(null);
-//     const [interviewDetails, setInterviewDetails] = useState(null);
-//     const videoRef = useRef(null);
-
-//     useEffect(() => {
-//         (async() => {
-//             try {
-//                 const token = localStorage.getItem("token");
-//                 const response = await axios.get(`http://localhost:3000/api/interview/specificInterview/${id}`, { headers: { Authorization: token } });
-//                 console.log(response.data.interview);
-
-//                 setInterviewDetails(response.data.interview);
-//             } catch (error) {
-//                 console.log(error);
-//             }
-//         })();
-//     }, [id]);
-
-//     useEffect(() => {
-//         if(userStream && videoRef.current) {
-//             videoRef.current.srcObject = userStream;
-//         }
-//     }, [userStream]);
-
-//     const handleUser = useCallback(async() => {
-//         console.log("clicked");
-//         try {
-//             const stream = await navigator.mediaDevices.getUserMedia({
-//                 audio: true,
-//                 video: true
-//             });
-//             setUserStream(stream);
-//         } catch (error) {
-//             console.log(error);
-//         }
-//     }, []);
-
-//     const handleClose = useCallback(async() => {
-//         console.log("clicked for close");
-//         try {
-//             if(userStream) {
-//                 userStream.getTracks().forEach(element => element.stop());
-//                 setUserStream(null);
-//             }
-//         } catch (error) {
-//             console.log(error);
-//         }
-//     }, [userStream]);
-
-//     const handleCallUser = useCallback(async () => {
-//         try {
-//             const stream = await navigator.mediaDevices.getUserMedia({ 
-//                 audio: true, 
-//                 video: true 
-//             }).catch(error => {
-//                 console.error("Error accessing media devices:", error);
-//                 return navigator.mediaDevices.getUserMedia({ audio: true });
-//             });
-            
-//             setMyStream(stream);
-
-//             stream.getTracks().forEach(track => {
-//                 peer.peer.addTrack(track, stream);
-//             });
-            
-//             const offer = await peer.getOffer();
-//             socket.emit("user:call", { to: remoteSocketId, offer });
-//         } catch (error) {
-//             console.error("Error calling user:", error);
-//             alert("Error accessing camera/microphone. Please check permissions.");
-//         }
-//     }, [remoteSocketId, socket]);
-
-//     return (
-//         <div className="relative">
-//             <div className='px-6 md:px-32 py-14 bg-gray-50'>
-//                 <div className='mt-16 flex items-center justify-center'>
-//                     {
-//                         interviewDetails && (
-//                                 <div className="bg-white rounded-3xl shadow-2xl max-w-xl w-full p-12 text-center">
-//                                     <h1 className="text-3xl text-gray-800 font-bold mb-4">{interviewDetails.jobId.title}</h1>
-//                                     <div className="text-2xl text-indigo-500 font-semibold mb-8">{interviewDetails.hrId.companyName}</div>
-
-//                                     {
-//                                         user.role === "HR" && (
-//                                             <>
-//                                                 <div className="flex items-center justify-between">
-//                                                     <div className="bg-gray-50 rounded-2xl p-6 my-8 border-2 border-gray-200">
-//                                                         <div className="text-2xl text-gray-800 font-bold mb-2">{user.name}</div>
-//                                                         <div className="text-gray-500 text-base mb-4">{user.email}</div>
-//                                                     </div>
-                
-//                                                     <p>&rarr;</p>
-                
-//                                                     <div className="bg-gray-50 rounded-2xl p-6 my-8 border-2 border-gray-200">
-//                                                         <div className="text-2xl text-gray-800 font-bold mb-2">{interviewDetails.applicantId.name}</div>
-//                                                         <div className="text-gray-500 text-base mb-4">{interviewDetails.applicantId.email}</div>
-//                                                     </div>
-//                                                 </div>
-                                                
-//                                                 <button className="inline-flex items-center gap-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white border-none py-3 px-8 rounded-xl text-base font-semibold cursor-pointer transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0" onclick={handleCallUser}><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>Start Call</button>
-//                                             </>
-//                                         )
-//                                     }
-
-//                                     {
-//                                         user.role === "User" && (
-//                                             <>
-//                                                 <div className="bg-gray-50 rounded-2xl p-6 my-8 border-2 border-gray-200">
-//                                                     <div className="text-2xl text-gray-800 font-bold mb-2">{user.name}</div>
-//                                                     <div className="text-gray-500 text-base mb-4">{user.email}</div>
-//                                                 </div>
-//                                                 <button class="inline-flex items-center gap-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white border-none py-3 px-8 rounded-xl text-base font-semibold cursor-pointer transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0" onClick={handleUser}><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>Accept Call</button>
-//                                             </>
-//                                         )
-//                                     }
-
-//                                     <div className="my-6">
-//                                         <div className="inline-flex gap-2">
-//                                             <div className="w-2.5 h-2.5 bg-indigo-500 rounded-full"></div>
-//                                             <div className="w-2.5 h-2.5 bg-indigo-500 rounded-full"></div>
-//                                             <div className="w-2.5 h-2.5 bg-indigo-500 rounded-full"></div>
-//                                         </div>
-//                                     </div>
-
-//                                     <p className="text-gray-500 text-sm mt-8">
-//                                         {
-//                                             user.role === "HR" ? "Creating a welcoming and supportive environment during the interview process not only helps candidates perform their best, but also reflects the values and culture of the organization." : "Please wait while we prepare your interview session. The interviewer will join shortly. Make sure your audio and video are working properly."
-//                                         }
-//                                     </p>
-//                                 </div>
-//                             // </div>
-//                         )
-//                     }
-//                 </div>
-
-
-//             </div>
-            
-//             {
-//                 userStream && <div className="absolute top-0 left-0 bg-gray-600 z-50 overflow-hidden min-h-screen min-w-screen flex items-center justify-center border">
-//                     <video autoPlay playsInline ref={videoRef} className="w-full h-screen"></video>
-//                     <button onClick={handleClose}>Close</button>
-//                 </div>
-//             }
-//         </div>
-//     )
-// }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// Remote video is not showing
-// import axios from "./config/axios";
-// import { useCallback, useContext, useEffect, useRef, useState } from "react"
-// import { useParams } from "react-router-dom";
-// import { AuthContext } from "./context/AuthContext";
-// import peer from "./services/peer";
-// import io from "socket.io-client";
-
-// export default function Interview() {
-//     const { user } = useContext(AuthContext)
-//     const { id } = useParams();
-    
-//     const [socket, setSocket] = useState(null);
-//     const [remoteSocketId, setRemoteSocketId] = useState(null);
-//     const [myStream, setMyStream] = useState(null);
-//     const [remoteStream, setRemoteStream] = useState(null);
-//     const [interviewDetails, setInterviewDetails] = useState(null);
-//     const [roomUsers, setRoomUsers] = useState([]);
-    
-//     const localVideoRef = useRef(null);
-//     const remoteVideoRef = useRef(null);
-
-//     useEffect(() => {
-//         // Initialize socket connection
-//         const newSocket = io("http://localhost:3000");
-//         setSocket(newSocket);
-
-//         return () => {
-//             newSocket.close();
-//         };
-//     }, []);
-
-//     // Configure peer service callbacks
-//     useEffect(() => {
-//         peer.setOnIceCandidate((candidate) => {
-//             if (socket && remoteSocketId) {
-//                 socket.emit("ice-candidate", {
-//                     to: remoteSocketId,
-//                     candidate
-//                 });
-//             }
-//         });
-
-//         peer.setOnRemoteTrack((stream) => {
-//             console.log("Setting remote stream from peer service");
-//             setRemoteStream(stream);
-//         });
-//     }, [socket, remoteSocketId]);
-
-//     useEffect(() => {
-//         if (!socket) return;
-
-//         // Socket event handlers
-//         const handleUserJoined = (data) => {
-//             console.log("User joined:", data);
-//             if (data.email !== user.email) {
-//                 setRemoteSocketId(data.socketId);
-//                 // Add to room users list
-//                 setRoomUsers(prev => [...prev, {
-//                     socketId: data.socketId,
-//                     email: data.email,
-//                     role: data.role
-//                 }]);
-//             }
-//         };
-
-//         const handleRoomJoin = (data) => {
-//             console.log("Joined room:", data);
-//             if (data.existingUsers && data.existingUsers.length > 0) {
-//                 setRoomUsers(data.existingUsers);
-//                 // Set the first remote user as target (you might want to handle multiple users differently)
-//                 const targetUser = data.existingUsers.find(u => u.role !== user.role);
-//                 if (targetUser) {
-//                     setRemoteSocketId(targetUser.socketId);
-//                 }
-//             }
-//         };
-
-//         const handleIncomingCall = async ({ from, offer }) => {
-//             console.log("Incoming call from:", from);
-//             setRemoteSocketId(from);
-            
-//             try {
-//                 const stream = await navigator.mediaDevices.getUserMedia({ 
-//                     audio: true, 
-//                     video: true 
-//                 });
-//                 setMyStream(stream);
-                
-//                 if (localVideoRef.current) {
-//                     localVideoRef.current.srcObject = stream;
-//                 }
-                
-//                 // Add tracks to peer connection
-//                 stream.getTracks().forEach(track => {
-//                     peer.peer.addTrack(track, stream);
-//                 });
-                
-//                 const answer = await peer.getAnswer(offer);
-//                 socket.emit("call:accepted", { to: from, answer });
-                
-//             } catch (error) {
-//                 console.error("Error handling incoming call:", error);
-//             }
-//         };
-
-//         const handleCallAccepted = async ({ answer }) => {
-//             console.log("Call accepted");
-//             await peer.setLocalDescription(answer);
-//         };
-
-//         const handleUserLeft = (data) => {
-//             console.log("User left:", data);
-//             setRoomUsers(prev => prev.filter(user => user.socketId !== data.socketId));
-//             if (data.socketId === remoteSocketId) {
-//                 setRemoteSocketId(null);
-//             }
-//         };
-
-//         const handleIceCandidate = async ({ candidate }) => {
-//             try {
-//                 await peer.addIceCandidate(candidate);
-//             } catch (error) {
-//                 console.error("Error adding ICE candidate:", error);
-//             }
-//         };
-
-//         socket.on("user:joined", handleUserJoined);
-//         socket.on("room:join", handleRoomJoin);
-//         socket.on("incoming:call", handleIncomingCall);
-//         socket.on("call:accepted", handleCallAccepted);
-//         socket.on("user:left", handleUserLeft);
-//         socket.on("ice-candidate", handleIceCandidate);
-
-//         return () => {
-//             socket.off("user:joined", handleUserJoined);
-//             socket.off("room:join", handleRoomJoin);
-//             socket.off("incoming:call", handleIncomingCall);
-//             socket.off("call:accepted", handleCallAccepted);
-//             socket.off("user:left", handleUserLeft);
-//             socket.off("ice-candidate", handleIceCandidate);
-//         };
-//     }, [socket, user]);
-
-//     useEffect(() => {
-//         if (!socket || !interviewDetails || !user) return;
-
-//         // Join room when interview details are available
-//         const roomId = interviewDetails._id;
-//         socket.emit("room:join", {
-//             email: user.email,
-//             roomId: roomId,
-//             role: user.role
-//         });
-//     }, [socket, interviewDetails, user]);
-
-//     useEffect(() => {
-//         (async() => {
-//             try {
-//                 const token = localStorage.getItem("token");
-//                 const response = await axios.get(`http://localhost:3000/api/interview/specificInterview/${id}`, { 
-//                     headers: { Authorization: token } 
-//                 });
-//                 console.log(response.data.interview);
-//                 setInterviewDetails(response.data.interview);
-//             } catch (error) {
-//                 console.log(error);
-//             }
-//         })();
-//     }, [id]);
-
-//     // Handle local stream display
-//     useEffect(() => {
-//         if (myStream && localVideoRef.current) {
-//             localVideoRef.current.srcObject = myStream;
-//         }
-//     }, [myStream]);
-
-//     // Handle remote stream display
-//     useEffect(() => {
-//         if (remoteStream && remoteVideoRef.current) {
-//             remoteVideoRef.current.srcObject = remoteStream;
-//         }
-//     }, [remoteStream]);
-
-//     const handleCallUser = useCallback(async () => {
-//         console.log("Making call to:", remoteSocketId);
-//         if (!remoteSocketId) {
-//             console.error("No remote socket ID available");
-//             return;
-//         }
-
-//         try {
-//             const stream = await navigator.mediaDevices.getUserMedia({ 
-//                 audio: true, 
-//                 video: true 
-//             });
-            
-//             setMyStream(stream);
-
-//             if (localVideoRef.current) {
-//                 localVideoRef.current.srcObject = stream;
-//             }
-
-//             // Add tracks to peer connection
-//             stream.getTracks().forEach(track => {
-//                 peer.peer.addTrack(track, stream);
-//             });
-            
-//             const offer = await peer.getOffer();
-//             socket.emit("user:call", { to: remoteSocketId, offer });
-            
-//         } catch (error) {
-//             console.error("Error calling user:", error);
-//             alert("Error accessing camera/microphone. Please check permissions.");
-//         }
-//     }, [remoteSocketId, socket]);
-
-//     const handleEndCall = useCallback(() => {
-//         console.log("Ending call");
-//         if (myStream) {
-//             myStream.getTracks().forEach(track => track.stop());
-//             setMyStream(null);
-//         }
-//         if (remoteStream) {
-//             remoteStream.getTracks().forEach(track => track.stop());
-//             setRemoteStream(null);
-//         }
-//         setRemoteSocketId(null);
-//         peer.close();
-//     }, [myStream, remoteStream]);
-
-//     const isCallActive = myStream || remoteStream;
-
-//     return (
-//         <div className="relative">
-//             <div className='px-6 md:px-32 py-14 bg-gray-50'>
-//                 <div className='mt-16 flex items-center justify-center'>
-//                     {interviewDetails && (
-//                         <div className="bg-white rounded-3xl shadow-2xl max-w-xl w-full p-12 text-center">
-//                             <h1 className="text-3xl text-gray-800 font-bold mb-4">
-//                                 {interviewDetails.jobId.title}
-//                             </h1>
-//                             <div className="text-2xl text-indigo-500 font-semibold mb-8">
-//                                 {interviewDetails.hrId.companyName}
-//                             </div>
-
-//                             {/* Debug info */}
-//                             <div className="text-sm text-gray-500 mb-4">
-//                                 Room Users: {roomUsers.length} | 
-//                                 Remote Socket: {remoteSocketId ? 'Connected' : 'Disconnected'}
-//                             </div>
-
-//                             {user.role === "HR" && (
-//                                 <>
-//                                     <div className="flex items-center justify-between">
-//                                         <div className="bg-gray-50 rounded-2xl p-6 my-8 border-2 border-gray-200">
-//                                             <div className="text-2xl text-gray-800 font-bold mb-2">
-//                                                 {user.name}
-//                                             </div>
-//                                             <div className="text-gray-500 text-base mb-4">
-//                                                 {user.email}
-//                                             </div>
-//                                         </div>
-                
-//                                         <p>&rarr;</p>
-                
-//                                         <div className="bg-gray-50 rounded-2xl p-6 my-8 border-2 border-gray-200">
-//                                             <div className="text-2xl text-gray-800 font-bold mb-2">
-//                                                 {interviewDetails.applicantId.name}
-//                                             </div>
-//                                             <div className="text-gray-500 text-base mb-4">
-//                                                 {interviewDetails.applicantId.email}
-//                                             </div>
-//                                         </div>
-//                                     </div>
-                                    
-//                                     {!isCallActive ? (
-//                                         <button 
-//                                             className="inline-flex items-center gap-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white border-none py-3 px-8 rounded-xl text-base font-semibold cursor-pointer transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0"
-//                                             onClick={handleCallUser}
-//                                             disabled={!remoteSocketId}
-//                                         >
-//                                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-//                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
-//                                             </svg>
-//                                             {remoteSocketId ? "Start Call" : "Waiting for candidate..."}
-//                                         </button>
-//                                     ) : (
-//                                         <button 
-//                                             className="inline-flex items-center gap-2 bg-red-600 text-white border-none py-3 px-8 rounded-xl text-base font-semibold cursor-pointer transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0"
-//                                             onClick={handleEndCall}
-//                                         >
-//                                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-//                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
-//                                             </svg>
-//                                             End Call
-//                                         </button>
-//                                     )}
-//                                 </>
-//                             )}
-
-//                             {user.role === "User" && (
-//                                 <>
-//                                     <div className="bg-gray-50 rounded-2xl p-6 my-8 border-2 border-gray-200">
-//                                         <div className="text-2xl text-gray-800 font-bold mb-2">
-//                                             {user.name}
-//                                         </div>
-//                                         <div className="text-gray-500 text-base mb-4">
-//                                             {user.email}
-//                                         </div>
-//                                     </div>
-                                    
-//                                     {isCallActive ? (
-//                                         <button 
-//                                             className="inline-flex items-center gap-2 bg-red-600 text-white border-none py-3 px-8 rounded-xl text-base font-semibold cursor-pointer transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0"
-//                                             onClick={handleEndCall}
-//                                         >
-//                                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-//                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
-//                                             </svg>
-//                                             End Call
-//                                         </button>
-//                                     ) : (
-//                                         <div className="text-gray-600">
-//                                             {remoteSocketId ? "Ready for call..." : "Waiting for HR to join..."}
-//                                         </div>
-//                                     )}
-//                                 </>
-//                             )}
-
-//                             <div className="my-6">
-//                                 <div className="inline-flex gap-2">
-//                                     <div className="w-2.5 h-2.5 bg-indigo-500 rounded-full"></div>
-//                                     <div className="w-2.5 h-2.5 bg-indigo-500 rounded-full"></div>
-//                                     <div className="w-2.5 h-2.5 bg-indigo-500 rounded-full"></div>
-//                                 </div>
-//                             </div>
-
-//                             <p className="text-gray-500 text-sm mt-8">
-//                                 {user.role === "HR" 
-//                                     ? "Creating a welcoming and supportive environment during the interview process not only helps candidates perform their best, but also reflects the values and culture of the organization." 
-//                                     : "Please wait while we prepare your interview session. The interviewer will join shortly. Make sure your audio and video are working properly."
-//                                 }
-//                             </p>
-//                         </div>
-//                     )}
-//                 </div>
-//             </div>
-            
-//             {/* Video call interface */}
-//             {isCallActive && (
-//                 <div className="fixed inset-0 bg-gray-900 z-50 flex flex-col">
-//                     <div className="flex-1 relative">
-//                         {/* Remote video */}
-//                         <video 
-//                             autoPlay 
-//                             playsInline 
-//                             ref={remoteVideoRef} 
-//                             className="w-full h-full object-cover"
-//                         />
-                        
-//                         {/* Local video preview */}
-//                         {myStream && (
-//                             <div className="absolute bottom-4 right-4 w-64 h-48 bg-black rounded-lg shadow-lg overflow-hidden">
-//                                 <video 
-//                                     autoPlay 
-//                                     playsInline 
-//                                     muted
-//                                     ref={localVideoRef} 
-//                                     className="w-full h-full object-cover"
-//                                 />
-//                             </div>
-//                         )}
-//                     </div>
-                    
-//                     {/* Call controls */}
-//                     <div className="bg-gray-800 p-4 flex justify-center space-x-4">
-//                         <button 
-//                             className="bg-red-600 text-white p-4 rounded-full hover:bg-red-700 transition-colors"
-//                             onClick={handleEndCall}
-//                         >
-//                             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-//                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
-//                             </svg>
-//                         </button>
-//                     </div>
-//                 </div>
-//             )}
-//         </div>
-//     );
-// }
-
-
-
-
-
-
-
-
 // Correct
 import axios from "./config/axios";
 import { useCallback, useContext, useEffect, useRef, useState } from "react"
@@ -578,6 +5,12 @@ import { useParams } from "react-router-dom";
 import { AuthContext } from "./context/AuthContext";
 import peer from "./services/peer";
 import io from "socket.io-client";
+
+import { BiSolidMicrophone } from "react-icons/bi";
+import { BiSolidMicrophoneOff } from "react-icons/bi";
+import { IoVideocam } from "react-icons/io5";
+import { IoVideocamOff } from "react-icons/io5";
+import { MdCallEnd } from "react-icons/md";
 
 export default function Interview() {
     const { user } = useContext(AuthContext)
@@ -593,6 +26,9 @@ export default function Interview() {
     
     const localVideoRef = useRef(null);
     const remoteVideoRef = useRef(null);
+
+    const [mic, setMic] = useState(true);
+    const [camera, setCamera] = useState(true);
 
     // Initialize socket connection
     useEffect(() => {
@@ -889,7 +325,7 @@ export default function Interview() {
                 <div className='px-6 md:px-32 py-14 bg-gray-50'>
                     <div className='mt-16 flex items-center justify-center'>
                         {interviewDetails && (
-                            <div className="bg-white rounded-3xl shadow-2xl max-w-4xl w-full p-8 text-center">
+                            <div className="bg-white rounded-3xl shadow-2xl max-w-xl w-full p-8 text-center">
                                 <h1 className="text-3xl text-gray-800 font-bold mb-4">
                                     {interviewDetails.jobId.title}
                                 </h1>
@@ -897,41 +333,12 @@ export default function Interview() {
                                     {interviewDetails.hrId.companyName}
                                 </div>
 
-                                {/* Video previews with better styling */}
-                                {/* <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                                    <div className="bg-gray-50 p-4 rounded-lg border-2 border-gray-200">
-                                        <h3 className="text-lg font-semibold mb-3 text-gray-700">Your Camera</h3>
-                                        <video 
-                                            ref={localVideoRef}
-                                            autoPlay
-                                            playsInline
-                                            muted
-                                            className="w-full h-48 bg-black rounded-lg"
-                                        />
-                                        <div className="mt-2 text-sm text-gray-600">
-                                            {myStream ? 'Live' : 'No video'}
-                                        </div>
-                                    </div>
-                                    <div className="bg-gray-50 p-4 rounded-lg border-2 border-gray-200">
-                                        <h3 className="text-lg font-semibold mb-3 text-gray-700">Remote Video</h3>
-                                        <video 
-                                            ref={remoteVideoRef}
-                                            autoPlay
-                                            playsInline
-                                            className="w-full h-48 bg-black rounded-lg"
-                                        />
-                                        <div className="mt-2 text-sm text-gray-600">
-                                            {remoteStream ? 'Live' : 'Waiting for connection...'}
-                                        </div>
-                                    </div>
-                                </div> */}
-
                                 {user.role === "HR" && (
                                     <>
                                         <div className="flex items-center justify-between mb-8">
                                             <div className="bg-gray-50 rounded-2xl p-6 border-2 border-gray-200">
                                                 <div className="text-xl text-gray-800 font-bold mb-2">
-                                                    {user.name} (You)
+                                                    {user.name}
                                                 </div>
                                                 <div className="text-gray-500 text-sm">
                                                     {user.email}
@@ -1010,8 +417,41 @@ export default function Interview() {
             </div>
 
             {
-                myStream && remoteStream && <div className="w-screen border-2 border-green-500 h-screen absolute top-0 left-0">
-                    
+                myStream && <div className="w-screen h-screen absolute top-0 left-0 bg-black">
+                    <div className="relative">
+                        <video 
+                            ref={localVideoRef}
+                            autoPlay
+                            playsInline
+                            muted
+                            className="w-80 h-48 bg-black rounded-lg absolute bottom-0 right-0 z-20"
+                            />
+
+                        <video 
+                            ref={remoteVideoRef}
+                            autoPlay
+                            playsInline
+                            className="w-full h-screen bg-black rounded-lg z-50"
+                        />
+
+                        <div className="absolute bottom-3 flex items-center justify-center w-full z-50 gap-4">
+                            <button className={`rounded-lg ${camera ? "bg-gray-500" : "bg-red-600 text-white"} px-8 py-3`} onClick={() => {
+                                const videoTrack = myStream?.getVideoTracks()[0];
+                                if (videoTrack) {
+                                    videoTrack.enabled = !videoTrack.enabled;
+                                    setCamera(videoTrack.enabled);
+                                }
+                            }}>{camera ? <IoVideocam /> : <IoVideocamOff />}</button>
+                            <button className={`rounded-lg ${mic ? "bg-gray-500" : "bg-red-600 text-white"} px-8 py-3`} onClick={() => {
+                                const audioTrack = myStream?.getAudioTracks()[0];
+                                if (audioTrack) {
+                                    audioTrack.enabled = !audioTrack.enabled;
+                                    setMic(audioTrack.enabled);
+                                }
+                            }}>{mic ? <BiSolidMicrophone /> : <BiSolidMicrophoneOff />}</button>
+                            <button className="inline-flex items-center gap-2 bg-red-600 text-white border-none py-3 px-8 rounded-lg z-50 text-base font-semibold cursor-pointer transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0" onClick={handleEndCall}><MdCallEnd /></button>
+                        </div>
+                    </div>
                 </div>
             }
         </div>
