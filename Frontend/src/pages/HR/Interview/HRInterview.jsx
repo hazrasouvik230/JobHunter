@@ -1,17 +1,13 @@
 import axios from 'axios';
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { SiGooglemeet } from "react-icons/si";
 import { Link, useNavigate } from 'react-router-dom';
+import { AuthContext } from '../../../context/AuthContext';
+import { useSocket } from '../../../context/SocketProvider';
 
 const Interview = () => {
-  const HRInterviews = [
-    { userName: "Souvik", role: "Service", date: "Aug 31, 2025", time: "14:00:00" },
-    { userName: "Sandhit", role: "Service", date: "Aug 31, 2025", time: "14:00:00" },
-    { userName: "Protyush", role: "Service", date: "Aug 31, 2025", time: "14:00:00" },
-    { userName: "Tanmoy", role: "Service", date: "Aug 31, 2025", time: "14:00:00" },
-    { userName: "Prajal", role: "Service", date: "Aug 31, 2025", time: "14:00:00" },
-    { userName: "Sanjay", role: "Service", date: "Aug 31, 2025", time: "14:00:00" },
-  ];
+  const { user }= useContext(AuthContext);
+  const socket = useSocket();
 
   const [interviews, setInterviews] = useState([]);
 
@@ -30,6 +26,33 @@ const Interview = () => {
   }, []);
 
   const navigate = useNavigate();
+
+  const handleJoinRoom = useCallback((data) => {
+    console.log("Clicked");
+    const { roomId } = data;
+    navigate(`/interview/${roomId}`);
+  }, [navigate]);
+
+  useEffect(() => {
+    if(socket) {
+      socket.on("room:join", handleJoinRoom);
+
+      return () => {
+        socket.off("room:join", handleJoinRoom);
+      }
+    }
+  }, [socket, handleJoinRoom]);
+
+  const joinRoom = useCallback(meetingLink => {
+    if (socket && user) {
+      const email = user.email;
+      const role = user.role;
+      const roomId = meetingLink;
+
+      socket.emit("room:join", { email, roomId, role });
+      console.log("Joining room:", { email, roomId, role });
+    }
+  }, [socket, user]);
 
   return (
     <div className='px-6 md:px-32 py-12 bg-gray-50 min-h-screen'>
@@ -73,7 +96,7 @@ const Interview = () => {
                       <p>{interview.rating}</p>
                     </div>
 
-                    <button className='flex gap-2 items-center bg-sky-500 px-8 py-2 rounded-md cursor-pointer text-white' onClick={() => navigate(`/interview/${interview.meetingLink}`)}><SiGooglemeet />Join Meeting</button>
+                    <button className='flex gap-2 items-center bg-sky-500 px-8 py-2 rounded-md cursor-pointer text-white' onClick={() => joinRoom(interview.meetingLink)}><SiGooglemeet />Join Meeting</button>
                   </div>
                 </div>
               })

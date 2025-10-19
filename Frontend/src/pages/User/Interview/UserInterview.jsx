@@ -81,17 +81,18 @@
 
 
 
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { IoVideocam } from "react-icons/io5";
 import { AuthContext } from '../../../context/AuthContext';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
+import { useSocket } from '../../../context/SocketProvider';
 
 const Interview = () => {
-  const [interviews, setInterviews] = useState([]);
-
   const { user }= useContext(AuthContext);
-  console.log(user);
+  const socket = useSocket();
+
+  const [interviews, setInterviews] = useState([]);
 
   useEffect(() => {
     (async() => {
@@ -107,6 +108,32 @@ const Interview = () => {
   }, []);
 
   const navigate = useNavigate();
+
+  const handleJoinRoom = useCallback((data) => {
+    const { roomId } = data;
+    navigate(`/interview/${roomId}`);
+  }, [navigate]);
+
+  useEffect(() => {
+    if(socket) {
+      socket.on("room:join", handleJoinRoom);
+
+      return () => {
+        socket.off("room:join", handleJoinRoom);
+      }
+    }
+  }, [socket, handleJoinRoom]);
+
+  const joinRoom = useCallback(meetingLink => {
+    if (socket && user) {
+      const email = user.email;
+      const role = user.role;
+      const roomId = meetingLink;
+
+      socket.emit("room:join", { email, roomId, role });
+      console.log("Joining room:", { email, roomId, role });
+    }
+  }, [socket, user]);
 
   return (
     <div className='px-6 md:px-32 py-12 pb-20 bg-gray-50'>
@@ -142,7 +169,7 @@ const Interview = () => {
                     </div>
                   </div>
 
-                  <button className='absolute flex items-center justify-center px-8 py-1 gap-2 bg-amber-200 rounded-md text-xl font-semibold duration-300 hover:scale-105 cursor-not-allowed top-4 right-8' onClick={() => navigate(`/interview/${interview.meetingLink}`)}><IoVideocam className='text-2xl' /> Join</button>
+                  <button className='absolute flex items-center justify-center px-8 py-1 gap-2 bg-amber-200 rounded-md text-xl font-semibold duration-300 hover:scale-105 cursor-not-allowed top-4 right-8' onClick={() => joinRoom(interview.meetingLink)}><IoVideocam className='text-2xl' /> Join</button>
                 </div>
               })
             }
