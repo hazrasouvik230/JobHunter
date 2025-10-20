@@ -118,16 +118,19 @@ jobController.getAllJobs = async(req, res) => {
             return res.status(404).json({ error: "User not found." });
         }
 
-        const page = parseInt(req.query.page) || 1;
-        const limit = parseInt(req.query.limit) || 3;
-        const skip = (page - 1) * limit;
+        // const page = parseInt(req.query.page) || 1;
+        // const limit = parseInt(req.query.limit) || 3;
+        // const skip = (page - 1) * limit;
 
-        const jobs = await Job.find().skip(skip).limit(limit).populate("postedBy", "name email companyName companyLogo");
+        // const jobs = await Job.find().skip(skip).limit(limit).populate("postedBy", "name email companyName companyLogo");
 
-        const totalJobs = await Job.countDocuments();
-        const totalPages = Math.ceil(totalJobs / limit);
+        // const totalJobs = await Job.countDocuments();
+        // const totalPages = Math.ceil(totalJobs / limit);
 
-        res.status(200).json({ success: true, jobs, pagination: { currentPage: page, totalPages, totalJobs, limit } });
+        // res.status(200).json({ success: true, jobs, pagination: { currentPage: page, totalPages, totalJobs, limit } });
+        
+        const jobs = await Job.find();
+        res.status(200).json({ success: true, jobs });
     } catch (error) {
         console.log(error);
         res.status(500).json({ success: false, message: "Something went wrong while fetching jobs." });
@@ -195,6 +198,15 @@ jobController.apply = async(req, res) => {
             return res.status(403).json({ error: "Forbidden: Only applicants can apply for the jobs." });
         }
 
+        if(!req.file) {
+            return res.status(400).json({ error: "Please upload your resume while appling for this job role.", requiredResume: true });
+        }
+
+        const allowedTypes = ['application/pdf'];
+        if(!allowedTypes.includes(req.file.mimetype)) {
+            return res.status(400).json({ error: "Invalid file type.", requiredResume: true });
+        }
+
         const job = await Job.findById(jobId);
         if(!job) {
             return res.status(404).json({ error: "Job not found!" });
@@ -212,8 +224,8 @@ jobController.apply = async(req, res) => {
         // Add applicant with the new structure
         job.applicants.push({
             applicantId: req.userId,
-            status: "applied"
-            // appliedAt will be automatically set by default
+            status: "applied",
+            resumePath: req.file.path
         });
 
         await job.save();
@@ -230,7 +242,7 @@ jobController.apply = async(req, res) => {
             await applicant.save();
         }
         
-        res.status(200).json({ success: true, message: "Successfully applied for the job." });
+        res.status(200).json({ success: true, message: "Successfully applied for the job.", resumeFileName: req.file.filename });
     } catch (error) {
         console.log(error);
         res.status(500).json({ success: false, message: "Something went wrong while applying for a job." });

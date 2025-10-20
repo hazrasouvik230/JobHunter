@@ -29,6 +29,10 @@ const jobSchema = new mongoose.Schema({
         appliedAt: {
             type: Date,
             default: Date.now
+        },
+        resumePath: {
+            type: String,
+            required: true
         }
     }]
 }, { timestamps: true });

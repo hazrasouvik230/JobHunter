@@ -88,6 +88,10 @@ const userSchema = new mongoose.Schema({
     profileImage: {
         type: String,
         default: ""
+    },
+    resume: {
+        type: String, 
+        default: ""
     }
 }, { timestamps: true });
 
