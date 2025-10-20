@@ -164,6 +164,7 @@ app.delete("/api/resume/certificate/:id", authenticateUser, resumeController.del
 // Job Route
 // app.post("/api/job", authenticateUser, authorizeUser(["HR"]), jobController.create); // Create a job ✅
 app.post("/api/job", authenticateUser, authorizeUser(["HR"]), checkSubscription, jobController.create); // Create a job ✅
+app.put("/api/job/:id", authenticateUser, authorizeUser(["HR"]), jobController.update);
 app.post("/api/job/generateDescription", authenticateUser, authorizeUser(["HR"]), jobController.generateJobDescription);    // Generating job description externally ✅
 app.post("/api/job/generateShortDesc", authenticateUser, authorizeUser(["HR"]), jobController.generateShortDesc);    // Generating short description externally ✅
 app.get("/api/job", authenticateUser, authorizeUser(["User"]), jobController.getAllJobs);   // List of all jobs ✅

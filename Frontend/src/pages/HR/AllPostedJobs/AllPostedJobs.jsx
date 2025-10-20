@@ -40,6 +40,10 @@ const AllPostedJobs = () => {
 
     const navigate = useNavigate();
 
+    const handleEdit = (job) => {
+      navigate("/hr/post-job", { state: { jobData: job, isEdit: true } });
+    };
+
     // Pagination handlers
     const handleNextPage = () => {
         if (currentPage < totalPages) {
@@ -82,7 +86,7 @@ const AllPostedJobs = () => {
         <div className='text-center mb-8 mt-16'>
             <div className="absolute"><span className="text-start hover:text-blue-800 cursor-pointer ease-in-out text-gray-600 hover:font-semibold"><Link to="/">Back</Link></span></div>
 
-            <p className='text-4xl font-bold text-gray-900 mb-4'>All posted jobs</p>
+            <p className='text-4xl font-bold text-shadow-lg text-gray-900 mb-4'>All Posted Jobs</p>
             <p className='text-xl text-gray-600 max-w-2xl mx-auto'>Find the best talent for your company.</p>
         </div>
 
@@ -106,11 +110,6 @@ const AllPostedJobs = () => {
 
                         <div className='flex gap-2'>
                           <p className='bg-blue-100 text-blue-800 font-semibold px-8 py-1 rounded-2xl flex items-center gap-4'><GiSkills />{allJobs.requirements.join(", ")}</p>
-                          {/* {
-                            allJobs.requirements.map(ele => {
-                              return <span key={ele} >{ele}</span>
-                            })
-                          } */}
                         </div>
                         
                         <hr className='my-4 text-gray-400' />
@@ -134,7 +133,7 @@ const AllPostedJobs = () => {
                           </div>
 
                           <div className='flex gap-4'>
-                            <button className='px-6 py-2 bg-blue-300 rounded-md cursor-pointer flex items-center justify-center gap-2'>Edit <MdEdit /></button>
+                            <button className='px-6 py-2 bg-blue-300 rounded-md font-semibold cursor-pointer flex items-center justify-center gap-2 hover:font-bold' onClick={() => handleEdit(allJobs)}>Edit <MdEdit /></button>
                             <button className='px-6 py-2 bg-blue-700 text-white font-semibold rounded-md cursor-pointer flex items-center justify-center gap-2 hover:font-bold' onClick={() => navigate(`/hr/specific-job/${allJobs._id}`)}>View Details<FaChevronRight /></button>
                           </div>
                         </div>

@@ -396,4 +396,31 @@ jobController.unsaveJob = async (req, res) => {
     }
 };
 
+jobController.update = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { title, location, jobType, requirements, experienceLevel, salary, deadline, description } = req.body;
+
+        const job = await Job.findById(id);
+
+        if(!job) {
+            return res.status(404).json({ success: false, message: "Job not found." });
+        }
+
+        if(job.postedBy.toString() != req.userId.toString()) {
+            return res.status(403).json({ success: false, message: "Unauthorize." });
+        }
+
+        const updatedJob = await Job.findByIdAndUpdate(
+            id, { title, location, jobType, requirements, experienceLevel, salary, deadline, description },
+            { new: true, runValidators: true }
+        );
+        
+        res.status(200).json({ success: true, message: "Job updated successfully", job: updatedJob });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ success: false, message: "Failed to update job" });
+    }
+}
+
 module.exports = jobController;
