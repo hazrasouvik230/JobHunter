@@ -88,10 +88,7 @@ const AllUsers = () => {
               {paginationInfo(users).map((user) => (
                 <div key={user._id} className='flex items-center justify-between bg-blue-50 my-4 p-4 px-6 rounded-lg hover:shadow-md transition-all duration-200 border border-blue-100'>
                   <div className="flex gap-4 items-center">
-                    <img 
-                      src={`http://localhost:3000/uploads/profile-images/${user.profileImage}`} 
-                      alt={user.name} 
-                      className='h-12 w-12 rounded-full border-2 border-blue-300 object-cover' 
+                    <img src={`http://localhost:3000/uploads/profile-images/${user.profileImage}`} alt={user.name} className='h-12 w-12 rounded-full border-2 border-blue-300 object-cover' 
                     />
                     <div>
                       <p className='text-lg font-semibold text-gray-800'>{user.name}</p>
@@ -105,18 +102,8 @@ const AllUsers = () => {
 
                   {user.role !== "Admin" && (
                     <div className='flex gap-3'>
-                      <button 
-                        className='bg-blue-500 px-4 py-2 text-white font-medium rounded-lg cursor-pointer hover:bg-blue-600 transition-all duration-200 hover:scale-105'
-                        onClick={() => handleUser(user._id)}
-                      >
-                        View Details
-                      </button>
-                      <button 
-                        className='bg-red-500 px-4 py-2 text-white font-medium rounded-lg cursor-pointer hover:bg-red-600 transition-all duration-200 hover:scale-105'
-                        onClick={() => handleRemove(user._id)}
-                      >
-                        Remove
-                      </button>
+                      <button className='bg-blue-500 px-4 py-2 text-white font-medium rounded-lg cursor-pointer hover:bg-blue-600 transition-all duration-200 hover:scale-105'onClick={() => handleUser(user._id)}>View Details</button>
+                      <button className='bg-red-500 px-4 py-2 text-white font-medium rounded-lg cursor-pointer hover:bg-red-600 transition-all duration-200 hover:scale-105'onClick={() => handleRemove(user._id)}>Remove</button>
                     </div>
                   )}
                 </div>

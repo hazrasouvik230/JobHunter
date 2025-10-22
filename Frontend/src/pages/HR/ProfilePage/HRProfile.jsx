@@ -91,13 +91,10 @@ export default function HRProfilePage() {
             const response = await axios.put(`http://localhost:3000${endpoint}`, formData, { headers: { 'Authorization': token, 'Content-Type': 'multipart/form-data' } });
 
             if (response.data.success) {
-                // Update user in context
                 setUser(response.data.user);
                 
-                // Update user in localStorage
                 localStorage.setItem('user', JSON.stringify(response.data.user));
                 
-                // Update preview with new image from server
                 setPreview(`http://localhost:3000/uploads/${folderPath}/${response.data.user[fieldName]}`);
                 
                 alert(successMessage);
@@ -106,7 +103,6 @@ export default function HRProfilePage() {
             console.error(`Error uploading ${type}:`, error);
             alert(error.response?.data?.message || errorMessage);
             
-            // Revert preview on error
             const originalImage = storedUser?.[fieldName];
             setPreview(originalImage ? `http://localhost:3000/uploads/${folderPath}/${originalImage}` : "");
         } finally {
@@ -114,7 +110,6 @@ export default function HRProfilePage() {
         }
     };
 
-    // Trigger file input clicks
     const handleProfileImageUpload = () => {
         profileImageInputRef.current?.click();
     };

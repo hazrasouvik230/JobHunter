@@ -135,13 +135,7 @@ userController.allAppliedJobs = async (req, res) => {
         const totalAppliedJobs = userWithCount.appliedJobs.length;
         const totalPages = Math.ceil(totalAppliedJobs / limit);
 
-        res.status(200).json({ success: true, appliedJobs: user.appliedJobs, pagination: {
-            currentPage: page,
-            totalPages: totalPages,
-            totalJobs: totalAppliedJobs,
-            hasNext: page < totalPages,
-            hasPrev: page > 1
-        } });
+        res.status(200).json({ success: true, appliedJobs: user.appliedJobs, pagination: { currentPage: page, totalPages: totalPages, totalJobs: totalAppliedJobs, hasNext: page < totalPages, hasPrev: page > 1 } });
     } catch (error) {
         console.log(error);
         res.status(500).json({ success: false, message: "Something went wrong." });
@@ -164,7 +158,6 @@ userController.savedJobs = async (req, res) => {
 
 userController.updateProfileImage = async (req, res) => {
     try {
-        // Check if file was uploaded
         if(!req.file) {
             return res.status(400).json({ success: false, message: "No image file provided!" });
         }
@@ -174,7 +167,6 @@ userController.updateProfileImage = async (req, res) => {
             return res.status(404).json({ success: false, message: "User not found." });
         }
 
-        // Deletes the old file if that exists
         if(user.profileImage) {
             const fs = require("fs");
             const path = require("path");
@@ -199,7 +191,6 @@ userController.updateProfileImage = async (req, res) => {
 
 userController.updateCompanyLogo = async (req, res) => {
     try {
-        // Check if file was uploaded
         if(!req.file) {
             return res.status(400).json({ success: false, message: "No image file provided!" });
         }
@@ -209,7 +200,6 @@ userController.updateCompanyLogo = async (req, res) => {
             return res.status(404).json({ success: false, message: "User not found." });
         }
 
-        // Deletes the old file if that exists
         if(user.companyLogo) {
             const fs = require("fs");
             const path = require("path");
@@ -234,10 +224,7 @@ userController.updateCompanyLogo = async (req, res) => {
 
 userController.companies = async (req, res) => {
     try {
-        const companies = await User.find({ 
-            role: 'HR',
-            companyName: { $exists: true, $ne: "" } 
-        }).select('name email companyName companyLogo profileImage createdAt');
+        const companies = await User.find({ role: 'HR', companyName: { $exists: true, $ne: "" } }).select('name email companyName companyLogo profileImage createdAt');
         
         res.status(200).json({ success: true, companies });
     } catch (error) {

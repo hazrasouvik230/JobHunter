@@ -135,7 +135,7 @@ const HRSpecificJob = () => {
                                                         }
                                                     </div>
                                                 </td>
-                                                <td className='border p-2'>0</td>
+                                                <td className='border p-2'>{applicant.rating > 0 ? `${applicant.rating} / 10` : "-" }</td>
                                             </tr>
                                         )
                                     })

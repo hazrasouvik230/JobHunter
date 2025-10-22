@@ -23,8 +23,12 @@ const jobSchema = new mongoose.Schema({
         },
         status: {
             type: String,
-            enum: ["applied", "rejected", "selected_for_interview", "hired"],
+            enum: ["applied", "rejected", "selected_for_interview", "interview_completed", "hired"],
             default: "applied"
+        },
+        rating: {
+            type: Number,
+            default: 0
         },
         appliedAt: {
             type: Date,

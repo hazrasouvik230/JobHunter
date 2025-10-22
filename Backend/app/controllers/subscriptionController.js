@@ -10,8 +10,8 @@ const subscriptionController = {};
 // console.log("Secret key:", process.env.RAZORPAY_API_SECRET_KEY);
 
 const razorpayInstance = new Razorpay({
-  key_id: process.env.RAZORPAY_API_KEY,
-  key_secret: process.env.RAZORPAY_API_SECRET_KEY,
+    key_id: process.env.RAZORPAY_API_KEY,
+    key_secret: process.env.RAZORPAY_API_SECRET_KEY,
 });
 
 subscriptionController.getCurrentSubscription = async (req, res) => {
@@ -130,66 +130,6 @@ subscriptionController.verification = async (req, res) => {
     }
 };
 
-// subscriptionController.purchaseSubscription = async (req, res) => {
-//     const { planName, paymentId } = req.body;
-    
-//     try {
-//         // Define plan limits and durations
-//         const plans = {
-//             "Basic": { limit: 5, duration: 30, price: 2999 },
-//             "Professional": { limit: 20, duration: 30, price: 7999 },
-//             "Enterprise": { limit: -1, duration: 30, price: 14999 } // -1 for unlimited
-//         };
-
-//         if (!plans[planName]) {
-//             return res.status(400).json({
-//                 success: false,
-//                 error: "Invalid plan selected."
-//             });
-//         }
-
-//         const plan = plans[planName];
-//         const endDate = new Date(Date.now() + plan.duration * 24 * 60 * 60 * 1000);
-
-//         let subscription = await Subscription.findOne({ userId: req.userId });
-
-//         if (subscription) {
-//             // Update existing subscription
-//             subscription.planName = planName;
-//             subscription.jobPostsLimit = plan.limit === -1 ? 999999 : plan.limit;
-//             subscription.jobPostsUsed = 0; // Reset on new purchase
-//             subscription.isActive = true;
-//             subscription.endDate = endDate;
-//             subscription.paymentId = paymentId;
-//             await subscription.save();
-//         } else {
-//             // Create new subscription
-//             subscription = new Subscription({
-//                 userId: req.userId,
-//                 planName,
-//                 jobPostsLimit: plan.limit === -1 ? 999999 : plan.limit,
-//                 jobPostsUsed: 0,
-//                 isActive: true,
-//                 endDate,
-//                 paymentId
-//             });
-//             await subscription.save();
-//         }
-
-//         res.status(200).json({
-//             success: true,
-//             message: `Successfully subscribed to ${planName} plan!`,
-//             subscription
-//         });
-//     } catch (error) {
-//         console.log(error);
-//         res.status(500).json({
-//             success: false,
-//             message: "Error processing subscription purchase."
-//         });
-//     }
-// };
-
 subscriptionController.cancelSubscription = async (req, res) => {
     try {
         const subscription = await Subscription.findOne({ userId: req.userId });
@@ -261,48 +201,6 @@ subscriptionController.getSubscriptionPlans = async (req, res) => {
         res.status(500).json({ success: false, message: "Error fetching subscription plans." });
     }
 };
-
-// subscriptionController.listOfSubscriptions = async (req, res) => {
-//     try {
-//         const subscriptions = await Subscription.find()
-//             .populate('userId', 'companyName name email') // Assuming these fields in User model
-//             .select('planName jobPostsLimit jobPostsUsed isActive endDate paymentId razorpayOrderId createdAt')
-//             .sort({ createdAt: -1 });
-
-//         const formattedSubscriptions = subscriptions.map(sub => ({
-//             paymentId: sub.paymentId,
-//             companyName: sub.userId?.companyName || 'N/A',
-//             hrName: sub.userId?.name || 'N/A',
-//             planName: sub.planName,
-//             amount: subscriptionController.getPlanPrice(sub.planName), // You'll need to implement this
-//             time: sub.createdAt,
-//             status: sub.isActive ? 'Active' : 'Inactive'
-//         }));
-
-//         res.status(200).json({
-//             success: true,
-//             subscriptions: formattedSubscriptions,
-//             total: formattedSubscriptions.length
-//         });
-//     } catch (error) {
-//         console.error("List subscriptions error:", error);
-//         res.status(500).json({ 
-//             success: false, 
-//             message: "Error fetching subscription details." 
-//         });
-//     }
-// };
-
-// // Helper method to get plan price
-// subscriptionController.getPlanPrice = (planName) => {
-//     const planPrices = {
-//         "Free": 0,
-//         "Basic": 2999,
-//         "Professional": 7999,
-//         "Enterprise": 14999
-//     };
-//     return planPrices[planName] || 0;
-// };
 
 subscriptionController.transactions = async (req, res) => {
     try {

@@ -1,34 +1,4 @@
-// import { createContext } from "react";
-// const JobContext = createContext();
-// export default JobContext;
 
-
-// import { createContext, useContext } from "react";
-// import { AuthContext } from "./AuthContext";
-
-// const JobContext = createContext();
-
-// export const useJobs = () => {
-//     const context = useContext(JobContext);
-//     if(!context) {
-//         throw new Error("useJobs must be used within a JobsProvider");
-//     }
-//     return context;
-// };
-
-// export const JobsProvider = ({ children }) => {
-
-// }
-
-// export default JobContext;
-
-
-
-
-
-
-
-// context/JobsContext.js
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
 import { AuthContext } from './AuthContext';
@@ -59,7 +29,6 @@ export const JobsProvider = ({ children }) => {
     sortBy: "Created at"
   });
 
-  // Fetch all jobs
   const fetchAllJobs = async () => {
     try {
       setLoading(true);

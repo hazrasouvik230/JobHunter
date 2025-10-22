@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react"
 import axios from "../../../config/axios"
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { FaAngleRight } from "react-icons/fa";
-import { FaAngleLeft } from "react-icons/fa";
 
 export default function SpecificUserDetails() {
     const { id } = useParams();

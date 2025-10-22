@@ -58,6 +58,7 @@ const AppliedJobs = () => {
                 { headers: { Authorization: token } }
             );
             
+            console.log(response.data.appliedJobs);
             setAppliedJobs(response.data.appliedJobs);
             setTotalPages(response.data.pagination.totalPages);
             setPage(response.data.pagination.currentPage);
@@ -80,10 +81,8 @@ const AppliedJobs = () => {
                 { headers: { Authorization: token } }
             );
 
-            // Update local state
             setAppliedJobs(prev => prev.filter(job => job._id !== jobId));
             
-            // Update user context
             const updatedUser = {
                 ...user, 
                 appliedJobs: user.appliedJobs.filter(id => id !== jobId)
@@ -104,7 +103,7 @@ const AppliedJobs = () => {
     };
 
     useEffect(() => {
-        fetchAppliedJobs(1); // Start with page 1
+        fetchAppliedJobs(1);
     }, []);
 
     if (loading) {
@@ -131,7 +130,6 @@ const AppliedJobs = () => {
                 <p className='text-xl text-gray-600 max-w-2xl mx-auto'>Track your job applications</p>
             </div>
 
-            {/* <div className='border border-gray-200 rounded-md shadow-2xl w-full h-[600px] overflow-y-auto p-4'> */}
                 {appliedJobs?.length > 0 ? (
                     <>
                         <div className='flex flex-wrap gap-[1%]'>
@@ -167,37 +165,23 @@ const AppliedJobs = () => {
                                             <div className='bg-gradient-to-r from-amber-100 to-yellow-100 text-amber-800 rounded-2xl px-4 py-1 flex items-center gap-2 text-sm'>
                                                 <CurrencyFormatter amount={Number(job.salary)} currencyCode="INR" />
                                             </div>
-                                            {/* <div className='bg-gradient-to-r from-slate-100 to-gray-100 text-slate-700 rounded-2xl px-4 py-1 flex items-center gap-2 text-sm'>
-                                                <FaRegClock /> {formatDistanceToNow(new Date(job.createdAt))} ago
-                                            </div> */}
-                                            {/* <div className={`bg-gradient-to-r rounded-2xl px-4 py-1 flex items-center gap-2 text-sm ${
-                                                isDeadlinePassed 
-                                                    ? 'from-red-100 to-rose-100 text-red-800' 
-                                                    : 'from-green-100 to-emerald-100 text-green-800'
-                                            }`}>
-                                                <BsCalendarDate /> 
-                                                {isDeadlinePassed 
-                                                    ? `Closed ${formatDistanceToNow(new Date(job.deadline))} ago`
-                                                    : `Closes in ${formatDistanceToNow(new Date(job.deadline))}`
-                                                }
-                                            </div> */}
                                         </div>
 
                                         <div className='mb-16'>
-                                                                <ReactMarkdown>
-                                                                  {job.description ? job.description.slice(0, 200) : "No description available."}
-                                                                </ReactMarkdown>
-                                                              </div>
-                                        
-                                                              <div className='absolute left-4 bottom-4'>
-                                                                <p className='text-xs'>Posted: {formatDistanceToNow(new Date(job.createdAt))} ago</p>
-                                                                
-                                                                <p className='text-xs'>
-                                                                  {
-                                                                    new Date(job.deadline) > Date.now() ? `Deadline in ${formatDistanceToNow(new Date(job.deadline))}` : `Deadline was ${formatDistanceToNow(new Date(job.deadline))} ago`
-                                                                  }
-                                                                </p>
-                                                              </div>
+                                            <ReactMarkdown>
+                                                {job.description ? job.description.slice(0, 200) : "No description available."}
+                                            </ReactMarkdown>
+                                            </div>
+                    
+                                            <div className='absolute left-4 bottom-4'>
+                                            <p className='text-xs'>Posted: {formatDistanceToNow(new Date(job.createdAt))} ago</p>
+                                            
+                                            <p className='text-xs'>
+                                                {
+                                                new Date(job.deadline) > Date.now() ? `Deadline in ${formatDistanceToNow(new Date(job.deadline))}` : `Deadline was ${formatDistanceToNow(new Date(job.deadline))} ago`
+                                                }
+                                            </p>
+                                        </div>
 
                                         <span className={`absolute right-2 top-2 text-xs font-semibold px-3 py-1 rounded-2xl z-10 ${statusDisplay.className}`}>
                                             {statusDisplay.text}

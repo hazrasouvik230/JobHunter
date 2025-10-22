@@ -15,7 +15,6 @@ export default function UserDetails() {
                 // console.log(response.data.jobs);
                 setAllJobs(response.data.jobs);
 
-                // Fetch subscription info
                 const subResponse = await axios.get(`http://localhost:3000/api/subscription/current`, {
                     headers: { Authorization: token }
                 });

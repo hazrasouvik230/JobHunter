@@ -39,13 +39,11 @@ const Revenue = () => {
     })();
   }, []);
 
-  // Prepare chart data from API response
   const prepareChartData = () => {
     if (!data) return {};
 
     const { transactions, summary } = data;
 
-    // Revenue by Company
     const revenueByCompany = transactions.map(transaction => ({
       name: transaction.companyName,
       revenue: transaction.amount,
@@ -53,7 +51,6 @@ const Revenue = () => {
       date: new Date(transaction.purchaseDate).toLocaleDateString()
     }));
 
-    // Plan Distribution
     const planDistribution = Object.entries(summary.planBreakdown || {}).map(([plan, count]) => ({
       name: plan,
       value: count,
@@ -62,7 +59,6 @@ const Revenue = () => {
         .reduce((sum, t) => sum + t.amount, 0)
     })).filter(item => item.value > 0);
 
-    // Monthly Revenue Trend (example data - you might want to aggregate by month from transactions)
     const monthlyRevenue = [
       { month: 'Jan', revenue: 0 },
       { month: 'Feb', revenue: 0 },
@@ -78,7 +74,6 @@ const Revenue = () => {
       { month: 'Dec', revenue: 0 },
     ];
 
-    // Subscription Status
     const subscriptionStatus = [
       { name: 'Active', value: summary.activeSubscriptions, color: '#00C49F' },
       { name: 'Expired', value: summary.expiredSubscriptions, color: '#FF8042' }

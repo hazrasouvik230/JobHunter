@@ -23,7 +23,6 @@ const resumeController = require("./app/controllers/resumeController");
 const authenticateUser = require("./app/middlewares/authenticateUser");
 const authorizeUser = require("./app/middlewares/authorizeUser");
 
-// const upload = require("./app/middlewares/upload");
 const { uploadImages, uploadResumes } = require("./app/middlewares/upload");
 
 const interviewController = require("./app/controllers/interviewController");
@@ -136,7 +135,6 @@ io.on("connection", (socket) => {
 });
 
 // User Routes
-// app.post("/api/register", upload.single("companyLogo"), userController.register); // Registration ✅
 app.post("/api/register", uploadImages.single("companyLogo"), userController.register); // Registration ✅
 app.post("/api/login", userController.login);   // Login ✅
 app.get("/api/list", userController.list);   // List ✅
@@ -162,7 +160,6 @@ app.post("/api/resume/certificate", authenticateUser, resumeController.addCertif
 app.delete("/api/resume/certificate/:id", authenticateUser, resumeController.deleteCertificate);
 
 // Job Route
-// app.post("/api/job", authenticateUser, authorizeUser(["HR"]), jobController.create); // Create a job ✅
 app.post("/api/job", authenticateUser, authorizeUser(["HR"]), checkSubscription, jobController.create); // Create a job ✅
 app.put("/api/job/:id", authenticateUser, authorizeUser(["HR"]), jobController.update);
 app.post("/api/job/generateDescription", authenticateUser, authorizeUser(["HR"]), jobController.generateJobDescription);    // Generating job description externally ✅
@@ -170,7 +167,6 @@ app.post("/api/job/generateShortDesc", authenticateUser, authorizeUser(["HR"]), 
 app.get("/api/job", authenticateUser, authorizeUser(["User"]), jobController.getAllJobs);   // List of all jobs ✅
 app.get("/api/job/allPostedJobsByHR", authenticateUser, authorizeUser(["HR"]), jobController.allPostedJobsByHR);    // All posted jobs by the specific user ✅
 app.get("/api/job/getSpecificJob/:id", authenticateUser, authorizeUser(["User", "HR"]), jobController.getSpecificJob);  // Get a specific job ✅
-// app.post("/api/job/applyJob/:id", authenticateUser, authorizeUser(["User"]), jobController.apply);  // Apply for a job ✅
 app.post("/api/job/applyJob/:id", authenticateUser, authorizeUser(["User"]), uploadResumes.single("resumePath"), jobController.apply);  // Apply for a job ✅
 app.delete("/api/job/revokeApplication/:id", authenticateUser, authorizeUser(["User"]), jobController.revoke);
 app.get("/api/job/savedJobs", authenticateUser, authorizeUser(["User"]), jobController.getSavedJobs);  // Get saved jobs with pagination ✅
@@ -191,9 +187,9 @@ app.get('/api/admin/transactions', authenticateUser, authorizeUser(['Admin']), s
 
 app.post("/api/interview/scheduleInterview", authenticateUser, authorizeUser(["HR"]), interviewController.scheduleInterview);
 app.put("/api/interview/specificJobRejection", authenticateUser, authorizeUser(["HR"]), interviewController.specificJobRejection);
+app.put("/api/interview/completeInterview/:meetingLink", authenticateUser, authorizeUser(["HR", "User"]), interviewController.completeInterview);
 app.get("/api/interview/getInterviews", authenticateUser, authorizeUser(["User"]), interviewController.getInterviewByApplicant);
 app.get("/api/interview/getInterviewByHR", authenticateUser, authorizeUser(["HR"]), interviewController.getInterviewByHR);
-app.get("/api/interview/getInterviewByHR/:id", authenticateUser, authorizeUser(["HR"]), interviewController.getSpecificJobInterviews);
 app.get("/api/interview/specificInterview/:meetingLink", authenticateUser, authorizeUser(["User", "HR"]), interviewController.specificInterview);
 
 const PORT = process.env.PORT || 3000;

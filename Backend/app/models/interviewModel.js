@@ -40,6 +40,10 @@ const interviewSchema = new mongoose.Schema({
     rating: {
         type: Number,
         default: 0
+    },
+    aiFeedback: {
+        type: String,
+        default: ""
     }
 }, { timestamps: true });
 
