@@ -15,7 +15,7 @@ const AppliedJobs = () => {
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [loading, setLoading] = useState(false);
-    const [limit] = useState(6);
+    const [limit] = useState(9);
 
     const getApplicationStatus = (job) => {
         if(!job?.applicants || !user?._id) return 'applied';
@@ -23,6 +23,7 @@ const AppliedJobs = () => {
         const userApplication = job.applicants.find(
             applicant => applicant.applicantId === user._id
         );
+        // console.log(userApplication?.status);
         return userApplication?.status || 'applied';
     };
 
@@ -35,6 +36,10 @@ const AppliedJobs = () => {
             'rejected': {
                 text: 'Rejected',
                 className: 'bg-red-100/50 text-red-800 px-4 py-2 rounded-md'
+            },
+            'interview_completed': {
+                text: 'Interview Completed',
+                className: 'bg-green-100/50 text-green-800 px-4 py-2 rounded-md'
             },
             'under_review': {
                 text: 'Hired',
@@ -142,11 +147,7 @@ const AppliedJobs = () => {
                                     <div key={job._id} className='border border-gray-300 p-4 rounded-xl relative w-full shadow-lg md:w-[32.6%] mb-4 hover:scale-102 hover:shadow-lg hover:border-gray-600/50 duration-300 ease-in-out'>
                                         <div className='absolute h-20 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 opacity-35 top-0 left-0 w-full rounded-t-xl z-5'></div>
                                         <div className='flex gap-4'>
-                                            <img 
-                                                src={`http://localhost:3000/uploads/company-logos/${job.companyLogo}`} 
-                                                alt={job.companyName} 
-                                                className='h-22 w-22 rounded-lg shadow-lg z-10' 
-                                            />
+                                            <img src={`http://localhost:3000/uploads/company-logos/${job.companyLogo}`} alt={job.companyName} className='h-22 w-22 rounded-lg shadow-lg z-10' />
                                             <div className='z-10'>
                                                 <p className='font-bold text-xl mt-5'>{job.title}</p>
                                             </div>
@@ -178,23 +179,16 @@ const AppliedJobs = () => {
                                             
                                             <p className='text-xs'>
                                                 {
-                                                new Date(job.deadline) > Date.now() ? `Deadline in ${formatDistanceToNow(new Date(job.deadline))}` : `Deadline was ${formatDistanceToNow(new Date(job.deadline))} ago`
+                                                    new Date(job.deadline) > Date.now() ? `Deadline in ${formatDistanceToNow(new Date(job.deadline))}` : `Deadline was ${formatDistanceToNow(new Date(job.deadline))} ago`
                                                 }
                                             </p>
                                         </div>
 
-                                        <span className={`absolute right-2 top-2 text-xs font-semibold px-3 py-1 rounded-2xl z-10 ${statusDisplay.className}`}>
-                                            {statusDisplay.text}
-                                        </span>
+                                        <span className={`absolute right-2 top-2 text-xs font-semibold px-3 py-1 rounded-2xl z-10 ${statusDisplay.className}`}>{statusDisplay.text}</span>
                                         
-                                        {status === 'applied' && (
-                                            <button 
-                                                className='bg-red-200/50 absolute right-2 bottom-2 text-red-800 font-semibold px-4 py-1 rounded-md cursor-pointer hover:scale-105 hover:bg-red-300/50 transition-all'
-                                                onClick={() => handleRevokeApplication(job._id)}
-                                            >
-                                                Revoke Application
-                                            </button>
-                                        )}
+                                        {
+                                            status === 'applied' && <button className='bg-red-200/50 absolute right-2 bottom-2 text-red-800 font-semibold px-4 py-1 rounded-md cursor-pointer hover:scale-105 hover:bg-red-300/50 transition-all' onClick={() => handleRevokeApplication(job._id)}>Revoke Application</button>
+                                        }
                                     </div>
                                 );
                             })}
@@ -248,12 +242,7 @@ const AppliedJobs = () => {
                 ) : (
                     <div className="text-center py-12">
                         <p className="text-gray-500 text-lg">You haven't applied for any jobs yet.</p>
-                        <Link 
-                            to="/user/all-jobs" 
-                            className="inline-block mt-4 bg-indigo-500 text-white px-6 py-2 rounded-lg hover:bg-indigo-600 transition-colors"
-                        >
-                            Browse Jobs
-                        </Link>
+                        <Link to="/user/all-jobs" className="inline-block mt-4 bg-indigo-500 text-white px-6 py-2 rounded-lg hover:bg-indigo-600 transition-colors">Browse Jobs</Link>
                     </div>
                 )}
             {/* </div> */}

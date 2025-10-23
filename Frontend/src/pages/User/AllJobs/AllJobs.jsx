@@ -20,7 +20,7 @@ const AllJobs = () => {
   const [savedJobs, setSavedJobs] = useState([]);
 
   const [page, setPage] = useState(1);
-  const [limit] = useState(3);
+  const [limit] = useState(9);
 
   const [filters, setFilters] = useState({
     search: "",
@@ -197,7 +197,7 @@ const AllJobs = () => {
       </div>
 
       {/* All jobs */}
-      <div className='border border-gray-200 rounded-md shadow-2xl w-full overflow-y-auto p-4'>
+      <div className='mt-10'>
         {filteredJobs.length === 0 ? (
           <div className='flex flex-col items-center justify-center text-gray-500 h-[400px]'>
             <div className='text-6xl mb-4'>😔</div>

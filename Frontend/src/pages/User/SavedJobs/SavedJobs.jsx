@@ -16,7 +16,7 @@ const SavedJobs = () => {
   const [savedJobs, setSavedJobs] = useState([]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [limit] = useState(6);
+  const [limit] = useState(9);
   const [loading, setLoading] = useState(false);
 
   const fetchSavedJobs = async () => {
@@ -72,7 +72,7 @@ const SavedJobs = () => {
   const navigate = useNavigate();
   
   return (
-    <div className='px-6 md:px-32 py-12 bg-gray-50'>
+    <div className='px-6 md:px-32 py-12 pb-20 bg-gray-50'>
         <div className='text-center mb-8 mt-16'>
             <div className="absolute"><span className="text-start hover:text-blue-800 cursor-pointer ease-in-out text-gray-600 hover:font-semibold"><Link to="/">Back</Link></span></div>
 

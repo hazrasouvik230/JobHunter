@@ -24,6 +24,8 @@ const Interview = () => {
     })();
   }, []);
 
+  const filteredInterviews = interviews.filter(ele => ele.status !== "completed");
+
   const navigate = useNavigate();
 
   const handleJoinRoom = useCallback((data) => {
@@ -73,7 +75,7 @@ const Interview = () => {
           </div> :
           <div className='mt-8'>
             {
-              interviews.map((interview) => {
+              filteredInterviews.map((interview) => {
                 return <div className='relative bg-amber-400/20 px-8 py-4 my-4 rounded flex gap-10 hover:shadow-lg' key={interview._id}>
                   <img src={`http://localhost:3000/uploads/company-logos/${interview.hrId.companyLogo}`} alt="" className='w-20 h-20 rounded-md' />
                   <div>

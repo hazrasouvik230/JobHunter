@@ -87,7 +87,7 @@ const AllPostedJobs = () => {
             <div className="absolute"><span className="text-start hover:text-blue-800 cursor-pointer ease-in-out text-gray-600 hover:font-semibold"><Link to="/">Back</Link></span></div>
 
             <p className='text-4xl font-bold text-shadow-lg text-gray-900 mb-4'>All Posted Jobs</p>
-            <p className='text-xl text-gray-600 max-w-2xl mx-auto'>Find the best talent for your company.</p>
+            <p className='text-xl text-gray-600 max-w-2xl mx-auto'>Discover talent. Drive success.</p>
         </div>
 
         <div>

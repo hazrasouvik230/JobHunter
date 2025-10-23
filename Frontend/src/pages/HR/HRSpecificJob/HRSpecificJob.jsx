@@ -54,7 +54,6 @@ const HRSpecificJob = () => {
             console.log("Response:", response.data);
             
             if (response.data.success) {
-                // Update local state to reflect the change immediately
                 const updatedApplicants = job.applicants.map(applicant => 
                     applicant._id === applicantId 
                         ? { ...applicant, status: "rejected" } 
@@ -85,8 +84,8 @@ const HRSpecificJob = () => {
             <div className='text-center mb-8 mt-16'>
                 <div className="absolute"><span className="text-start hover:text-blue-800 cursor-pointer ease-in-out text-gray-600 hover:font-semibold"><Link to="/hr/all-posted-jobs">Back</Link></span></div>
 
-                <p className='text-4xl font-bold text-gray-900 mb-4'>Specific job details</p>
-                <p className='text-xl text-gray-600 max-w-2xl mx-auto'>Hire smarter. Grow faster.</p>
+                <p className='text-4xl text-shadow-lg font-bold text-gray-900 mb-4'>Specific job details</p>
+                <p className='text-xl text-gray-600 max-w-2xl mx-auto'>Your next hire is just a click away.</p>
             </div>
 
             <div className='flex justify-between gap-2'>
@@ -132,6 +131,9 @@ const HRSpecificJob = () => {
                                                         }
                                                         {
                                                             applicant.status === "selected_for_interview" && <p className='px-4 py-1 bg-amber-400 font-semibold text-white rounded'>Interview</p>
+                                                        }
+                                                        {
+                                                            applicant.status === "interview_completed" && <p className='px-4 py-1 bg-green-400 font-semibold text-white rounded'>Interview Completed</p>
                                                         }
                                                     </div>
                                                 </td>

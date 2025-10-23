@@ -146,7 +146,7 @@ const PostJob = () => {
                 <p className='text-4xl font-bold text-gray-900 mb-4'>
                     {isEdit ? 'Edit Job' : 'Post a Job'}
                 </p>
-                <p className='text-xl text-gray-600 max-w-2xl mx-auto'>Find the best talent for your company.</p>
+                <p className='text-xl text-gray-600 max-w-2xl mx-auto'>Your next star employee is just a post away.</p>
             </div>
             
             <div className='flex justify-between gap-2'>

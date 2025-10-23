@@ -46,7 +46,7 @@ interviewController.getInterviewByApplicant = async (req, res) => {
 interviewController.getInterviewByHR = async (req, res) => {
     try {
         const hrId = req.userId;
-        const interviews = await Interview.find({ hrId }).populate("applicantId", ["name", "email"]).populate("jobId", ["title"]);
+        const interviews = await Interview.find({ hrId }).populate("applicantId", ["name", "email"]).populate("jobId", ["title"]).sort({ date: 1 });
         res.status(200).json({ success: true, message: "Interviews fetched successfully!", interviews });
     } catch (error) {
         console.log(error);
