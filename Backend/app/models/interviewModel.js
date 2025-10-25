@@ -30,7 +30,7 @@ const interviewSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ["scheduled", "completed", "cancelled", "rejected"],
+        enum: ["scheduled", "completed", "hired", "rejected"],
         default: "scheduled"
     },
     meetingLink: {

@@ -70,17 +70,6 @@ interviewController.specificInterview = async (req, res) => {
     }
 };
 
-// interviewController.getSpecificJobInterviews = async (req, res) => {
-//     const jobId = req.params.id;
-    
-//     try {
-        
-//     } catch (error) {
-//         console.log(error);
-//         res.status(500).json({ message: "Something went wrong." });
-//     }
-// };
-
 interviewController.specificJobRejection = async (req, res) => {
     try {
         const { jobId, applicantId } = req.body;
@@ -106,8 +95,6 @@ interviewController.completeInterview = async (req, res) => {
     try {
         const { meetingLink } = req.params;
         const { jobId, applicantId, status, conversationTranscript } = req.body;
-
-        console.log("Job:", jobId, "& Candidate:", applicantId);
 
         const interview = await Interview.findOne({ meetingLink });
         if (!interview) {
@@ -151,6 +138,53 @@ interviewController.completeInterview = async (req, res) => {
     } catch (error) {
         console.log(error);
         res.status(500).json({ success: false, message: "Something went wrong." });
+    }
+};
+
+interviewController.decision = async (req, res) => {
+    const { jobId, applicantId, decision } = req.body;
+    const hrId = req.userId;
+
+    try {
+        if(!jobId || !applicantId || !decision) {
+            return res.status(400).json({ success: false, message: "All fields are required." });
+        }
+
+        if (!["hired", "rejected"].includes(decision)) {
+            return res.status(400).json({ success: false, message: "Decision must be either 'hired' or 'rejected'." });
+        }
+
+        const job = await Job.findById(jobId);
+        if (!job) {
+            return res.status(404).json({ success: false, message: "Job not found." });
+        }
+
+        const applicant = job.applicants.find(app => app.applicantId.toString() === applicantId);
+
+        if (!applicant) {
+            return res.status(404).json({ success: false, message: "Applicant not found for this job." });
+        }
+
+        if (applicant.status !== "interview_completed") {
+            return res.status(400).json({ success: false, message: "Interview must be completed before making a decision." });
+        }
+
+        await Job.updateOne(
+            { _id: jobId, "applicants.applicantId": applicantId },
+            { $set: { "applicants.$.status": decision } }
+        );
+
+        await Interview.updateOne(
+            { jobId, applicantId, hrId },
+            { $set: { status: decision } }
+        );
+
+        const actionMessage = decision === "hired" ? "Candidate hired successfully!" : "Candidate rejected successfully.";
+
+        res.status(200).json({ success: true, message: actionMessage, decision });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: "Something went wrong." });
     }
 };
 

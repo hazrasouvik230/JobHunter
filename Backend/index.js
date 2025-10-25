@@ -191,6 +191,7 @@ app.put("/api/interview/completeInterview/:meetingLink", authenticateUser, autho
 app.get("/api/interview/getInterviews", authenticateUser, authorizeUser(["User"]), interviewController.getInterviewByApplicant);
 app.get("/api/interview/getInterviewByHR", authenticateUser, authorizeUser(["HR"]), interviewController.getInterviewByHR);
 app.get("/api/interview/specificInterview/:meetingLink", authenticateUser, authorizeUser(["User", "HR"]), interviewController.specificInterview);
+app.put("/api/interview/decision", authenticateUser, authorizeUser(["HR"]), interviewController.decision);
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {

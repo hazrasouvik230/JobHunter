@@ -29,25 +29,25 @@ const AppliedJobs = () => {
 
     const getStatusBadge = (status) => {
         const statusConfig = {
-            'selected_for_interview': {
-                text: 'Interview Scheduled',
-                className: 'bg-yellow-100/50 text-yellow-800 px-4 py-2 rounded-md'
+            'applied': {
+                text: 'Applied',
+                className: 'bg-blue-100 text-blue-700 border border-blue-200'
             },
             'rejected': {
                 text: 'Rejected',
-                className: 'bg-red-100/50 text-red-800 px-4 py-2 rounded-md'
+                className: 'bg-red-100 text-red-700 border border-red-200'
+            },
+            'selected_for_interview': {
+                text: 'Interview Scheduled',
+                className: 'bg-amber-100 text-amber-700 border border-amber-200'
             },
             'interview_completed': {
                 text: 'Interview Completed',
-                className: 'bg-green-100/50 text-green-800 px-4 py-2 rounded-md'
+                className: 'bg-purple-100 text-purple-700 border border-purple-200'
             },
-            'under_review': {
+            'hired': {
                 text: 'Hired',
-                className: 'bg-green-100/50 text-green-800 px-4 py-2 rounded-md'
-            },
-            'applied': {
-                text: 'Applied',
-                className: 'bg-blue-100/50 text-gray-800 px-4 py-2 rounded-md'
+                className: 'bg-green-100 text-green-700 border border-green-200'
             }
         };
         
