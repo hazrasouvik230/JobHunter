@@ -6,12 +6,14 @@ import UserDetails from '../UserDetails';
 
 import { MdOutlineAccessTimeFilled } from "react-icons/md";
 import { FaTrash } from "react-icons/fa6";
+import Hiring from './Hiring';
 
 const HRSpecificJob = () => {
     const { id }= useParams();
     const [job, setJob] = useState({});
     const [scheduleInterviewModal, setScheduleInetrviewModal] = useState(false);
     const [selectedApplicant, setSelectedApplicant] = useState(null);
+    const [hiring, setHiring] = useState(false);
 
     useEffect(() => {
         (async() => {
@@ -84,7 +86,7 @@ const HRSpecificJob = () => {
             <div className='text-center mb-8 mt-16'>
                 <div className="absolute"><span className="text-start hover:text-blue-800 cursor-pointer ease-in-out text-gray-600 hover:font-semibold"><Link to="/hr/all-posted-jobs">Back</Link></span></div>
 
-                <p className='text-4xl text-shadow-lg font-bold text-gray-900 mb-4'>Specific job details</p>
+                <p className='text-4xl text-shadow-lg font-bold text-gray-900 mb-4'>Specific Job Details</p>
                 <p className='text-xl text-gray-600 max-w-2xl mx-auto'>Your next hire is just a click away.</p>
             </div>
 
@@ -102,9 +104,9 @@ const HRSpecificJob = () => {
                             <thead>
                                 <tr className='bg-gray-300 text-center'>
                                     <th className='border p-2 w-[25%]'>Name</th>
-                                    <th className='border p-2 w-[35%]'>Email</th>
+                                    <th className='border p-2 w-[30%]'>Email</th>
                                     <th className='border p-2 w-[15%]'>Resume</th>
-                                    <th className='border p-2 w-[15%]'>Actions</th>
+                                    <th className='border p-2 w-[30%]'>Actions</th>
                                     <th className='border p-2 w-[10%]'>Score</th>
                                 </tr>
                             </thead>
@@ -130,10 +132,10 @@ const HRSpecificJob = () => {
                                                             applicant.status === "rejected" && <p className='px-4 py-1 bg-red-600 font-semibold text-white rounded'>Rejected</p>
                                                         }
                                                         {
-                                                            applicant.status === "selected_for_interview" && <p className='px-4 py-1 bg-amber-400 font-semibold text-white rounded'>Interview</p>
+                                                            applicant.status === "selected_for_interview" && <p className='px-4 py-1 bg-amber-400 font-semibold text-white rounded'>Interview Scheduled</p>
                                                         }
                                                         {
-                                                            applicant.status === "interview_completed" && <p className='px-4 py-1 bg-green-400 font-semibold text-white rounded'>Interview Completed</p>
+                                                            applicant.status === "interview_completed" && <p className='px-4 py-1 bg-green-400 font-semibold text-white rounded cursor-pointer' onClick={() => setHiring(!hiring)}>Interview Completed</p>
                                                         }
                                                     </div>
                                                 </td>
@@ -151,6 +153,10 @@ const HRSpecificJob = () => {
 
                 <div className="w-1/3"><UserDetails /></div>
             </div>
+
+            {
+                hiring && <Hiring setHiring={setHiring} hiring={hiring} />
+            }
         </div>
     )
 }
