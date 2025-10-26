@@ -97,6 +97,7 @@ const AllPostedJobs = () => {
                 <div className='bg-white border-2 border-gray-400 rounded-xl shadow-xl w-2/3 px-6 py-3'>
                   {
                     allPostedJobs.map((allJobs) => {
+                      const hiredCount = allJobs.applicants?.filter(applicant => applicant.status === "hired").length || 0;
                       return <div key={allJobs._id} className='border border-gray-400 border-l-8 my-4 px-8 py-4 rounded-lg hover:shadow-lg hover:scale-102 transition-all duration-200 ease-in-out'>
                         <p className='text-xs font-normal text-gray-600'>JOB ID: {allJobs._id}</p>
                         <p className='text-2xl font-bold'>{allJobs.title}</p>
@@ -116,20 +117,20 @@ const AllPostedJobs = () => {
 
                         <div className='flex items-center justify-between'>
                           <div className='flex  gap-4'>
-                            <p className='border border-gray-400 shadow-lg px-4 py-1 rounded-md flex items-center justify-center gap-2'>
+                            <div className='border border-gray-400 shadow-lg px-4 py-1 rounded-md flex items-center justify-center gap-2'>
                               <FaUserFriends className='border-2 text-4xl p-1 rounded-md text-blue-700' />
                               <div>
                                 <p>Applicants</p>
-                              <p>{allJobs.applicants?.length || 0}</p>
+                                <p>{allJobs.applicants?.length || 0}</p>
                               </div>
-                            </p>
-                            <p className='border border-gray-400 shadow-lg px-4 py-1 rounded-md flex items-center justify-center gap-2'>
+                            </div>
+                            <div className='border border-gray-400 shadow-lg px-4 py-1 rounded-md flex items-center justify-center gap-2'>
                               <FaUserCheck className='border-2 text-4xl p-1 rounded-md text-green-700' />
                               <div>
                                 <p>Selected</p>
-                                <p>0</p>
+                                <p>{hiredCount}</p>
                               </div>
-                            </p>
+                            </div>
                           </div>
 
                           <div className='flex gap-4'>

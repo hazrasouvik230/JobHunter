@@ -143,7 +143,7 @@ const PostJob = () => {
             <div className='text-center mb-8 mt-16'>
                 <div className="absolute"><span className="text-start hover:text-blue-800 cursor-pointer ease-in-out text-gray-600 hover:font-semibold"><Link to="/">Back</Link></span></div>
 
-                <p className='text-4xl font-bold text-gray-900 mb-4'>
+                <p className='text-4xl text-shadow-lg font-bold text-gray-900 mb-4'>
                     {isEdit ? 'Edit Job' : 'Post a Job'}
                 </p>
                 <p className='text-xl text-gray-600 max-w-2xl mx-auto'>Your next star employee is just a post away.</p>
