@@ -10,6 +10,7 @@ import { GiGraduateCap } from "react-icons/gi";
 import { AuthContext } from '../../../context/AuthContext';
 import ReactMarkdown from "react-markdown";
 import { formatDistanceToNow  } from "date-fns";
+import Error from '../../Error';
 
 
 const AllJobs = () => {
@@ -18,6 +19,7 @@ const AllJobs = () => {
 
   const [allJobs, setAllJobs] = useState([]);
   const [savedJobs, setSavedJobs] = useState([]);
+  const [unauthorize, setUnauthorize] = useState(false);
 
   const [page, setPage] = useState(1);
   const [limit] = useState(9);
@@ -65,6 +67,9 @@ const AllJobs = () => {
       setAllJobs(response.data.jobs);
     } catch (error) {
       console.log(error);
+      if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+        setUnauthorize(true);
+      }
     }
   };
   
@@ -78,6 +83,9 @@ const AllJobs = () => {
       console.log("Saved jobs:", response.data.savedJobs);
     } catch (error) {
       console.log(error);
+      if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+        setUnauthorize(true);
+      }
     }
   }
 
@@ -116,6 +124,10 @@ const AllJobs = () => {
   }
 
   const navigate = useNavigate();
+
+  if(unauthorize) {
+    return <Error />
+  }
 
   return (
     <div className='px-6 md:px-32 py-12 pb-20 bg-gray-50'>

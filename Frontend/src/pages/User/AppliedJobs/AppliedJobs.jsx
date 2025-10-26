@@ -8,6 +8,7 @@ import { AuthContext } from '../../../context/AuthContext';
 import CurrencyFormatter from '../../../CurrencyFormatter';
 import { formatDistanceToNow  } from "date-fns";
 import { Link } from 'react-router-dom';
+import Error from '../../Error';
 
 const AppliedJobs = () => {
     const { user, setUser } = useContext(AuthContext);
@@ -16,6 +17,7 @@ const AppliedJobs = () => {
     const [totalPages, setTotalPages] = useState(1);
     const [loading, setLoading] = useState(false);
     const [limit] = useState(9);
+    const [unauthorize, setUnauthorize] = useState(false);
 
     const getApplicationStatus = (job) => {
         if(!job?.applicants || !user?._id) return 'applied';
@@ -69,7 +71,10 @@ const AppliedJobs = () => {
             setPage(response.data.pagination.currentPage);
         } catch (error) {
             console.error("Error fetching applied jobs:", error);
-            alert("Failed to load applied jobs");
+            if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+               setUnauthorize(true);
+            }
+            // alert("Failed to load applied jobs");
         } finally {
             setLoading(false);
         }
@@ -120,6 +125,10 @@ const AppliedJobs = () => {
                 </div>
             </div>
         );
+    }
+
+    if (unauthorize) {
+        return <Error />
     }
 
     return (

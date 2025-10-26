@@ -95,7 +95,7 @@ const Navbar = () => {
   return (
     <>
       <div className='fixed w-full z-20 bg-white flex items-center justify-between px-32 py-4 shadow-xl'>
-        <img src='/Logo(C)-1.png' alt='JobHunterLogo' className='cursor-pointer h-8 hover:scale-110' onClick={() => navigate("/")} />
+        <img src='/HireHub-Logo.png' alt='JobHunterLogo' className='cursor-pointer h-8 hover:scale-110' onClick={() => navigate("/")} />
 
         {/* Navitems */}
         {
@@ -116,7 +116,7 @@ const Navbar = () => {
             {
               JSON.parse(localStorage.getItem("user")).profileImage === "" ? <FaUser className='border text-3xl rounded-full cursor-pointer hover:scale-105' onClick={handleMenu} /> : (
                 <>
-                  <img src={`http://localhost:3000/uploads/profile-images/${JSON.parse(localStorage.getItem("user")).profileImage}`} alt="" className='h-7.5 border w-7.5 rounded-full' onClick={handleMenu} />
+                  <img src={`http://localhost:3000/uploads/profile-images/${JSON.parse(localStorage.getItem("user")).profileImage}`} alt="" className='h-8 border-2 border-gray-500 w-8 rounded-full cursor-pointer hover:scale-110 hover:border-gray-900' onClick={handleMenu} />
                 </>
               )
             }

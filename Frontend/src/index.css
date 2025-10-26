@@ -17,3 +17,16 @@
     }
   }
 }
+
+@layer utilities {
+  .blinking {
+    @apply text-slate-400 mb-8 max-w-md mx-auto;
+    animation: blink-animation 1s step-start infinite;
+  }
+
+  @keyframes blink-animation {
+    50% {
+      opacity: 0;
+    }
+  }
+}

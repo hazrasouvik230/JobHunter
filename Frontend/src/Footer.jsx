@@ -8,7 +8,7 @@ const Footer = () => {
     <div style={{ background: "#F0F0F5"}} className='px-32 py-16'>
         <div className='flex flex-col items-center justify-center gap-8 mb-12 sm:flex-row sm:justify-around'>
             <div className='flex flex-col items-center justify-center sm:items-start'>
-                <h1 className='font-bold text-2xl'>Job Portal</h1>
+                <h1 className='font-bold text-2xl'>HireHub</h1>
                 <p className='text-sm font-normal text-gray-500 '>Call now: +91 1236547890</p>
                 <p className='text-sm font-normal text-gray-500 '>Address: Kolkata</p>
             </div>

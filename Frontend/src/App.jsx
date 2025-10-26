@@ -25,6 +25,8 @@ import ApplyJob from './pages/User/ApplyJob/ApplyJob';
 import HRProfilePage from './pages/HR/ProfilePage/HRProfile';
 import Interview from './Interview';
 
+import Error from './pages/Error';
+
 const App = () => {
   return (
     <BrowserRouter>
@@ -57,6 +59,8 @@ const App = () => {
         <Route path='/user/interview' element={<UserInterview />} />
 
         <Route path='/interview/:id' element={<Interview />} />
+
+        <Route path='*' element={<Error />} />
       </Routes>
       
       <Footer />

@@ -3,6 +3,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import ReactMarkdown from "react-markdown";
 import { AuthContext } from '../../../context/AuthContext';
+import Error from '../../Error';
 
 const ApplyJob = () => {
     const { user, setUser } = useContext(AuthContext);
@@ -13,6 +14,7 @@ const ApplyJob = () => {
     const [applying, setApplying] = useState(false);
     const [resumeFile, setResumeFile] = useState(null);
     const [error, setError] = useState('');
+    const [unauthorize, setUnauthorize] = useState(false);
 
     const navigate = useNavigate();
 
@@ -94,6 +96,9 @@ const ApplyJob = () => {
                 setJobDetails(response.data.job);
             } catch (error) {
                 console.log(error);
+                if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+                    setUnauthorize(true);
+                }
             } finally {
                 setLoading(false);
             }
@@ -109,6 +114,10 @@ const ApplyJob = () => {
                 </div>
             </div>
         );
+    }
+
+    if (unauthorize) {
+        return <Error />
     }
 
     return (

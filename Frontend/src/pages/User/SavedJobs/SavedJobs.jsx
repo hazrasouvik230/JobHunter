@@ -9,6 +9,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { FaBookmark } from "react-icons/fa6";
 import { GiGraduateCap } from "react-icons/gi";
 import { formatDistanceToNow } from "date-fns";
+import Error from '../../Error';
 
 const SavedJobs = () => {
   const { user, setUser } = useContext(AuthContext);
@@ -18,6 +19,7 @@ const SavedJobs = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [limit] = useState(9);
   const [loading, setLoading] = useState(false);
+  const [unauthorize, setUnauthorize] = useState(false);
 
   const fetchSavedJobs = async () => {
     setLoading(true);
@@ -32,6 +34,9 @@ const SavedJobs = () => {
       setTotalPages(response.data.pagination.totalPages);
     } catch (error) {
       console.log(error);
+      if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+        setUnauthorize(true);
+      }
     } finally {
       setLoading(false);
     }
@@ -70,6 +75,10 @@ const SavedJobs = () => {
   };
 
   const navigate = useNavigate();
+
+  if (unauthorize) {
+    return <Error />
+  }
   
   return (
     <div className='px-6 md:px-32 py-12 pb-20 bg-gray-50'>
