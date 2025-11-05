@@ -3,6 +3,7 @@ import { AuthContext } from "../../../context/AuthContext"
 import { Link } from "react-router-dom";
 import axios, { all } from "axios";
 import { motion } from "framer-motion";
+import Error from "../../Error";
 
 export default function HRProfilePage() {
     const { user, setUser } = useContext(AuthContext);
@@ -23,6 +24,7 @@ export default function HRProfilePage() {
     const [totalApplicants, setTotalApplicants] = useState(0);
 
     const [interviewDetails, setInterviewDetails] = useState([]);
+    const [unauthorize, setUnauthorize] = useState(false);
 
     useEffect(() => {
         (async() => {
@@ -43,6 +45,9 @@ export default function HRProfilePage() {
             setTotalApplicants(applicantCount);
         } catch (error) {
             console.log(error);
+            if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+                setUnauthorize(true);
+            }
         }
         })();
     }, []);
@@ -117,6 +122,10 @@ export default function HRProfilePage() {
     const handleCompanyLogoUpload = () => {
         companyLogoInputRef.current?.click();
     };
+
+    if (unauthorize) {
+        return <Error />
+    }
     
     return (
         <motion.div className='px-6 md:px-32 py-12 bg-blue-50' initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.6 }}>

@@ -5,6 +5,7 @@ import axios from 'axios';
 import Loader from '../../../Loading';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import UserDetails from "../UserDetails";
+import Error from '../../Error';
 
 const PostJob = () => {
     const location = useLocation();
@@ -77,6 +78,7 @@ const PostJob = () => {
     }, [isEdit, jobData]);
     
     const [allPostedJobs, setAllPostedJobs] = useState([]);
+    const [unauthorize, setUnauthorize] = useState(false);
 
     useEffect(() => {
       (async() => {
@@ -118,6 +120,9 @@ const PostJob = () => {
             } else {
                 alert(error.response?.data?.message || "Failed to post job");
             }
+            if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+                setUnauthorize(true);
+            }
             console.log(error.response?.data || error.message);
         }
     };
@@ -137,6 +142,10 @@ const PostJob = () => {
             setLoading(false);
         }
     };
+
+    if (unauthorize) {
+        return <Error />
+    }
 
     return (
         <div className='px-6 md:px-32 py-12 pb-20 bg-gray-50'>

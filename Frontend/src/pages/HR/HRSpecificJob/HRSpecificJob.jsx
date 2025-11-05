@@ -7,6 +7,7 @@ import UserDetails from '../UserDetails';
 import { MdOutlineAccessTimeFilled } from "react-icons/md";
 import { FaTrash } from "react-icons/fa6";
 import Hiring from './Hiring';
+import Error from '../../Error';
 
 const HRSpecificJob = () => {
     const { id } = useParams();
@@ -17,6 +18,7 @@ const HRSpecificJob = () => {
     const [selectedForHiring, setSelectedForHiring] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [unauthorize, setUnauthorize] = useState(false);
 
     const fetchJobDetails = async () => {
         try {
@@ -29,6 +31,9 @@ const HRSpecificJob = () => {
         } catch (error) {
             // console.log(error);
             setError("Failed to load job details");
+            if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+                setUnauthorize(true);
+            }
         } finally {
             setLoading(false);
         }
@@ -87,6 +92,10 @@ const HRSpecificJob = () => {
                 <p className='text-xl text-gray-600'>Loading job details...</p>
             </div>
         );
+    }
+
+    if (unauthorize) {
+        return <Error />
     }
 
     if (error) {

@@ -13,12 +13,14 @@ import { formatDistanceToNow  } from "date-fns";
 
 import UserDetails from "../UserDetails";
 import currencyFormatter from '../../../CurrencyFormatter';
+import Error from '../../Error';
 
 const AllPostedJobs = () => {
     const [allPostedJobs, setAllPostedJobs] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [totalJobs, setTotalJobs] = useState(0);
+    const [unauthorize, setUnauthorize] = useState(false);
 
     const fetchPostedJobs = async (page = 1) => {
       try {
@@ -31,6 +33,9 @@ const AllPostedJobs = () => {
         setTotalJobs(response.data.pagination.totalJobs);
       } catch (error) {
         console.log(error);
+        if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+            setUnauthorize(true);
+        }
       }
     }
 
@@ -80,6 +85,10 @@ const AllPostedJobs = () => {
         
         return pages;
     };
+
+    if (unauthorize) {
+      return <Error />
+    }
 
     return (
       <div className='px-6 md:px-32 py-12 pb-20 bg-gray-50'>

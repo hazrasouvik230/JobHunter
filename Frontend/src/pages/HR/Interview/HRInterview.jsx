@@ -4,12 +4,14 @@ import { SiGooglemeet } from "react-icons/si";
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../../context/AuthContext';
 import { useSocket } from '../../../context/SocketProvider';
+import Error from '../../Error';
 
 const Interview = () => {
   const { user }= useContext(AuthContext);
   const socket = useSocket();
 
   const [interviews, setInterviews] = useState([]);
+  const [unauthorize, setUnauthorize] = useState(false);
 
   useEffect(() => {
     (async() => {
@@ -20,6 +22,9 @@ const Interview = () => {
         setInterviews(response.data.interviews);
       } catch (error) {
         console.log(error);
+        if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+            setUnauthorize(true);
+        }
         alert("something went wrong");
       }
     })();
@@ -59,6 +64,10 @@ const Interview = () => {
       console.log("Joining room:", { email, roomId, role });
     }
   }, [socket, user]);
+
+  if (unauthorize) {
+    return <Error />
+  }
 
   return (
     <div className='px-6 md:px-32 py-12 pb-20 bg-gray-50 min-h-screen'>
