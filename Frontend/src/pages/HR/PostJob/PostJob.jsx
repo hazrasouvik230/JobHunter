@@ -6,6 +6,7 @@ import Loader from '../../../Loading';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import UserDetails from "../UserDetails";
 import Error from '../../Error';
+import toast from 'react-hot-toast';
 
 const PostJob = () => {
     const location = useLocation();
@@ -104,12 +105,26 @@ const PostJob = () => {
             let response;
             if (isEdit && jobData) {
                 response = await axios.put(`http://localhost:3000/api/job/${jobData._id}`, formJobData, { headers: { Authorization: token } });
-                alert("Job updated successfully!");
+                toast.promise(
+                    Promise.resolve(response),
+                    {
+                        loading: 'Updating your job...',
+                        success: <b>Your JOB details are updated successfully!</b>,
+                        error: <b>Update failed. Please try again.</b>,
+                    }
+                );
             } else {
-                response = await axios.post("http://localhost:3000/api/job", formJobData, { headers: { Authorization: `${token}` } });
-                console.log(response.data);
-                alert("Job posted successfully!");
+                response = await axios.post("http://localhost:3000/api/job", formJobData, { headers: { Authorization: token } });
+                toast.promise(
+                    Promise.resolve(response),
+                    {
+                        loading: 'Creating your job...',
+                        success: <b>New JOB posted successfully!</b>,
+                        error: <b>New JOB creation failed. Please try again.</b>,
+                    }
+                );
             }
+
             
             console.log(response.data);
             navigate("/hr/all-posted-jobs");

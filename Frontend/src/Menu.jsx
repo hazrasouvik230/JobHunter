@@ -3,6 +3,7 @@ import { FaUserCog } from "react-icons/fa";
 import { TbLogout } from "react-icons/tb";
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from './context/AuthContext';
+import toast from 'react-hot-toast';
 
 const Menu = ({ setShowMenu }) => {
     const { role, logout } = useContext(AuthContext);
@@ -19,6 +20,7 @@ const Menu = ({ setShowMenu }) => {
 
     const handleLogout = () => {
         logout();
+        toast.success("Logged out successfully!");
         setShowMenu(prev => !prev);
         navigate("/");
     };

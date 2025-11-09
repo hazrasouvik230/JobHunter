@@ -99,7 +99,7 @@ const Navbar = () => {
 
         {/* Navitems */}
         {
-            isLoggedIn && getNavLinks() && <div className='flex space-x-12'>
+            isLoggedIn && localStorage.getItem("token") && getNavLinks() && <div className='flex space-x-12'>
                 {
                     getNavLinks().map((navItem) => {
                       const isActive = location.pathname === navItem.path;
@@ -110,7 +110,7 @@ const Navbar = () => {
         }
 
         {
-          isLoggedIn ? <div className='flex gap-4'>
+          isLoggedIn && localStorage.getItem("token") ? <div className='flex gap-4'>
             <IoNotifications className='relative text-3xl cursor-pointer' onClick={handleNotificationModal} />
             <span className='absolute right-43 text-center bg-red-400 text-xs font-semibold text-white h-4 w-4 rounded-full'>{notifications.length}</span>
             {

@@ -8,7 +8,8 @@ import { FaUserCheck } from "react-icons/fa";
 import { FaUserFriends } from "react-icons/fa";
 import { MdEdit } from "react-icons/md";
 import { FaChevronRight } from "react-icons/fa";
-import { GiSkills } from "react-icons/gi";
+import { FaTrash } from "react-icons/fa";
+import { FaLaptopCode } from "react-icons/fa";
 import { formatDistanceToNow  } from "date-fns";
 
 import UserDetails from "../UserDetails";
@@ -86,6 +87,10 @@ const AllPostedJobs = () => {
         return pages;
     };
 
+    const handleRemovePostedJob = (id) => {
+      alert(id);
+    };
+
     if (unauthorize) {
       return <Error />
     }
@@ -107,9 +112,11 @@ const AllPostedJobs = () => {
                   {
                     allPostedJobs.map((allJobs) => {
                       const hiredCount = allJobs.applicants?.filter(applicant => applicant.status === "hired").length || 0;
-                      return <div key={allJobs._id} className='border border-gray-400 border-l-8 my-4 px-8 py-4 rounded-lg hover:shadow-lg hover:scale-102 transition-all duration-200 ease-in-out'>
+                      return <div key={allJobs._id} className='relative border border-gray-400 border-l-8 my-4 px-8 py-4 rounded-lg hover:shadow-lg hover:scale-102 transition-all duration-200 ease-in-out'>
                         <p className='text-xs font-normal text-gray-600'>JOB ID: {allJobs._id}</p>
                         <p className='text-2xl font-bold'>{allJobs.title}</p>
+
+                        <FaTrash className='absolute top-4 right-8 text-gray-500 cursor-pointer hover:text-red-600 transition-all duration-200 ease-in-out hover:scale-110' onClick={() => handleRemovePostedJob(allJobs._id)} />
 
                         <div className="flex gap-4 my-4 flex-wrap">
                           <p className='bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-800 font-medium rounded-2xl px-6 py-1 flex items-center justify-center gap-2'><BsBriefcaseFill className='text-base' /> {allJobs.jobType}</p>
@@ -119,7 +126,7 @@ const AllPostedJobs = () => {
                         </div>
 
                         <div className='flex gap-2'>
-                          <p className='bg-blue-100 text-blue-800 font-semibold px-8 py-1 rounded-2xl flex items-center gap-4'><GiSkills />{allJobs.requirements.join(", ")}</p>
+                          <p className='bg-blue-100 text-blue-800 font-semibold px-8 py-1 rounded-2xl flex items-center gap-4'><FaLaptopCode />{allJobs.requirements.join(", ")}</p>
                         </div>
                         
                         <hr className='my-4 text-gray-400' />

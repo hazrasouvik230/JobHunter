@@ -27,11 +27,15 @@ import Interview from './Interview';
 
 import Error from './pages/Error';
 
+import { Toaster } from 'react-hot-toast';
+
 const App = () => {
   return (
     <BrowserRouter>
       <Navbar />
 
+      <Toaster position="top-right" reverseOrder={false} />
+      
       <Routes>
         <Route path='/' element={<Home />} />
         <Route path="/profile" element={<Profile />} />
